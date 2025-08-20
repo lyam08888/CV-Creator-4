@@ -1,98 +1,246 @@
 export function generatePreview(formData) {
-  const previewPanel = document.getElementById('cv-preview');
+  const previewContainer = document.getElementById('cv-preview');
   
-  let html = '';
-
-  if (formData.recruiterName || formData.companyName || formData.companyLogoUrl) {
-    html += `
-      <div class="cv-recruitment-banner">
-        ${formData.companyLogoUrl ? `<img src="${formData.companyLogoUrl}" alt="${formData.companyName || 'Company'} Logo" class="company-logo">` : ''}
-        <div class="recruiter-info">
-          <h3>${formData.companyName || 'Entreprise de Recrutement'}</h3>
-          <p>Contact: ${formData.recruiterName || 'Recruteur'} (${formData.recruiterContact || 'Non spécifié'})</p>
-        </div>
-      </div>
-    `;
-  }
-
-  html += `
-    <div class="cv-section sortable" data-section="header">
-      <div class="drag-handle">⋮⋮</div>
-      <div class="cv-header">
-        <h1 contenteditable="false">${formData.fullName || ''}</h1>
-        <p contenteditable="false">${formData.jobTitle || ''}</p>
-        <p contenteditable="false">${formData.email || ''} | ${formData.phone || ''} | ${formData.address || ''}</p>
-      </div>
-    </div>
-    <div class="cv-section sortable" data-section="summary">
-      <div class="drag-handle">⋮⋮</div>
-      <h2 contenteditable="false">Résumé</h2>
-      <p contenteditable="false">${formData.summary || ''}</p>
-    </div>
-  `;
-
-  if (formData.experience) {
-    html += '<div class="cv-section sortable" data-section="experience"><div class="drag-handle">⋮⋮</div><h2 contenteditable="false">Expérience Professionnelle</h2>';
-    formData.experience.forEach(exp => {
-      html += `
-        <div class="cv-item">
-          <h3 contenteditable="false">${exp.title} chez ${exp.company}</h3>
-          <p class="cv-period" contenteditable="false">${exp.period}</p>
-          <p contenteditable="false">${exp.description}</p>
-        </div>
-      `;
-    });
-    html += '</div>';
-  }
-
-  if (formData.education) {
-    html += '<div class="cv-section sortable" data-section="education"><div class="drag-handle">⋮⋮</div><h2 contenteditable="false">Formation</h2>';
-    formData.education.forEach(edu => {
-      html += `
-        <div class="cv-item">
-          <h3 contenteditable="false">${edu.degree} - ${edu.school}</h3>
-          <p class="cv-period" contenteditable="false">${edu.period}</p>
-        </div>
-      `;
-    });
-    html += '</div>';
-  }
-
-  if (formData.skills) {
-    html += `
-      <div class="cv-section sortable" data-section="skills">
-        <div class="drag-handle">⋮⋮</div>
-        <h2 contenteditable="false">Compétences</h2>
-        <p contenteditable="false">${formData.skills}</p>
-      </div>
-    `;
-  }
-
-  previewPanel.innerHTML = html;
+  // Générer le contenu des sections
+  const sections = generateSections(formData);
+  
+  // Créer les pages avec pagination automatique
+  const pages = createPagesWithPagination(sections);
+  
+  // Injecter le HTML dans le conteneur
+  previewContainer.innerHTML = pages;
   
   // Initialiser le drag & drop après avoir généré le contenu
   initializeDragAndDrop();
+  
+  // Appliquer la personnalisation
+  applyCustomizationToPreview();
+}
+
+function generateSections(formData) {
+  const sections = [];
+
+  // Bannière de recrutement
+  if (formData.recruiterName || formData.companyName || formData.companyLogoUrl) {
+    sections.push({
+      type: 'recruitment-banner',
+      content: `
+        <div class="cv-recruitment-banner">
+          ${formData.companyLogoUrl ? `<img src="${formData.companyLogoUrl}" alt="${formData.companyName || 'Company'} Logo" class="company-logo">` : ''}
+          <div class="recruiter-info">
+            <h3>${formData.companyName || 'Entreprise de Recrutement'}</h3>
+            <p>Contact: ${formData.recruiterName || 'Recruteur'} (${formData.recruiterContact || 'Non spécifié'})</p>
+          </div>
+        </div>
+      `,
+      height: 80 // estimation en mm
+    });
+  }
+
+  // En-tête
+  sections.push({
+    type: 'header',
+    content: `
+      <div class="cv-section sortable" data-section="header">
+        <div class="drag-handle">⋮⋮</div>
+        <div class="cv-header">
+          <h1 contenteditable="false">${formData.fullName || ''}</h1>
+          <p contenteditable="false">${formData.jobTitle || ''}</p>
+          <p contenteditable="false">${formData.email || ''} | ${formData.phone || ''} | ${formData.address || ''}</p>
+        </div>
+      </div>
+    `,
+    height: 60
+  });
+
+  // Résumé
+  if (formData.summary) {
+    sections.push({
+      type: 'summary',
+      content: `
+        <div class="cv-section sortable" data-section="summary">
+          <div class="drag-handle">⋮⋮</div>
+          <h2 contenteditable="false">Résumé</h2>
+          <p contenteditable="false">${formData.summary}</p>
+        </div>
+      `,
+      height: 40 + (formData.summary.length / 100) * 10 // estimation basée sur la longueur
+    });
+  }
+
+  // Expérience
+  if (formData.experience && formData.experience.length > 0) {
+    let experienceContent = '<div class="cv-section sortable" data-section="experience"><div class="drag-handle">⋮⋮</div><h2 contenteditable="false">Expérience Professionnelle</h2>';
+    let experienceHeight = 30; // titre
+    
+    formData.experience.forEach(exp => {
+      const title = exp.title || '';
+      const company = exp.company || '';
+      const period = exp.period || '';
+      const description = exp.description || '';
+      
+      experienceContent += `
+        <div class="cv-item">
+          <h3 contenteditable="false">${title}${company ? ` chez ${company}` : ''}</h3>
+          ${period ? `<p class="cv-period" contenteditable="false">${period}</p>` : ''}
+          ${description ? `<p contenteditable="false">${description}</p>` : ''}
+        </div>
+      `;
+      experienceHeight += 25 + (description ? description.length / 150 * 10 : 0);
+    });
+    
+    experienceContent += '</div>';
+    
+    sections.push({
+      type: 'experience',
+      content: experienceContent,
+      height: experienceHeight
+    });
+  }
+
+  // Formation
+  if (formData.education && formData.education.length > 0) {
+    let educationContent = '<div class="cv-section sortable" data-section="education"><div class="drag-handle">⋮⋮</div><h2 contenteditable="false">Formation</h2>';
+    let educationHeight = 30;
+    
+    formData.education.forEach(edu => {
+      const degree = edu.degree || '';
+      const school = edu.school || '';
+      const period = edu.period || '';
+      
+      educationContent += `
+        <div class="cv-item">
+          <h3 contenteditable="false">${degree}${school ? ` - ${school}` : ''}</h3>
+          ${period ? `<p class="cv-period" contenteditable="false">${period}</p>` : ''}
+        </div>
+      `;
+      educationHeight += 20;
+    });
+    
+    educationContent += '</div>';
+    
+    sections.push({
+      type: 'education',
+      content: educationContent,
+      height: educationHeight
+    });
+  }
+
+  // Compétences
+  if (formData.skills) {
+    sections.push({
+      type: 'skills',
+      content: `
+        <div class="cv-section sortable" data-section="skills">
+          <div class="drag-handle">⋮⋮</div>
+          <h2 contenteditable="false">Compétences</h2>
+          <p contenteditable="false">${formData.skills}</p>
+        </div>
+      `,
+      height: 40 + (formData.skills.length / 100) * 5
+    });
+  }
+
+  return sections;
+}
+
+function createPagesWithPagination(sections) {
+  const maxPages = parseInt(localStorage.getItem('cv-max-pages') || '2');
+  const pageMarginTop = parseFloat(localStorage.getItem('cv-margin-top') || '20');
+  const pageMarginBottom = parseFloat(localStorage.getItem('cv-margin-bottom') || '20');
+  const availableHeight = 297 - pageMarginTop - pageMarginBottom; // A4 height minus margins
+  
+  let pages = [];
+  let currentPage = [];
+  let currentPageHeight = 0;
+  let pageNumber = 1;
+
+  sections.forEach((section, index) => {
+    // Vérifier si la section tient sur la page actuelle
+    if (currentPageHeight + section.height > availableHeight && currentPage.length > 0) {
+      // Créer une nouvelle page
+      pages.push(createPageHTML(currentPage, pageNumber));
+      currentPage = [];
+      currentPageHeight = 0;
+      pageNumber++;
+      
+      // Vérifier si on dépasse le nombre maximum de pages
+      if (pageNumber > maxPages) {
+        // Ajouter un indicateur de débordement
+        pages[pages.length - 1] = pages[pages.length - 1].replace(
+          '</div>',
+          '<div class="page-overflow-indicator">Contenu tronqué - Augmentez le nombre de pages</div></div>'
+        );
+        break;
+      }
+    }
+    
+    currentPage.push(section);
+    currentPageHeight += section.height;
+  });
+
+  // Ajouter la dernière page si elle contient du contenu
+  if (currentPage.length > 0) {
+    pages.push(createPageHTML(currentPage, pageNumber));
+  }
+
+  return pages.join('');
+}
+
+function createPageHTML(sections, pageNumber) {
+  const sectionsHTML = sections.map(section => section.content).join('');
+  
+  return `
+    <div class="cv-page" data-page="${pageNumber}">
+      ${sectionsHTML}
+      <div class="page-number">Page ${pageNumber}</div>
+    </div>
+  `;
+}
+
+function applyCustomizationToPreview() {
+  // Cette fonction sera appelée pour appliquer les styles de personnalisation
+  const customization = JSON.parse(localStorage.getItem('cv-customization') || '{}');
+  
+  if (Object.keys(customization).length > 0) {
+    // Importer et appliquer la personnalisation
+    import('./customization.js').then(module => {
+      if (module.applyCurrentCustomization) {
+        module.applyCurrentCustomization();
+      }
+    });
+  }
 }
 
 function initializeDragAndDrop() {
   const previewPanel = document.getElementById('cv-preview');
   
   if (window.Sortable && previewPanel) {
-    // Détruire l'instance existante si elle existe
-    if (previewPanel.sortableInstance) {
-      previewPanel.sortableInstance.destroy();
+    // Détruire les instances existantes
+    if (previewPanel.sortableInstances) {
+      previewPanel.sortableInstances.forEach(instance => instance.destroy());
     }
+    previewPanel.sortableInstances = [];
     
-    // Créer une nouvelle instance Sortable
-    previewPanel.sortableInstance = Sortable.create(previewPanel, {
-      animation: 150,
-      handle: '.drag-handle',
-      ghostClass: 'dragging',
-      chosenClass: 'drag-over',
-      onEnd: function(evt) {
-        // Sauvegarder l'ordre des sections après le drag & drop
-        saveSectionOrder();
-      }
+    // Créer une instance Sortable pour chaque page
+    const pages = previewPanel.querySelectorAll('.cv-page');
+    pages.forEach(page => {
+      const sortableInstance = Sortable.create(page, {
+        group: 'cv-sections', // Permet le drag & drop entre pages
+        animation: 150,
+        handle: '.drag-handle',
+        ghostClass: 'dragging',
+        chosenClass: 'drag-over',
+        onEnd: function(evt) {
+          // Sauvegarder l'ordre des sections après le drag & drop
+          saveSectionOrder();
+          // Régénérer l'aperçu pour recalculer la pagination
+          setTimeout(() => {
+            window.dispatchEvent(new CustomEvent('regeneratePreview'));
+          }, 100);
+        }
+      });
+      previewPanel.sortableInstances.push(sortableInstance);
     });
   }
 }

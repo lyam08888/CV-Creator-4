@@ -142,6 +142,11 @@ document.addEventListener('DOMContentLoaded', function() {
   populateExampleData();
   generatePreview();
   
+  // Écouter l'événement de régénération depuis la personnalisation
+  window.addEventListener('regeneratePreview', () => {
+    generatePreview();
+  });
+  
   console.log('CV Creator initialized successfully');
 });
 
@@ -604,10 +609,35 @@ function generatePreview() {
   console.log('Generating preview...');
   
   const formData = getFormData();
+  
+  // Utiliser le nouveau système de génération avec pagination
+  import('./preview.js').then(module => {
+    if (module.generatePreview) {
+      module.generatePreview(formData);
+      
+      // Réinitialiser le mode édition si actif
+      if (editMode) {
+        setTimeout(() => {
+          const editableElements = document.querySelectorAll('[contenteditable]');
+          editableElements.forEach(element => {
+            element.setAttribute('contenteditable', 'true');
+          });
+        }, 100);
+      }
+    }
+  }).catch(error => {
+    console.error('Erreur lors du chargement du module preview:', error);
+    // Fallback vers l'ancien système
+    generatePreviewFallback(formData);
+  });
+}
+
+// Fonction de fallback pour la génération d'aperçu
+function generatePreviewFallback(formData) {
   const previewContainer = document.getElementById('cv-preview');
   
   previewContainer.innerHTML = `
-    <div class="cv-container" id="cv-container">
+    <div class="cv-page" data-page="1">
       ${generateHeader(formData)}
       ${generateSummary(formData)}
       ${generateExperience(formData)}
@@ -616,6 +646,7 @@ function generatePreview() {
       ${generateLanguages(formData)}
       ${generateCertifications(formData)}
       ${generateProjects(formData)}
+      <div class="page-number">Page 1</div>
     </div>
   `;
   
@@ -623,14 +654,8 @@ function generatePreview() {
   initializeDragAndDrop();
   
   // Appliquer la personnalisation
-  applyCurrentCustomization();
-  
-  // Réinitialiser le mode édition si actif
-  if (editMode) {
-    const editableElements = document.querySelectorAll('[contenteditable]');
-    editableElements.forEach(element => {
-      element.setAttribute('contenteditable', 'true');
-    });
+  if (window.applyCurrentCustomization) {
+    window.applyCurrentCustomization();
   }
 }
 

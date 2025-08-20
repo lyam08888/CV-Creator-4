@@ -83,13 +83,24 @@ function initCustomizationHandlers() {
     }
   });
   
-  // Application en temps réel (optionnel)
+  // Application en temps réel
   const inputs = document.querySelectorAll('#customization input, #customization select');
   inputs.forEach(input => {
-    input.addEventListener('input', debounce(() => {
+    input.addEventListener('input', () => {
       updateCustomizationFromForm();
       applyCustomization();
-    }, 300));
+      saveCustomizationToStorage();
+      // Régénérer l'aperçu avec la nouvelle pagination
+      regeneratePreviewWithPagination();
+    });
+    
+    // Pour les checkboxes
+    input.addEventListener('change', () => {
+      updateCustomizationFromForm();
+      applyCustomization();
+      saveCustomizationToStorage();
+      regeneratePreviewWithPagination();
+    });
   });
 }
 
@@ -413,4 +424,136 @@ export function applyCurrentCustomization() {
 // Exporter la configuration actuelle
 export function getCurrentCustomization() {
   return { ...currentCustomization };
+}
+
+// Fonction pour régénérer l'aperçu avec pagination
+function regeneratePreviewWithPagination() {
+  // Sauvegarder les paramètres dans localStorage pour la pagination
+  localStorage.setItem('cv-max-pages', currentCustomization.maxPages.toString());
+  localStorage.setItem('cv-margin-top', currentCustomization.pageMarginTop.toString());
+  localStorage.setItem('cv-margin-bottom', currentCustomization.pageMarginBottom.toString());
+  localStorage.setItem('cv-margin-left', currentCustomization.pageMarginLeft.toString());
+  localStorage.setItem('cv-margin-right', currentCustomization.pageMarginRight.toString());
+  
+  // Importer et appeler la fonction de génération d'aperçu
+  import('./app.js').then(module => {
+    // Récupérer les données du formulaire et régénérer l'aperçu
+    const formData = collectFormData();
+    import('./preview.js').then(previewModule => {
+      if (previewModule.generatePreview) {
+        previewModule.generatePreview(formData);
+      }
+    });
+  }).catch(error => {
+    console.log('Régénération de l\'aperçu en cours...');
+    // Fallback: déclencher un événement personnalisé
+    window.dispatchEvent(new CustomEvent('regeneratePreview'));
+  });
+}
+
+// Fonction pour collecter les données du formulaire
+function collectFormData() {
+  const form = document.getElementById('cv-form');
+  if (!form) return {};
+  
+  const formData = new FormData(form);
+  const data = {};
+  
+  // Collecter les données de base
+  data.fullName = document.getElementById('fullName')?.value || '';
+  data.jobTitle = document.getElementById('jobTitle')?.value || '';
+  data.email = document.getElementById('email')?.value || '';
+  data.phone = document.getElementById('phone')?.value || '';
+  data.address = document.getElementById('address')?.value || '';
+  data.summary = document.getElementById('summary-text')?.value || '';
+  
+  // Collecter les expériences
+  data.experience = [];
+  const experienceItems = document.querySelectorAll('#experience-list .form-item');
+  experienceItems.forEach((item, index) => {
+    const title = item.querySelector(`input[name="experience[${index}][title]"]`)?.value || '';
+    const company = item.querySelector(`input[name="experience[${index}][company]"]`)?.value || '';
+    const description = item.querySelector(`textarea[name="experience[${index}][description]"]`)?.value || '';
+    const startDate = item.querySelector(`input[name="experience[${index}][startDate]"]`)?.value || '';
+    const endDate = item.querySelector(`input[name="experience[${index}][endDate]"]`)?.value || '';
+    const current = item.querySelector(`input[name="experience[${index}][current]"]`)?.checked || false;
+    
+    if (title && company) {
+      data.experience.push({
+        title,
+        company,
+        description,
+        period: formatPeriod(startDate, endDate, current)
+      });
+    }
+  });
+  
+  // Collecter les formations
+  data.education = [];
+  const educationItems = document.querySelectorAll('#education-list .form-item');
+  educationItems.forEach((item, index) => {
+    const degree = item.querySelector(`input[name="education[${index}][degree]"]`)?.value || '';
+    const school = item.querySelector(`input[name="education[${index}][school]"]`)?.value || '';
+    const startDate = item.querySelector(`input[name="education[${index}][startDate]"]`)?.value || '';
+    const endDate = item.querySelector(`input[name="education[${index}][endDate]"]`)?.value || '';
+    
+    if (degree && school) {
+      data.education.push({
+        degree,
+        school,
+        period: formatPeriod(startDate, endDate, false)
+      });
+    }
+  });
+  
+  // Collecter les compétences
+  const technicalSkills = [];
+  const softSkills = [];
+  
+  document.querySelectorAll('#technical-skills .skill-item').forEach(item => {
+    const name = item.querySelector('input[type="text"]')?.value;
+    if (name) technicalSkills.push(name);
+  });
+  
+  document.querySelectorAll('#soft-skills .skill-item').forEach(item => {
+    const name = item.querySelector('input[type="text"]')?.value;
+    if (name) softSkills.push(name);
+  });
+  
+  if (technicalSkills.length > 0 || softSkills.length > 0) {
+    data.skills = '';
+    if (technicalSkills.length > 0) {
+      data.skills += 'Compétences techniques: ' + technicalSkills.join(', ');
+    }
+    if (softSkills.length > 0) {
+      if (data.skills) data.skills += '\n';
+      data.skills += 'Compétences transversales: ' + softSkills.join(', ');
+    }
+  }
+  
+  // Données de recrutement
+  data.recruiterName = document.getElementById('recruiterName')?.value || '';
+  data.companyName = document.getElementById('companyName')?.value || '';
+  data.companyLogoUrl = document.getElementById('companyLogoUrl')?.value || '';
+  data.recruiterContact = document.getElementById('recruiterContact')?.value || '';
+  
+  return data;
+}
+
+// Fonction utilitaire pour formater les périodes
+function formatPeriod(startDate, endDate, current) {
+  if (!startDate) return '';
+  
+  const start = new Date(startDate + '-01');
+  const startFormatted = start.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+  
+  if (current) {
+    return `${startFormatted} - Présent`;
+  } else if (endDate) {
+    const end = new Date(endDate + '-01');
+    const endFormatted = end.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+    return `${startFormatted} - ${endFormatted}`;
+  } else {
+    return startFormatted;
+  }
 }
