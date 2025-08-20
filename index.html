@@ -51,7 +51,10 @@
           <div class="form-group">
             <label for="rawInfoText">Collez ici toutes les informations brutes du candidat (CV, profil LinkedIn, etc.)</label>
             <textarea id="rawInfoText" class="textarea" rows="8" placeholder="Nom, Prénom, Expériences, Formations, Compétences..."></textarea>
-            <button type="button" id="btnAutoFillAI" class="btn">Remplir automatiquement le formulaire avec l'IA</button>
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+              <button type="button" id="btnAutoFillAI" class="btn">Remplir automatiquement le formulaire avec l'IA</button>
+              <button type="button" id="btnLoadDemo" class="btn btn-secondary">📋 Charger données de démonstration</button>
+            </div>
           </div>
           <div class="form-grid">
             <div class="form-group">
@@ -403,5 +406,22 @@
   </div>
 
   <script type="module" src="./js/app.js"></script>
+  <script type="module" src="./demo-data.js"></script>
+  <script>
+    // Gestionnaire pour le bouton de démonstration
+    document.addEventListener('DOMContentLoaded', function() {
+      const btnLoadDemo = document.getElementById('btnLoadDemo');
+      if (btnLoadDemo) {
+        btnLoadDemo.addEventListener('click', function() {
+          if (window.loadDemoData) {
+            window.loadDemoData();
+            alert('✅ Données de démonstration chargées ! Vérifiez l\'aperçu et testez les fonctionnalités de personnalisation.');
+          } else {
+            console.error('Fonction loadDemoData non disponible');
+          }
+        });
+      }
+    });
+  </script>
 </body>
 </html>
