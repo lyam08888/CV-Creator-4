@@ -1,0 +1,375 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary-color: #8B5CF6; /* Vibrant Purple */
+  --primary-color-dark: #7C3AED; /* Darker Purple */
+  --secondary-color: #1E293B; /* Dark Slate */
+  --text-color: #E2E8F0; /* Light Gray */
+  --bg-color: #0F172A; /* Dark Blue-Gray */
+  --sidebar-bg: #1A202C; /* Slightly lighter dark blue-gray */
+  --main-bg: #F8FAFC; /* Off-white for main content */
+  --border-color: #334155; /* Darker Slate */
+  --input-bg: #CBD5E1; /* Light Gray for inputs */
+  --input-text-color: #1E293B; /* Dark Slate for input text */
+  --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-medium: 0 8px 16px rgba(0, 0, 0, 0.2);
+  --shadow-dark: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+.app-container {
+  display: flex;
+  height: 100%;
+  overflow: hidden; /* Prevent scrollbars on main container */
+}
+
+.sidebar {
+  width: 320px;
+  background-color: var(--sidebar-bg);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border-color);
+  box-shadow: var(--shadow-dark);
+  position: relative; /* For shadow */
+  z-index: 10; /* Ensure shadow is visible */
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 40px; /* Increased margin */
+}
+
+.logo {
+  width: 36px; /* Slightly larger logo */
+  height: 36px;
+}
+
+.title {
+  font-size: 22px; /* Slightly larger title */
+  font-weight: 700; /* Bolder title */
+  color: white; /* Ensure title is white */
+}
+
+.app-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Increased gap */
+  flex-grow: 1;
+  margin-bottom: 20px; /* Space before actions */
+}
+
+.nav-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-color);
+  padding: 14px 16px; /* Increased padding */
+  border-radius: 10px; /* More rounded corners */
+  text-align: left;
+  font-size: 15px; /* Slightly larger font */
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease; /* Smoother transitions */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-btn:hover {
+  background-color: rgba(var(--primary-color-dark), 0.2); /* Subtle hover */
+  color: var(--primary-color);
+  transform: translateX(5px); /* Slide effect */
+}
+
+.nav-btn.active {
+  background-color: var(--primary-color);
+  color: white;
+  box-shadow: var(--shadow-medium);
+  transform: translateX(5px); /* Active slide effect */
+}
+
+.app-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Increased gap */
+  margin-top: auto; /* Push actions to bottom */
+}
+
+.btn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 14px 20px; /* Larger buttons */
+  border-radius: 10px; /* More rounded */
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease; /* Smoother transitions */
+  box-shadow: var(--shadow-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn:hover {
+  background-color: var(--primary-color-dark);
+  transform: translateY(-3px); /* More pronounced lift */
+  box-shadow: var(--shadow-medium);
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-color-dark);
+}
+
+.main-content {
+  flex: 1;
+  padding: 40px; /* Increased padding */
+  background-color: var(--main-bg);
+  color: var(--secondary-color);
+  overflow-y: auto;
+  position: relative; /* For potential overlays */
+}
+
+.form-section {
+  display: none;
+  padding: 20px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: var(--shadow-light);
+  margin-bottom: 30px;
+}
+
+.form-section.active {
+  display: block;
+  animation: fadeInScale 0.6s ease-out forwards;
+}
+
+@keyframes fadeInScale {
+  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--secondary-color);
+  margin-bottom: 28px;
+  border-bottom: 2px solid #E2E8F0;
+  padding-bottom: 10px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 28px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-list .form-group {
+  border: 1px solid var(--border-color);
+  padding: 18px;
+  border-radius: 10px;
+  background-color: #F1F5F9;
+  box-shadow: var(--shadow-light);
+  transition: all 0.3s ease;
+}
+
+.form-list .form-group:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-medium);
+}
+
+label {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--secondary-color);
+}
+
+.input, .textarea {
+  width: 100%;
+  background-color: var(--input-bg);
+  color: var(--input-text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 12px 15px;
+  font-size: 15px;
+  transition: all 0.3s ease;
+}
+
+.input:focus, .textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.3); /* Primary color with transparency */
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.preview-panel {
+  flex-shrink: 0;
+  width: 500px;
+  padding: 30px;
+  background-color: var(--bg-color);
+  overflow-y: auto;
+  box-shadow: -8px 0 15px rgba(0, 0, 0, 0.2); /* Shadow on left side */
+  z-index: 5;
+}
+
+.cv-preview {
+  background-color: white;
+  color: #1E293B;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-medium);
+  min-height: calc(100% - 60px);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cv-preview .cv-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.cv-preview .cv-header h1 {
+  font-size: 38px;
+  font-weight: 700;
+  color: var(--primary-color-dark);
+  margin-bottom: 10px;
+}
+
+.cv-preview .cv-header p {
+  font-size: 15px;
+  color: #475569;
+  line-height: 1.5;
+}
+
+.cv-preview .cv-section {
+  margin-bottom: 20px;
+}
+
+.cv-preview .cv-section h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--secondary-color);
+  border-bottom: 2px solid #E2E8F0;
+  padding-bottom: 8px;
+  margin-bottom: 18px;
+}
+
+.cv-preview .cv-item {
+  margin-bottom: 15px;
+  padding-left: 10px;
+  border-left: 3px solid var(--primary-color);
+}
+
+.cv-preview .cv-item h3 {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--secondary-color);
+}
+
+.cv-preview .cv-item .cv-period {
+  font-size: 13px;
+  color: #64748B;
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+.cv-preview .cv-item p {
+  font-size: 14px;
+  color: #475569;
+}
+
+.textarea-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.btn-ai-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: var(--shadow-light);
+  transition: all 0.2s ease;
+  z-index: 1; /* Ensure it's above the textarea */
+}
+
+.btn-ai-icon:hover {
+  background: var(--primary-color-dark);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.btn-ai-icon.hidden {
+  display: none;
+}
+
+.cv-recruitment-banner {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background-color: #F1F5F9; /* Light background for the banner */
+  padding: 15px 20px;
+  border-radius: 10px;
+  margin-bottom: 25px;
+  box-shadow: var(--shadow-light);
+}
+
+.cv-recruitment-banner .company-logo {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  border-radius: 5px;
+}
+
+.cv-recruitment-banner .recruiter-info h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--secondary-color);
+  margin-bottom: 5px;
+}
+
+.cv-recruitment-banner .recruiter-info p {
+  font-size: 14px;
+  color: #475569;
+}

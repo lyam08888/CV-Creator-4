@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CV CREATOR IA</title>
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#0f172a">
+  <link rel="icon" href="./assets/favicon.svg">
+  <link rel="stylesheet" href="./css/app.css">
+  <!-- QRCode -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- html2canvas & jsPDF -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    <aside class="sidebar">
+      <header class="app-header">
+        <img src="./assets/favicon.svg" class="logo" alt="logo">
+        <h1 class="title">CV CREATOR IA</h1>
+      </header>
+      <nav class="app-nav">
+        <button class="nav-btn active" data-form="personal-info">Informations Personnelles</button>
+        <button class="nav-btn" data-form="summary">Résumé</button>
+        <button class="nav-btn" data-form="experience">Expérience</button>
+        <button class="nav-btn" data-form="education">Formation</button>
+        <button class="nav-btn" data-form="skills">Compétences</button>
+        <button class="nav-btn" data-form="recruitment">Recrutement</button>
+        <button class="nav-btn" data-form="settings">Paramètres</button>
+      </nav>
+      <div class="app-actions">
+        <button id="btnGenerateIA" class="btn btn-primary">Générer le CV par IA</button>
+        <button id="btnExport" class="btn">Exporter</button>
+        <button id="btnAnalyzeCVAI" class="btn">Analyser le CV avec IA</button>
+      </div>
+    </aside>
+    <main class="main-content">
+      <form id="cv-form">
+        <section id="personal-info" class="form-section active">
+          <h2>Informations Personnelles</h2>
+          <div class="form-group">
+            <label for="rawInfoText">Collez ici toutes les informations brutes du candidat (CV, profil LinkedIn, etc.)</label>
+            <textarea id="rawInfoText" class="textarea" rows="10" placeholder="Nom, Prénom, Expériences, Formations, Compétences..."></textarea>
+            <button type="button" id="btnAutoFillAI" class="btn">Remplir automatiquement le formulaire avec l'IA</button>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="fullName">Nom complet</label>
+              <input type="text" id="fullName" name="fullName" class="input">
+            </div>
+            <div class="form-group">
+              <label for="jobTitle">Titre du poste</label>
+              <input type="text" id="jobTitle" name="jobTitle" class="input">
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" class="input">
+            </div>
+            <div class="form-group">
+              <label for="phone">Téléphone</label>
+              <input type="tel" id="phone" name="phone" class="input">
+            </div>
+            <div class="form-group">
+              <label for="address">Adresse</label>
+              <input type="text" id="address" name="address" class="input">
+            </div>
+          </div>
+        </section>
+        <section id="summary" class="form-section">
+          <h2>Résumé</h2>
+          <div class="form-group">
+            <label for="summary-text">Votre résumé professionnel</label>
+            <textarea id="summary-text" name="summary" class="textarea" rows="5"></textarea>
+            <button type="button" id="btnGenerateSummaryAI" class="btn">Générer avec IA</button>
+          </div>
+        </section>
+        <section id="experience" class="form-section">
+          <h2>Expérience Professionnelle</h2>
+          <div id="experience-list" class="form-list">
+            <!-- Experience items will be added here dynamically -->
+          </div>
+          <button type="button" id="btnAddExperience" class="btn">Ajouter une expérience</button>
+        </section>
+        <section id="education" class="form-section">
+          <h2>Formation</h2>
+          <div id="education-list" class="form-list">
+            <!-- Education items will be added here dynamically -->
+          </div>
+          <button type="button" id="btnAddEducation" class="btn">Ajouter une formation</button>
+        </section>
+        <section id="skills" class="form-section">
+          <h2>Compétences</h2>
+          <div class="form-group">
+            <label for="skills-text">Listez vos compétences (séparées par des virgules)</label>
+            <input type="text" id="skills-text" name="skills" class="input">
+            <button type="button" id="btnSuggestSkillsAI" class="btn">Suggérer avec IA</button>
+          </div>
+        </section>
+        <section id="recruitment" class="form-section">
+          <h2>Informations Recrutement</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="recruiterName">Nom du Recruteur</label>
+              <input type="text" id="recruiterName" name="recruiterName" class="input">
+            </div>
+            <div class="form-group">
+              <label for="recruiterContact">Contact Recruteur (Email/Téléphone)</label>
+              <input type="text" id="recruiterContact" name="recruiterContact" class="input">
+            </div>
+            <div class="form-group">
+              <label for="companyName">Nom de l'Entreprise</label>
+              <input type="text" id="companyName" name="companyName" class="input">
+            </div>
+            <div class="form-group">
+              <label for="companyLogoUrl">URL du Logo de l'Entreprise</label>
+              <input type="url" id="companyLogoUrl" name="companyLogoUrl" class="input">
+            </div>
+          </div>
+        </section>
+        <section id="settings" class="form-section">
+          <h2>Paramètres</h2>
+          <div class="form-group">
+            <label for="geminiApiKey">Clé API Gemini</label>
+            <input type="password" id="geminiApiKey" class="input" placeholder="Saisir votre clé API Gemini">
+            <button type="button" id="btnSaveApiKey" class="btn">Sauvegarder la clé API</button>
+          </div>
+        </section>
+      </form>
+    </main>
+    <aside class="preview-panel">
+      <div id="cv-preview" class="cv-preview">
+        <!-- CV preview will be rendered here -->
+      </div>
+    </aside>
+  </div>
+
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>
