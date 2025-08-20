@@ -651,22 +651,23 @@ function generateExperience(data) {
   const experiencesHtml = data.experiences.map(exp => `
     <div class="cv-experience-item">
       <div class="cv-experience-header">
-        <h4 class="cv-experience-title">${exp.title}</h4>
-        <span class="cv-experience-period">${formatDate(exp.startDate)} - ${exp.current ? 'Présent' : formatDate(exp.endDate)}</span>
+        <h4 class="cv-experience-title" contenteditable="false">${exp.title}</h4>
+        <span class="cv-experience-period" contenteditable="false">${formatDate(exp.startDate)} - ${exp.current ? 'Présent' : formatDate(exp.endDate)}</span>
       </div>
-      <div class="cv-experience-company">${exp.company}${exp.location ? ` • ${exp.location}` : ''}</div>
-      <div class="cv-experience-description">${formatDescription(exp.description)}</div>
+      <div class="cv-experience-company" contenteditable="false">${exp.company}${exp.location ? ` • ${exp.location}` : ''}</div>
+      <div class="cv-experience-description" contenteditable="false">${formatDescription(exp.description)}</div>
       ${exp.technologies && exp.technologies.length > 0 ? `
         <div class="cv-technologies">
-          ${exp.technologies.map(tech => `<span class="cv-tech-tag">${tech}</span>`).join('')}
+          ${exp.technologies.map(tech => `<span class="cv-tech-tag" contenteditable="false">${tech}</span>`).join('')}
         </div>
       ` : ''}
     </div>
   `).join('');
   
   return `
-    <div class="cv-section cv-experience" data-section="experience">
-      <h3 class="cv-section-title">Expérience Professionnelle</h3>
+    <div class="cv-section cv-experience sortable" data-section="experience">
+      <div class="drag-handle">⋮⋮</div>
+      <h3 class="cv-section-title" contenteditable="false">Expérience Professionnelle</h3>
       ${experiencesHtml}
     </div>
   `;
@@ -678,18 +679,19 @@ function generateEducation(data) {
   const educationHtml = data.education.map(edu => `
     <div class="cv-education-item">
       <div class="cv-education-header">
-        <h4 class="cv-education-degree">${edu.degree}</h4>
-        <span class="cv-education-period">${formatDate(edu.startDate)} - ${formatDate(edu.endDate)}</span>
+        <h4 class="cv-education-degree" contenteditable="false">${edu.degree}</h4>
+        <span class="cv-education-period" contenteditable="false">${formatDate(edu.startDate)} - ${formatDate(edu.endDate)}</span>
       </div>
-      <div class="cv-education-school">${edu.school}${edu.location ? ` • ${edu.location}` : ''}</div>
-      ${edu.grade ? `<div class="cv-education-grade">${edu.grade}</div>` : ''}
-      ${edu.description ? `<div class="cv-education-description">${edu.description}</div>` : ''}
+      <div class="cv-education-school" contenteditable="false">${edu.school}${edu.location ? ` • ${edu.location}` : ''}</div>
+      ${edu.grade ? `<div class="cv-education-grade" contenteditable="false">${edu.grade}</div>` : ''}
+      ${edu.description ? `<div class="cv-education-description" contenteditable="false">${edu.description}</div>` : ''}
     </div>
   `).join('');
   
   return `
-    <div class="cv-section cv-education" data-section="education">
-      <h3 class="cv-section-title">Formation</h3>
+    <div class="cv-section cv-education sortable" data-section="education">
+      <div class="drag-handle">⋮⋮</div>
+      <h3 class="cv-section-title" contenteditable="false">Formation</h3>
       ${educationHtml}
     </div>
   `;
