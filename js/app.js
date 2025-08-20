@@ -150,6 +150,49 @@ document.addEventListener('DOMContentLoaded', function() {
   console.log('CV Creator initialized successfully');
 });
 
+// INITIALISATION DE L'APERÇU
+function initPreview() {
+  console.log('Initializing preview...');
+  
+  // S'assurer que le conteneur d'aperçu existe
+  const previewContainer = document.getElementById('cv-preview');
+  if (!previewContainer) {
+    console.error('Preview container not found');
+    return;
+  }
+  
+  // Initialiser avec un aperçu vide
+  previewContainer.innerHTML = `
+    <div class="cv-page">
+      <div class="cv-section" data-section="header">
+        <div class="cv-header">
+          <h1 class="cv-name">Votre Nom</h1>
+          <h2 class="cv-title">Votre Titre</h2>
+          <div class="cv-contact">
+            <span>email@exemple.com</span>
+            <span>+33 6 12 34 56 78</span>
+          </div>
+        </div>
+      </div>
+      <div class="cv-section" data-section="summary">
+        <h3 class="cv-section-title">Résumé Professionnel</h3>
+        <p>Commencez à remplir le formulaire pour voir votre CV prendre forme...</p>
+      </div>
+    </div>
+  `;
+  
+  console.log('Preview initialized');
+}
+
+// FONCTION POUR PEUPLER AVEC LES DONNÉES D'EXEMPLE
+function populateExampleData() {
+  console.log('Populating example data...');
+  
+  // Ne pas charger automatiquement les données d'exemple
+  // L'utilisateur peut les charger via le bouton "Charger Démo"
+  console.log('Example data ready to load on demand');
+}
+
 // Charger la clé API sauvegardée
 function loadSavedApiKey() {
   const savedApiKey = localStorage.getItem('cvpro_api_key');
@@ -1836,3 +1879,362 @@ function loadDemoData() {
     alert('✅ Données de démonstration chargées ! Vous pouvez maintenant tester toutes les fonctionnalités.');
   }
 }
+
+// FONCTION POUR GÉNÉRER L'APERÇU DU CV
+function generatePreview() {
+  console.log('Generating CV preview...');
+  
+  const formData = getFormData();
+  
+  // Importer et utiliser le module de prévisualisation
+  import('./preview.js').then(module => {
+    module.generatePreview(formData);
+  }).catch(error => {
+    console.error('Erreur lors du chargement du module preview:', error);
+    // Fallback: générer un aperçu simple
+    generateSimplePreview(formData);
+  });
+}
+
+// FONCTION DE PRÉVISUALISATION SIMPLE (FALLBACK)
+function generateSimplePreview(formData) {
+  const previewContainer = document.getElementById('cv-preview');
+  if (!previewContainer) return;
+  
+  let html = `
+    <div class="cv-page">
+      <div class="cv-section" data-section="header">
+        <div class="cv-header">
+          <h1 class="cv-name">${formData.fullName || 'Nom Complet'}</h1>
+          <h2 class="cv-title">${formData.jobTitle || 'Titre du poste'}</h2>
+          <div class="cv-contact">
+            ${formData.email ? `<span>${formData.email}</span>` : ''}
+            ${formData.phone ? `<span>${formData.phone}</span>` : ''}
+            ${formData.address ? `<span>${formData.address}</span>` : ''}
+          </div>
+        </div>
+      </div>
+  `;
+  
+  // Résumé
+  if (formData.summary) {
+    html += `
+      <div class="cv-section" data-section="summary">
+        <h3 class="cv-section-title">Résumé Professionnel</h3>
+        <p>${formData.summary}</p>
+      </div>
+    `;
+  }
+  
+  // Expériences
+  if (formData.experiences && formData.experiences.length > 0) {
+    html += `
+      <div class="cv-section" data-section="experience">
+        <h3 class="cv-section-title">Expérience Professionnelle</h3>
+    `;
+    
+    formData.experiences.forEach(exp => {
+      if (exp.title && exp.company) {
+        const period = formatExperiencePeriod(exp);
+        html += `
+          <div class="cv-experience-item">
+            <div class="cv-experience-header">
+              <h4 class="cv-experience-title">${exp.title}</h4>
+              ${period ? `<span class="cv-experience-period">${period}</span>` : ''}
+            </div>
+            <p class="cv-experience-company">${exp.company}${exp.location ? ` - ${exp.location}` : ''}</p>
+            ${exp.description ? `<div class="cv-experience-description">${exp.description.replace(/\n/g, '<br>')}</div>` : ''}
+            ${exp.technologies && exp.technologies.length > 0 ? `
+              <div class="cv-technologies">
+                ${exp.technologies.map(tech => `<span class="cv-tech-tag">${tech}</span>`).join('')}
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }
+    });
+    
+    html += '</div>';
+  }
+  
+  // Formation
+  if (formData.education && formData.education.length > 0) {
+    html += `
+      <div class="cv-section" data-section="education">
+        <h3 class="cv-section-title">Formation</h3>
+    `;
+    
+    formData.education.forEach(edu => {
+      if (edu.degree && edu.school) {
+        const period = formatEducationPeriod(edu);
+        html += `
+          <div class="cv-education-item">
+            <div class="cv-education-header">
+              <h4 class="cv-education-degree">${edu.degree}</h4>
+              ${period ? `<span class="cv-education-period">${period}</span>` : ''}
+            </div>
+            <p class="cv-education-school">${edu.school}${edu.location ? ` - ${edu.location}` : ''}</p>
+            ${edu.grade ? `<p class="cv-education-grade">${edu.grade}</p>` : ''}
+            ${edu.description ? `<p class="cv-education-description">${edu.description}</p>` : ''}
+          </div>
+        `;
+      }
+    });
+    
+    html += '</div>';
+  }
+  
+  // Compétences techniques
+  if (formData.technicalSkills && formData.technicalSkills.length > 0) {
+    html += `
+      <div class="cv-section" data-section="skills">
+        <h3 class="cv-section-title">Compétences Techniques</h3>
+        <div class="cv-skills-list">
+    `;
+    
+    formData.technicalSkills.forEach(skill => {
+      if (skill.name) {
+        html += `
+          <div class="cv-skill-item">
+            <span class="cv-skill-name">${skill.name}</span>
+            <div class="cv-skill-bar">
+              <div class="cv-skill-progress" style="width: ${skill.level || 50}%"></div>
+            </div>
+            <span class="cv-skill-level">${skill.level || 50}%</span>
+          </div>
+        `;
+      }
+    });
+    
+    html += '</div></div>';
+  }
+  
+  // Compétences transversales
+  if (formData.softSkills && formData.softSkills.length > 0) {
+    html += `
+      <div class="cv-section" data-section="soft-skills">
+        <h3 class="cv-section-title">Compétences Transversales</h3>
+        <div class="cv-skills-list">
+    `;
+    
+    formData.softSkills.forEach(skill => {
+      if (skill.name) {
+        html += `
+          <div class="cv-skill-item">
+            <span class="cv-skill-name">${skill.name}</span>
+            <div class="cv-skill-bar">
+              <div class="cv-skill-progress" style="width: ${skill.level || 50}%"></div>
+            </div>
+            <span class="cv-skill-level">${skill.level || 50}%</span>
+          </div>
+        `;
+      }
+    });
+    
+    html += '</div></div>';
+  }
+  
+  // Langues
+  if (formData.languages && formData.languages.length > 0) {
+    html += `
+      <div class="cv-section" data-section="languages">
+        <h3 class="cv-section-title">Langues</h3>
+        <div class="cv-languages-list">
+    `;
+    
+    formData.languages.forEach(lang => {
+      if (lang.name) {
+        html += `
+          <div class="cv-language-item">
+            <span class="cv-language-name">${lang.name}</span>
+            <span class="cv-language-level">${lang.level || 'Débutant'}</span>
+          </div>
+        `;
+      }
+    });
+    
+    html += '</div></div>';
+  }
+  
+  // Certifications
+  if (formData.certifications && formData.certifications.length > 0) {
+    html += `
+      <div class="cv-section" data-section="certifications">
+        <h3 class="cv-section-title">Certifications</h3>
+    `;
+    
+    formData.certifications.forEach(cert => {
+      if (cert.name) {
+        html += `
+          <div class="cv-certification-item">
+            <div class="cv-certification-name">${cert.name}</div>
+            <div class="cv-certification-details">
+              ${cert.issuer ? `${cert.issuer}` : ''}
+              ${cert.date ? ` - ${formatDate(cert.date)}` : ''}
+              ${cert.url ? ` - <a href="${cert.url}" target="_blank">Voir le certificat</a>` : ''}
+            </div>
+          </div>
+        `;
+      }
+    });
+    
+    html += '</div>';
+  }
+  
+  // Projets
+  if (formData.projects && formData.projects.length > 0) {
+    html += `
+      <div class="cv-section" data-section="projects">
+        <h3 class="cv-section-title">Projets</h3>
+    `;
+    
+    formData.projects.forEach(project => {
+      if (project.name) {
+        const period = formatProjectPeriod(project);
+        html += `
+          <div class="cv-project-item">
+            <div class="cv-project-header">
+              <h4 class="cv-project-name">${project.name}</h4>
+              ${period ? `<span class="cv-project-period">${period}</span>` : ''}
+            </div>
+            ${project.description ? `<p class="cv-project-description">${project.description}</p>` : ''}
+            ${project.technologies && project.technologies.length > 0 ? `
+              <div class="cv-technologies">
+                ${project.technologies.map(tech => `<span class="cv-tech-tag">${tech}</span>`).join('')}
+              </div>
+            ` : ''}
+            ${project.url ? `<div class="cv-project-url"><a href="${project.url}" target="_blank">Voir le projet</a></div>` : ''}
+          </div>
+        `;
+      }
+    });
+    
+    html += '</div>';
+  }
+  
+  html += '</div>'; // Fermer cv-page
+  
+  previewContainer.innerHTML = html;
+  
+  // Appliquer la personnalisation
+  if (window.applyCurrentCustomization) {
+    window.applyCurrentCustomization();
+  }
+}
+
+// FONCTIONS UTILITAIRES POUR LE FORMATAGE
+function formatExperiencePeriod(exp) {
+  if (!exp.startDate) return '';
+  
+  const start = formatDate(exp.startDate);
+  if (exp.current) {
+    return `${start} - Présent`;
+  } else if (exp.endDate) {
+    return `${start} - ${formatDate(exp.endDate)}`;
+  }
+  return start;
+}
+
+function formatEducationPeriod(edu) {
+  if (!edu.startDate) return '';
+  
+  const start = formatDate(edu.startDate);
+  if (edu.endDate) {
+    return `${start} - ${formatDate(edu.endDate)}`;
+  }
+  return start;
+}
+
+function formatProjectPeriod(project) {
+  if (!project.startDate) return '';
+  
+  const start = formatDate(project.startDate);
+  if (project.endDate) {
+    return `${start} - ${formatDate(project.endDate)}`;
+  }
+  return start;
+}
+
+function formatDate(dateString) {
+  if (!dateString) return '';
+  
+  const date = new Date(dateString + '-01');
+  return date.toLocaleDateString('fr-FR', { 
+    month: 'long', 
+    year: 'numeric' 
+  });
+}
+
+// FONCTIONS UTILITAIRES SUPPLÉMENTAIRES
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+// FONCTION POUR BASCULER LE POSTE ACTUEL
+function toggleCurrentJob(checkbox) {
+  const endDateInput = checkbox.closest('.form-item').querySelector('input[type="month"][name*="endDate"]');
+  if (endDateInput) {
+    if (checkbox.checked) {
+      endDateInput.disabled = true;
+      endDateInput.value = '';
+    } else {
+      endDateInput.disabled = false;
+    }
+  }
+  generatePreview();
+}
+
+// FONCTION POUR SUPPRIMER UN ÉLÉMENT DE FORMULAIRE
+function removeFormItem(button) {
+  const formItem = button.closest('.form-item');
+  if (formItem) {
+    formItem.remove();
+    generatePreview();
+  }
+}
+
+// FONCTION POUR BASCULER LE MODE ÉDITION
+function toggleEditMode() {
+  const body = document.body;
+  const button = document.getElementById('btnToggleEdit');
+  
+  if (body.classList.contains('edit-mode')) {
+    body.classList.remove('edit-mode');
+    button.textContent = 'Mode Édition';
+    
+    // Désactiver l'édition directe
+    const editableElements = document.querySelectorAll('[contenteditable="true"]');
+    editableElements.forEach(el => el.contentEditable = false);
+  } else {
+    body.classList.add('edit-mode');
+    button.textContent = 'Quitter Édition';
+    
+    // Activer l'édition directe
+    const editableElements = document.querySelectorAll('.cv-preview h1, .cv-preview h2, .cv-preview h3, .cv-preview p');
+    editableElements.forEach(el => el.contentEditable = true);
+  }
+}
+
+// FONCTION POUR SAUVEGARDER LA CLÉ API
+function saveApiKey() {
+  const apiKey = document.getElementById('geminiApiKey').value.trim();
+  if (apiKey) {
+    localStorage.setItem('cvpro_api_key', apiKey);
+    alert('Clé API sauvegardée avec succès !');
+  } else {
+    alert('Veuillez saisir une clé API valide.');
+  }
+}
+
+// Rendre les fonctions disponibles globalement
+window.toggleCurrentJob = toggleCurrentJob;
+window.removeFormItem = removeFormItem;
+window.toggleEditMode = toggleEditMode;
