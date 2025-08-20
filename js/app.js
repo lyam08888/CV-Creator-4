@@ -225,6 +225,8 @@ function initFormHandlers() {
   document.getElementById('btnAnalyzeCVAI').addEventListener('click', analyzeCVWithAI);
   document.getElementById('btnToggleEdit').addEventListener('click', toggleEditMode);
   document.getElementById('btnSaveApiKey').addEventListener('click', saveApiKey);
+  document.getElementById('btnNewCV').addEventListener('click', createNewCV);
+  document.getElementById('btnResetToDemo').addEventListener('click', loadDemoData);
   
   // Gestionnaires pour la bannière de recrutement
   initRecruitmentBannerHandlers();
@@ -1632,22 +1634,31 @@ function fillFormWithData(data) {
 function exportToPDF() {
   console.log('Exporting to PDF...');
   
-  const cvContainer = document.getElementById('cv-container');
-  if (!cvContainer) {
+  const cvPreview = document.getElementById('cv-preview');
+  if (!cvPreview) {
     alert('Erreur: Impossible de trouver le contenu du CV');
     return;
   }
   
+  // Afficher un indicateur de chargement
+  const button = document.getElementById('btnExport');
+  const originalText = button.textContent;
+  button.textContent = 'Export en cours...';
+  button.disabled = true;
+  
   // Utiliser html2canvas et jsPDF pour l'export
-  html2canvas(cvContainer, {
+  html2canvas(cvPreview, {
     scale: 2,
     useCORS: true,
-    allowTaint: true
+    allowTaint: true,
+    backgroundColor: '#ffffff',
+    width: cvPreview.scrollWidth,
+    height: cvPreview.scrollHeight
   }).then(canvas => {
     const imgData = canvas.toDataURL('image/png');
     const pdf = new jsPDF('p', 'mm', 'a4');
     const imgWidth = 210;
-    const pageHeight = 295;
+    const pageHeight = 297;
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
     let heightLeft = imgHeight;
     
@@ -1663,11 +1674,17 @@ function exportToPDF() {
       heightLeft -= pageHeight;
     }
     
-    const fileName = `CV_${getFormData().fullName.replace(/\s+/g, '_') || 'CV'}.pdf`;
+    const formData = getFormData();
+    const fileName = `CV_${(formData.fullName || 'CV').replace(/\s+/g, '_')}.pdf`;
     pdf.save(fileName);
+    
+    alert('PDF exporté avec succès !');
   }).catch(error => {
     console.error('Erreur lors de l\'export PDF:', error);
     alert('Erreur lors de l\'export PDF. Veuillez réessayer.');
+  }).finally(() => {
+    button.textContent = originalText;
+    button.disabled = false;
   });
 }
 
@@ -1737,4 +1754,85 @@ function initRecruitmentBannerHandlers() {
   });
   
   console.log('Recruitment banner handlers initialized');
+}
+
+// FONCTION POUR CRÉER UN NOUVEAU CV
+function createNewCV() {
+  if (confirm('Êtes-vous sûr de vouloir créer un nouveau CV ? Toutes les données actuelles seront perdues.')) {
+    // Vider tous les champs du formulaire
+    clearAllFormFields();
+    
+    // Régénérer l'aperçu vide
+    generatePreview();
+    
+    // Retourner à la première section
+    const firstNavBtn = document.querySelector('.nav-btn[data-form="personal-info"]');
+    if (firstNavBtn) {
+      firstNavBtn.click();
+    }
+    
+    alert('Nouveau CV créé ! Vous pouvez maintenant saisir vos informations.');
+  }
+}
+
+// FONCTION POUR VIDER TOUS LES CHAMPS
+function clearAllFormFields() {
+  // Vider les champs de base
+  const basicFields = [
+    'fullName', 'jobTitle', 'email', 'phone', 'address', 
+    'linkedin', 'website', 'github', 'summary-text', 'rawInfoText'
+  ];
+  
+  basicFields.forEach(fieldId => {
+    const field = document.getElementById(fieldId);
+    if (field) field.value = '';
+  });
+  
+  // Vider les listes dynamiques
+  const lists = [
+    'experience-list', 'education-list', 'technical-skills', 
+    'soft-skills', 'languages-list', 'certifications-list', 'projects-list'
+  ];
+  
+  lists.forEach(listId => {
+    const list = document.getElementById(listId);
+    if (list) list.innerHTML = '';
+  });
+  
+  // Vider les champs de recrutement
+  const recruitmentFields = [
+    'recruiterName', 'recruiterContact', 'companyName', 
+    'companyLogoUrl', 'bannerImageUrl', 'bannerMessage'
+  ];
+  
+  recruitmentFields.forEach(fieldId => {
+    const field = document.getElementById(fieldId);
+    if (field) field.value = '';
+  });
+  
+  // Décocher la bannière de recrutement
+  const showBannerCheckbox = document.getElementById('showRecruitmentBanner');
+  if (showBannerCheckbox) {
+    showBannerCheckbox.checked = false;
+    const bannerControls = document.getElementById('recruitmentBannerControls');
+    if (bannerControls) bannerControls.style.display = 'none';
+  }
+  
+  console.log('Tous les champs ont été vidés');
+}
+
+// FONCTION POUR CHARGER LES DONNÉES DE DÉMONSTRATION
+function loadDemoData() {
+  if (confirm('Charger les données de démonstration ? Cela remplacera les données actuelles.')) {
+    // Vider d'abord les champs
+    clearAllFormFields();
+    
+    // Remplir avec les données d'exemple
+    fillFormWithData(exampleData);
+    
+    // Régénérer l'aperçu
+    generatePreview();
+    
+    alert('✅ Données de démonstration chargées ! Vous pouvez maintenant tester toutes les fonctionnalités.');
+  }
 }

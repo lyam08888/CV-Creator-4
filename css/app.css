@@ -141,6 +141,15 @@ html, body {
   background-color: var(--primary-color-dark);
 }
 
+.btn-secondary {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #334155;
+}
+
 .main-content {
   flex: 1;
   padding: 40px; /* Increased padding */
@@ -234,7 +243,7 @@ label {
 
 .preview-panel {
   flex-shrink: 0;
-  width: 850px; /* Augmenté pour accommoder le format A4 réel */
+  width: 950px; /* Augmenté pour accommoder le format A4 réel (210mm + marges) */
   padding: 30px;
   background-color: var(--bg-color);
   overflow-y: auto;
@@ -1230,7 +1239,8 @@ label {
   box-shadow: var(--shadow-medium);
   border-radius: 8px;
   box-sizing: border-box;
-  transform: scale(0.6);
+  /* Suppression du scale pour affichage taille réelle A4 */
+  transform: none;
   transform-origin: top center;
 }
 
@@ -1404,7 +1414,8 @@ label {
   box-shadow: var(--shadow-medium);
   border-radius: 8px;
   box-sizing: border-box;
-  transform: scale(0.6);
+  /* Suppression du scale pour affichage taille réelle A4 */
+  transform: none;
   transform-origin: top center;
   overflow: hidden;
   page-break-after: always;

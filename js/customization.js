@@ -173,10 +173,16 @@ function applyCustomization() {
 
 // Appliquer le type de layout
 function applyLayout() {
-  // Supprimer les classes de layout existantes
+  // Supprimer les classes de layout existantes du conteneur et des pages
   previewContainer.classList.remove('layout-single', 'layout-two-column', 'layout-sidebar');
   
-  // Ajouter la nouvelle classe
+  const pages = previewContainer.querySelectorAll('.cv-page');
+  pages.forEach(page => {
+    page.classList.remove('layout-single', 'layout-two-column', 'layout-sidebar');
+    page.classList.add(`layout-${currentCustomization.layoutType}`);
+  });
+  
+  // Ajouter la nouvelle classe au conteneur
   previewContainer.classList.add(`layout-${currentCustomization.layoutType}`);
   
   // Pour le layout sidebar, assigner les sections aux colonnes
