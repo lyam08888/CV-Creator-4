@@ -235,8 +235,6 @@ function populateFormFields(data) {
     // Clear all fields first
     document.getElementById('cv-form').reset(); // Resets all form fields to their initial values
 
-    function populateFormFields(data) {
-    function populateFormFields(data) {
     // Personal Info
     document.getElementById('fullName').value = data.fullName || '';
     document.getElementById('jobTitle').value = data.jobTitle || '';
@@ -341,9 +339,6 @@ ${currentText}`;
     document.getElementById('recruiterContact').value = data.recruiterContact || '';
     document.getElementById('companyName').value = data.companyName || '';
     document.getElementById('companyLogoUrl').value = data.companyLogoUrl || '';
-}
-
-    return data;
 }
 
 function getFormData() {
