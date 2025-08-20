@@ -1,6 +1,24 @@
-import { initForm } from './form.js';
-import { generatePreview } from './preview.js';
-import { runAI } from './ai.js';
+// Import modules with error handling
+let initForm, generatePreview, runAI;
+
+async function loadModules() {
+  try {
+    const formModule = await import('./form.js');
+    initForm = formModule.initForm;
+    
+    const previewModule = await import('./preview.js');
+    generatePreview = previewModule.generatePreview;
+    
+    const aiModule = await import('./ai.js');
+    runAI = aiModule.runAI;
+  } catch (error) {
+    console.warn('Some modules failed to load:', error);
+    // Provide fallback functions
+    initForm = initForm || (() => console.log('Form module not loaded'));
+    generatePreview = generatePreview || (() => console.log('Preview module not loaded'));
+    runAI = runAI || (() => Promise.resolve('AI module not loaded'));
+  }
+}
 
 const exampleCVData = {
     fullName: "Jean Dupont",
@@ -42,28 +60,42 @@ const exampleCVData = {
     companyLogoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Google_for_Developers_logo.svg/1200px-Google_for_Developers_logo.svg.png" // Example logo URL
 };
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  // Initialize navigation first (doesn't depend on modules)
   initNav();
-  initForm();
+  
+  // Load modules and initialize other features
+  await loadModules();
+  
+  if (initForm) initForm();
   initActions();
   populateFormFields(exampleCVData); // Pre-fill form with example data
-  generatePreview(getFormData()); // Generate initial preview
+  if (generatePreview) generatePreview(getFormData()); // Generate initial preview
 });
 
 function initNav() {
+  console.log('Initializing navigation...');
   const navButtons = document.querySelectorAll('.nav-btn');
   const formSections = document.querySelectorAll('.form-section');
+  
+  console.log('Found nav buttons:', navButtons.length);
+  console.log('Found form sections:', formSections.length);
 
   navButtons.forEach(button => {
-    button.addEventListener('click', () => {
+    button.addEventListener('click', (e) => {
+      e.preventDefault();
       const formId = button.dataset.form;
+      console.log('Clicked tab:', formId);
 
+      // Remove active class from all buttons
       navButtons.forEach(btn => btn.classList.remove('active'));
       button.classList.add('active');
 
+      // Show/hide sections
       formSections.forEach(section => {
         if (section.id === formId) {
           section.classList.add('active');
+          console.log('Showing section:', section.id);
         } else {
           section.classList.remove('active');
         }
