@@ -13,6 +13,8 @@
   <!-- html2canvas & jsPDF -->
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <!-- Sortable.js for drag & drop -->
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 </head>
 <body>
   <div class="app-container">
@@ -27,77 +29,141 @@
         <button class="nav-btn" data-form="experience">Expérience</button>
         <button class="nav-btn" data-form="education">Formation</button>
         <button class="nav-btn" data-form="skills">Compétences</button>
+        <button class="nav-btn" data-form="languages">Langues</button>
+        <button class="nav-btn" data-form="certifications">Certifications</button>
+        <button class="nav-btn" data-form="projects">Projets</button>
         <button class="nav-btn" data-form="recruitment">Recrutement</button>
         <button class="nav-btn" data-form="settings">Paramètres</button>
       </nav>
       <div class="app-actions">
         <button id="btnGenerateIA" class="btn btn-primary">Générer le CV par IA</button>
-        <button id="btnExport" class="btn">Exporter</button>
+        <button id="btnExport" class="btn">Exporter PDF</button>
         <button id="btnAnalyzeCVAI" class="btn">Analyser le CV avec IA</button>
       </div>
     </aside>
+    
     <main class="main-content">
       <form id="cv-form">
+        <!-- INFORMATIONS PERSONNELLES -->
         <section id="personal-info" class="form-section active">
           <h2>Informations Personnelles</h2>
           <div class="form-group">
             <label for="rawInfoText">Collez ici toutes les informations brutes du candidat (CV, profil LinkedIn, etc.)</label>
-            <textarea id="rawInfoText" class="textarea" rows="10" placeholder="Nom, Prénom, Expériences, Formations, Compétences..."></textarea>
+            <textarea id="rawInfoText" class="textarea" rows="8" placeholder="Nom, Prénom, Expériences, Formations, Compétences..."></textarea>
             <button type="button" id="btnAutoFillAI" class="btn">Remplir automatiquement le formulaire avec l'IA</button>
           </div>
           <div class="form-grid">
             <div class="form-group">
-              <label for="fullName">Nom complet</label>
-              <input type="text" id="fullName" name="fullName" class="input">
+              <label for="fullName">Nom complet *</label>
+              <input type="text" id="fullName" name="fullName" class="input" required>
             </div>
             <div class="form-group">
-              <label for="jobTitle">Titre du poste</label>
-              <input type="text" id="jobTitle" name="jobTitle" class="input">
+              <label for="jobTitle">Titre du poste *</label>
+              <input type="text" id="jobTitle" name="jobTitle" class="input" required>
             </div>
             <div class="form-group">
-              <label for="email">Email</label>
-              <input type="email" id="email" name="email" class="input">
+              <label for="email">Email *</label>
+              <input type="email" id="email" name="email" class="input" required>
             </div>
             <div class="form-group">
-              <label for="phone">Téléphone</label>
-              <input type="tel" id="phone" name="phone" class="input">
+              <label for="phone">Téléphone *</label>
+              <input type="tel" id="phone" name="phone" class="input" required>
             </div>
             <div class="form-group">
-              <label for="address">Adresse</label>
-              <input type="text" id="address" name="address" class="input">
+              <label for="address">Adresse complète</label>
+              <input type="text" id="address" name="address" class="input" placeholder="123 Rue de la Paix, 75001 Paris">
+            </div>
+            <div class="form-group">
+              <label for="linkedin">LinkedIn</label>
+              <input type="url" id="linkedin" name="linkedin" class="input" placeholder="https://linkedin.com/in/votre-profil">
+            </div>
+            <div class="form-group">
+              <label for="website">Site Web / Portfolio</label>
+              <input type="url" id="website" name="website" class="input" placeholder="https://votre-site.com">
+            </div>
+            <div class="form-group">
+              <label for="github">GitHub</label>
+              <input type="url" id="github" name="github" class="input" placeholder="https://github.com/votre-username">
             </div>
           </div>
         </section>
+
+        <!-- RÉSUMÉ PROFESSIONNEL -->
         <section id="summary" class="form-section">
-          <h2>Résumé</h2>
+          <h2>Résumé Professionnel</h2>
           <div class="form-group">
-            <label for="summary-text">Votre résumé professionnel</label>
-            <textarea id="summary-text" name="summary" class="textarea" rows="5"></textarea>
+            <label for="summary-text">Votre résumé professionnel (2-3 phrases percutantes)</label>
+            <textarea id="summary-text" name="summary" class="textarea" rows="4" placeholder="Développeur Full Stack avec 5 ans d'expérience..."></textarea>
             <button type="button" id="btnGenerateSummaryAI" class="btn">Générer avec IA</button>
           </div>
         </section>
+
+        <!-- EXPÉRIENCE PROFESSIONNELLE -->
         <section id="experience" class="form-section">
           <h2>Expérience Professionnelle</h2>
-          <div id="experience-list" class="form-list">
-            <!-- Experience items will be added here dynamically -->
+          <div id="experience-list" class="form-list sortable">
+            <!-- Les expériences seront ajoutées ici dynamiquement -->
           </div>
-          <button type="button" id="btnAddExperience" class="btn">Ajouter une expérience</button>
+          <button type="button" id="btnAddExperience" class="btn btn-add">+ Ajouter une expérience</button>
         </section>
+
+        <!-- FORMATION -->
         <section id="education" class="form-section">
           <h2>Formation</h2>
-          <div id="education-list" class="form-list">
-            <!-- Education items will be added here dynamically -->
+          <div id="education-list" class="form-list sortable">
+            <!-- Les formations seront ajoutées ici dynamiquement -->
           </div>
-          <button type="button" id="btnAddEducation" class="btn">Ajouter une formation</button>
+          <button type="button" id="btnAddEducation" class="btn btn-add">+ Ajouter une formation</button>
         </section>
+
+        <!-- COMPÉTENCES -->
         <section id="skills" class="form-section">
           <h2>Compétences</h2>
           <div class="form-group">
-            <label for="skills-text">Listez vos compétences (séparées par des virgules)</label>
-            <input type="text" id="skills-text" name="skills" class="input">
-            <button type="button" id="btnSuggestSkillsAI" class="btn">Suggérer avec IA</button>
+            <label>Compétences Techniques</label>
+            <div id="technical-skills" class="skills-container">
+              <!-- Compétences techniques -->
+            </div>
+            <button type="button" id="btnAddTechnicalSkill" class="btn btn-small">+ Ajouter compétence technique</button>
           </div>
+          <div class="form-group">
+            <label>Compétences Transversales</label>
+            <div id="soft-skills" class="skills-container">
+              <!-- Compétences transversales -->
+            </div>
+            <button type="button" id="btnAddSoftSkill" class="btn btn-small">+ Ajouter compétence transversale</button>
+          </div>
+          <button type="button" id="btnSuggestSkillsAI" class="btn">Suggérer des compétences avec IA</button>
         </section>
+
+        <!-- LANGUES -->
+        <section id="languages" class="form-section">
+          <h2>Langues</h2>
+          <div id="languages-list" class="form-list">
+            <!-- Les langues seront ajoutées ici -->
+          </div>
+          <button type="button" id="btnAddLanguage" class="btn btn-add">+ Ajouter une langue</button>
+        </section>
+
+        <!-- CERTIFICATIONS -->
+        <section id="certifications" class="form-section">
+          <h2>Certifications</h2>
+          <div id="certifications-list" class="form-list">
+            <!-- Les certifications seront ajoutées ici -->
+          </div>
+          <button type="button" id="btnAddCertification" class="btn btn-add">+ Ajouter une certification</button>
+        </section>
+
+        <!-- PROJETS -->
+        <section id="projects" class="form-section">
+          <h2>Projets</h2>
+          <div id="projects-list" class="form-list sortable">
+            <!-- Les projets seront ajoutés ici -->
+          </div>
+          <button type="button" id="btnAddProject" class="btn btn-add">+ Ajouter un projet</button>
+        </section>
+
+        <!-- INFORMATIONS RECRUTEMENT -->
         <section id="recruitment" class="form-section">
           <h2>Informations Recrutement</h2>
           <div class="form-grid">
@@ -106,7 +172,7 @@
               <input type="text" id="recruiterName" name="recruiterName" class="input">
             </div>
             <div class="form-group">
-              <label for="recruiterContact">Contact Recruteur (Email/Téléphone)</label>
+              <label for="recruiterContact">Contact Recruteur</label>
               <input type="text" id="recruiterContact" name="recruiterContact" class="input">
             </div>
             <div class="form-group">
@@ -117,8 +183,14 @@
               <label for="companyLogoUrl">URL du Logo de l'Entreprise</label>
               <input type="url" id="companyLogoUrl" name="companyLogoUrl" class="input">
             </div>
+            <div class="form-group">
+              <label for="jobDescription">Description du poste visé</label>
+              <textarea id="jobDescription" name="jobDescription" class="textarea" rows="4"></textarea>
+            </div>
           </div>
         </section>
+
+        <!-- PARAMÈTRES -->
         <section id="settings" class="form-section">
           <h2>Paramètres</h2>
           <div class="form-group">
@@ -126,12 +198,29 @@
             <input type="password" id="geminiApiKey" class="input" placeholder="Saisir votre clé API Gemini">
             <button type="button" id="btnSaveApiKey" class="btn">Sauvegarder la clé API</button>
           </div>
+          <div class="form-group">
+            <label>Modèle de CV</label>
+            <select id="cvTemplate" class="input">
+              <option value="modern">Moderne</option>
+              <option value="classic">Classique</option>
+              <option value="creative">Créatif</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Couleur principale</label>
+            <input type="color" id="primaryColor" class="input" value="#2563eb">
+          </div>
         </section>
       </form>
     </main>
+    
     <aside class="preview-panel">
+      <div class="preview-header">
+        <h3>Aperçu du CV</h3>
+        <button id="btnToggleEdit" class="btn btn-small">Mode Édition</button>
+      </div>
       <div id="cv-preview" class="cv-preview">
-        <!-- CV preview will be rendered here -->
+        <!-- L'aperçu du CV sera généré ici avec des blocs drag & drop -->
       </div>
     </aside>
   </div>
