@@ -1,6 +1,9 @@
 // CV Creator App - Version complète avec drag & drop
 console.log('CV Creator App loaded');
 
+// Import du module IA
+import { runAI } from './ai.js';
+
 // Données d'exemple pour pré-remplir le CV
 const exampleData = {
   fullName: "Jean Dupont",
@@ -131,11 +134,21 @@ document.addEventListener('DOMContentLoaded', function() {
   initNavigation();
   initFormHandlers();
   initPreview();
+  loadSavedApiKey();
   populateExampleData();
   generatePreview();
   
   console.log('CV Creator initialized successfully');
 });
+
+// Charger la clé API sauvegardée
+function loadSavedApiKey() {
+  const savedApiKey = localStorage.getItem('cvpro_api_key');
+  if (savedApiKey) {
+    document.getElementById('geminiApiKey').value = savedApiKey;
+    console.log('Clé API Gemini chargée depuis le localStorage');
+  }
+}
 
 // NAVIGATION
 function initNavigation() {
@@ -202,6 +215,7 @@ function initFormHandlers() {
   document.getElementById('btnExport').addEventListener('click', exportToPDF);
   document.getElementById('btnAnalyzeCVAI').addEventListener('click', analyzeCVWithAI);
   document.getElementById('btnToggleEdit').addEventListener('click', toggleEditMode);
+  document.getElementById('btnSaveApiKey').addEventListener('click', saveApiKey);
   
   // Écouter les changements dans le formulaire pour mettre à jour l'aperçu
   document.getElementById('cv-form').addEventListener('input', debounce(generatePreview, 500));
@@ -1075,35 +1089,496 @@ function formatDescription(description) {
   }).join('');
 }
 
-// FONCTIONS IA (PLACEHOLDERS)
-function autoFillWithAI() {
-  console.log('Auto-fill with AI - Feature to implement');
-  alert('Fonctionnalité IA à implémenter - Nécessite une clé API Gemini');
+// GESTION DE LA CLÉ API
+function saveApiKey() {
+  const apiKeyInput = document.getElementById('geminiApiKey');
+  const apiKey = apiKeyInput.value.trim();
+  
+  if (!apiKey) {
+    alert('Veuillez saisir une clé API Gemini valide.');
+    return;
+  }
+  
+  // Sauvegarder dans localStorage
+  localStorage.setItem('cvpro_api_key', apiKey);
+  
+  // Feedback visuel
+  const button = document.getElementById('btnSaveApiKey');
+  const originalText = button.textContent;
+  button.textContent = '✓ Sauvegardée';
+  button.style.backgroundColor = '#10b981';
+  
+  setTimeout(() => {
+    button.textContent = originalText;
+    button.style.backgroundColor = '';
+  }, 2000);
+  
+  console.log('Clé API Gemini sauvegardée');
 }
 
-function generateSummaryAI() {
-  console.log('Generate summary with AI - Feature to implement');
-  alert('Fonctionnalité IA à implémenter - Nécessite une clé API Gemini');
+// FONCTIONS IA COMPLÈTES
+async function autoFillWithAI() {
+  console.log('Auto-fill with AI...');
+  
+  const rawText = document.getElementById('rawInfoText').value.trim();
+  if (!rawText) {
+    alert('Veuillez coller les informations brutes du candidat dans le champ prévu à cet effet.');
+    return;
+  }
+  
+  const button = document.getElementById('btnAutoFillAI');
+  const originalText = button.textContent;
+  button.textContent = 'Traitement en cours...';
+  button.disabled = true;
+  
+  try {
+    const prompt = `
+Analyse ce texte contenant les informations d'un candidat et extrait les données structurées pour remplir un formulaire de CV.
+Retourne UNIQUEMENT un objet JSON valide avec cette structure exacte :
+
+{
+  "fullName": "Nom complet du candidat",
+  "jobTitle": "Titre du poste recherché ou actuel",
+  "email": "adresse@email.com",
+  "phone": "+33 X XX XX XX XX",
+  "address": "Adresse complète",
+  "linkedin": "URL LinkedIn si mentionnée",
+  "website": "URL site web/portfolio si mentionné",
+  "github": "URL GitHub si mentionnée",
+  "summary": "Résumé professionnel de 2-3 phrases",
+  "experiences": [
+    {
+      "title": "Titre du poste",
+      "company": "Nom de l'entreprise",
+      "location": "Lieu",
+      "startDate": "YYYY-MM",
+      "endDate": "YYYY-MM ou vide si actuel",
+      "current": true/false,
+      "description": "Description des missions",
+      "technologies": ["Tech1", "Tech2"]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Nom du diplôme",
+      "school": "Nom de l'école",
+      "location": "Lieu",
+      "startDate": "YYYY-MM",
+      "endDate": "YYYY-MM",
+      "description": "Description optionnelle",
+      "grade": "Mention si mentionnée"
+    }
+  ],
+  "technicalSkills": [
+    {"name": "Compétence", "level": 85}
+  ],
+  "softSkills": [
+    {"name": "Compétence transversale", "level": 90}
+  ],
+  "languages": [
+    {"name": "Français", "level": "Natif"}
+  ],
+  "certifications": [
+    {
+      "name": "Nom de la certification",
+      "issuer": "Organisme",
+      "date": "YYYY-MM",
+      "url": "URL si mentionnée"
+    }
+  ],
+  "projects": [
+    {
+      "name": "Nom du projet",
+      "description": "Description",
+      "technologies": ["Tech1", "Tech2"],
+      "url": "URL si mentionnée",
+      "startDate": "YYYY-MM",
+      "endDate": "YYYY-MM"
+    }
+  ]
 }
 
-function suggestSkillsAI() {
-  console.log('Suggest skills with AI - Feature to implement');
-  alert('Fonctionnalité IA à implémenter - Nécessite une clé API Gemini');
+Texte à analyser :
+${rawText}
+`;
+
+    const result = await runAI({
+      action: 'auto-fill-cv',
+      prompt: prompt
+    });
+    
+    if (result) {
+      try {
+        // Nettoyer le résultat pour extraire le JSON
+        let jsonStr = result.trim();
+        if (jsonStr.startsWith('```json')) {
+          jsonStr = jsonStr.replace(/```json\n?/, '').replace(/\n?```$/, '');
+        }
+        if (jsonStr.startsWith('```')) {
+          jsonStr = jsonStr.replace(/```\n?/, '').replace(/\n?```$/, '');
+        }
+        
+        const data = JSON.parse(jsonStr);
+        
+        // Remplir le formulaire avec les données extraites
+        fillFormWithData(data);
+        
+        alert('Formulaire rempli automatiquement avec succès !');
+        generatePreview();
+        
+      } catch (parseError) {
+        console.error('Erreur de parsing JSON:', parseError);
+        console.log('Résultat brut:', result);
+        alert('Erreur lors de l\'analyse des données. Veuillez réessayer.');
+      }
+    }
+    
+  } catch (error) {
+    console.error('Erreur Auto-fill AI:', error);
+    alert('Erreur lors du traitement automatique. Vérifiez votre clé API.');
+  } finally {
+    button.textContent = originalText;
+    button.disabled = false;
+  }
 }
 
-function generateFullCVWithAI() {
-  console.log('Generate full CV with AI - Feature to implement');
-  alert('Fonctionnalité IA à implémenter - Nécessite une clé API Gemini');
+async function generateSummaryAI() {
+  console.log('Generate summary with AI...');
+  
+  const formData = getFormData();
+  if (!formData.fullName || !formData.jobTitle) {
+    alert('Veuillez remplir au moins le nom et le titre du poste pour générer un résumé.');
+    return;
+  }
+  
+  const button = document.getElementById('btnGenerateSummaryAI');
+  const originalText = button.textContent;
+  button.textContent = 'Génération...';
+  button.disabled = true;
+  
+  try {
+    const prompt = `
+Génère un résumé professionnel percutant de 2-3 phrases pour ce profil :
+
+Nom: ${formData.fullName}
+Titre: ${formData.jobTitle}
+Expériences: ${formData.experiences ? formData.experiences.map(exp => `${exp.title} chez ${exp.company}`).join(', ') : 'Non spécifiées'}
+Compétences techniques: ${formData.technicalSkills ? formData.technicalSkills.map(skill => skill.name).join(', ') : 'Non spécifiées'}
+
+Le résumé doit :
+- Être professionnel et impactant
+- Mettre en valeur les points forts
+- Être adapté au poste recherché
+- Faire environ 50-80 mots
+- Être en français
+
+Retourne UNIQUEMENT le texte du résumé, sans guillemets ni formatage.
+`;
+
+    const result = await runAI({
+      action: 'generate-summary',
+      prompt: prompt
+    });
+    
+    if (result) {
+      document.getElementById('summary-text').value = result.trim();
+      generatePreview();
+      alert('Résumé généré avec succès !');
+    }
+    
+  } catch (error) {
+    console.error('Erreur Generate Summary AI:', error);
+    alert('Erreur lors de la génération du résumé. Vérifiez votre clé API.');
+  } finally {
+    button.textContent = originalText;
+    button.disabled = false;
+  }
 }
 
-function analyzeCVWithAI() {
-  console.log('Analyze CV with AI - Feature to implement');
-  alert('Fonctionnalité IA à implémenter - Nécessite une clé API Gemini');
+async function suggestSkillsAI() {
+  console.log('Suggest skills with AI...');
+  
+  const formData = getFormData();
+  if (!formData.jobTitle) {
+    alert('Veuillez remplir le titre du poste pour obtenir des suggestions de compétences.');
+    return;
+  }
+  
+  const button = document.getElementById('btnSuggestSkillsAI');
+  const originalText = button.textContent;
+  button.textContent = 'Suggestion...';
+  button.disabled = true;
+  
+  try {
+    const prompt = `
+Suggère des compétences techniques et transversales pertinentes pour le poste de "${formData.jobTitle}".
+
+Retourne UNIQUEMENT un objet JSON avec cette structure :
+{
+  "technicalSkills": [
+    {"name": "Nom de la compétence", "level": 75}
+  ],
+  "softSkills": [
+    {"name": "Nom de la compétence transversale", "level": 80}
+  ]
 }
 
-function improveWithAI(button) {
-  console.log('Improve text with AI - Feature to implement');
-  alert('Fonctionnalité IA à implémenter - Nécessite une clé API Gemini');
+Critères :
+- 8-12 compétences techniques maximum
+- 5-8 compétences transversales maximum
+- Niveaux entre 60 et 95
+- Compétences réellement pertinentes pour le poste
+- Noms en français
+`;
+
+    const result = await runAI({
+      action: 'suggest-skills',
+      prompt: prompt
+    });
+    
+    if (result) {
+      try {
+        let jsonStr = result.trim();
+        if (jsonStr.startsWith('```json')) {
+          jsonStr = jsonStr.replace(/```json\n?/, '').replace(/\n?```$/, '');
+        }
+        
+        const skills = JSON.parse(jsonStr);
+        
+        // Ajouter les compétences techniques
+        if (skills.technicalSkills) {
+          skills.technicalSkills.forEach(skill => {
+            addTechnicalSkill(skill);
+          });
+        }
+        
+        // Ajouter les compétences transversales
+        if (skills.softSkills) {
+          skills.softSkills.forEach(skill => {
+            addSoftSkill(skill);
+          });
+        }
+        
+        generatePreview();
+        alert('Compétences suggérées ajoutées avec succès !');
+        
+      } catch (parseError) {
+        console.error('Erreur de parsing JSON:', parseError);
+        alert('Erreur lors de l\'analyse des suggestions. Veuillez réessayer.');
+      }
+    }
+    
+  } catch (error) {
+    console.error('Erreur Suggest Skills AI:', error);
+    alert('Erreur lors de la suggestion de compétences. Vérifiez votre clé API.');
+  } finally {
+    button.textContent = originalText;
+    button.disabled = false;
+  }
+}
+
+async function generateFullCVWithAI() {
+  console.log('Generate full CV with AI...');
+  
+  const rawText = document.getElementById('rawInfoText').value.trim();
+  if (!rawText) {
+    alert('Veuillez coller les informations brutes du candidat pour générer un CV complet.');
+    return;
+  }
+  
+  const button = document.getElementById('btnGenerateIA');
+  const originalText = button.textContent;
+  button.textContent = 'Génération complète...';
+  button.disabled = true;
+  
+  try {
+    // Utiliser la même logique que autoFillWithAI mais avec un prompt plus complet
+    await autoFillWithAI();
+    
+    // Puis générer un résumé
+    setTimeout(async () => {
+      await generateSummaryAI();
+    }, 1000);
+    
+    alert('CV complet généré avec succès !');
+    
+  } catch (error) {
+    console.error('Erreur Generate Full CV AI:', error);
+    alert('Erreur lors de la génération complète. Vérifiez votre clé API.');
+  } finally {
+    button.textContent = originalText;
+    button.disabled = false;
+  }
+}
+
+async function analyzeCVWithAI() {
+  console.log('Analyze CV with AI...');
+  
+  const formData = getFormData();
+  if (!formData.fullName || !formData.jobTitle) {
+    alert('Veuillez remplir au moins les informations de base pour analyser le CV.');
+    return;
+  }
+  
+  const button = document.getElementById('btnAnalyzeCVAI');
+  const originalText = button.textContent;
+  button.textContent = 'Analyse...';
+  button.disabled = true;
+  
+  try {
+    const cvText = document.getElementById('cv-preview').innerText;
+    
+    const prompt = `
+Analyse ce CV et fournis des recommandations d'amélioration :
+
+${cvText}
+
+Fournis une analyse structurée avec :
+1. Points forts du CV
+2. Points à améliorer
+3. Suggestions concrètes
+4. Note globale sur 10
+
+Sois constructif et professionnel.
+`;
+
+    const result = await runAI({
+      action: 'analyze-cv',
+      prompt: prompt
+    });
+    
+    if (result) {
+      // Afficher l'analyse dans une modal ou alert
+      const analysisWindow = window.open('', '_blank', 'width=600,height=400');
+      analysisWindow.document.write(`
+        <html>
+          <head><title>Analyse du CV</title></head>
+          <body style="font-family: Arial, sans-serif; padding: 20px;">
+            <h2>Analyse de votre CV</h2>
+            <div style="white-space: pre-wrap; line-height: 1.6;">${result}</div>
+            <button onclick="window.close()" style="margin-top: 20px; padding: 10px 20px;">Fermer</button>
+          </body>
+        </html>
+      `);
+    }
+    
+  } catch (error) {
+    console.error('Erreur Analyze CV AI:', error);
+    alert('Erreur lors de l\'analyse du CV. Vérifiez votre clé API.');
+  } finally {
+    button.textContent = originalText;
+    button.disabled = false;
+  }
+}
+
+async function improveWithAI(button) {
+  console.log('Improve text with AI...');
+  
+  const textarea = button.previousElementSibling;
+  const currentText = textarea.value.trim();
+  
+  if (!currentText) {
+    alert('Veuillez saisir du texte à améliorer.');
+    return;
+  }
+  
+  const originalText = button.textContent;
+  button.textContent = 'Amélioration...';
+  button.disabled = true;
+  
+  try {
+    const prompt = `
+Améliore ce texte professionnel pour un CV :
+
+"${currentText}"
+
+Critères d'amélioration :
+- Plus impactant et professionnel
+- Utilise des verbes d'action
+- Quantifie les résultats quand possible
+- Garde le même sens mais améliore la formulation
+- Reste concis et pertinent
+- En français
+
+Retourne UNIQUEMENT le texte amélioré, sans guillemets.
+`;
+
+    const result = await runAI({
+      action: 'improve-text',
+      prompt: prompt
+    });
+    
+    if (result) {
+      textarea.value = result.trim();
+      generatePreview();
+      alert('Texte amélioré avec succès !');
+    }
+    
+  } catch (error) {
+    console.error('Erreur Improve Text AI:', error);
+    alert('Erreur lors de l\'amélioration du texte. Vérifiez votre clé API.');
+  } finally {
+    button.textContent = originalText;
+    button.disabled = false;
+  }
+}
+
+// FONCTION UTILITAIRE POUR REMPLIR LE FORMULAIRE
+function fillFormWithData(data) {
+  // Informations personnelles
+  if (data.fullName) document.getElementById('fullName').value = data.fullName;
+  if (data.jobTitle) document.getElementById('jobTitle').value = data.jobTitle;
+  if (data.email) document.getElementById('email').value = data.email;
+  if (data.phone) document.getElementById('phone').value = data.phone;
+  if (data.address) document.getElementById('address').value = data.address;
+  if (data.linkedin) document.getElementById('linkedin').value = data.linkedin;
+  if (data.website) document.getElementById('website').value = data.website;
+  if (data.github) document.getElementById('github').value = data.github;
+  if (data.summary) document.getElementById('summary-text').value = data.summary;
+  
+  // Vider les listes existantes
+  document.getElementById('experience-list').innerHTML = '';
+  document.getElementById('education-list').innerHTML = '';
+  document.getElementById('technical-skills').innerHTML = '';
+  document.getElementById('soft-skills').innerHTML = '';
+  document.getElementById('languages-list').innerHTML = '';
+  document.getElementById('certifications-list').innerHTML = '';
+  document.getElementById('projects-list').innerHTML = '';
+  
+  // Ajouter les expériences
+  if (data.experiences) {
+    data.experiences.forEach(exp => addExperience(exp));
+  }
+  
+  // Ajouter les formations
+  if (data.education) {
+    data.education.forEach(edu => addEducation(edu));
+  }
+  
+  // Ajouter les compétences techniques
+  if (data.technicalSkills) {
+    data.technicalSkills.forEach(skill => addTechnicalSkill(skill));
+  }
+  
+  // Ajouter les compétences transversales
+  if (data.softSkills) {
+    data.softSkills.forEach(skill => addSoftSkill(skill));
+  }
+  
+  // Ajouter les langues
+  if (data.languages) {
+    data.languages.forEach(lang => addLanguage(lang));
+  }
+  
+  // Ajouter les certifications
+  if (data.certifications) {
+    data.certifications.forEach(cert => addCertification(cert));
+  }
+  
+  // Ajouter les projets
+  if (data.projects) {
+    data.projects.forEach(project => addProject(project));
+  }
 }
 
 // EXPORT PDF
