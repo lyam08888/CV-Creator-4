@@ -75,33 +75,73 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 function initNav() {
   console.log('Initializing navigation...');
+  
+  // Get all navigation buttons and form sections
   const navButtons = document.querySelectorAll('.nav-btn');
   const formSections = document.querySelectorAll('.form-section');
   
   console.log('Found nav buttons:', navButtons.length);
   console.log('Found form sections:', formSections.length);
+  
+  // List all buttons and sections for debugging
+  navButtons.forEach((btn, i) => {
+    console.log(`Button ${i}:`, btn.dataset.form, btn.textContent.trim());
+  });
+  
+  formSections.forEach((section, i) => {
+    console.log(`Section ${i}:`, section.id);
+  });
 
-  navButtons.forEach(button => {
-    button.addEventListener('click', (e) => {
+  // Add click event to each navigation button
+  navButtons.forEach((button, index) => {
+    button.addEventListener('click', function(e) {
       e.preventDefault();
-      const formId = button.dataset.form;
-      console.log('Clicked tab:', formId);
-
+      e.stopPropagation();
+      
+      const targetFormId = this.dataset.form;
+      console.log(`Clicked button ${index}: targeting "${targetFormId}"`);
+      
       // Remove active class from all buttons
-      navButtons.forEach(btn => btn.classList.remove('active'));
-      button.classList.add('active');
-
-      // Show/hide sections
-      formSections.forEach(section => {
-        if (section.id === formId) {
-          section.classList.add('active');
-          console.log('Showing section:', section.id);
-        } else {
-          section.classList.remove('active');
-        }
+      navButtons.forEach(btn => {
+        btn.classList.remove('active');
       });
+      
+      // Add active class to clicked button
+      this.classList.add('active');
+      console.log('Button activated:', this.textContent.trim());
+      
+      // Hide all sections first
+      formSections.forEach(section => {
+        section.classList.remove('active');
+        section.style.display = 'none';
+      });
+      
+      // Show target section
+      const targetSection = document.getElementById(targetFormId);
+      if (targetSection) {
+        targetSection.classList.add('active');
+        targetSection.style.display = 'block';
+        console.log('Section shown:', targetFormId);
+      } else {
+        console.error('Target section not found:', targetFormId);
+      }
     });
   });
+  
+  // Ensure first section is visible on load
+  if (formSections.length > 0) {
+    formSections.forEach(section => {
+      section.classList.remove('active');
+      section.style.display = 'none';
+    });
+    
+    const firstSection = document.getElementById('personal-info');
+    if (firstSection) {
+      firstSection.classList.add('active');
+      firstSection.style.display = 'block';
+      console.log('First section activated: personal-info');
+    }
+  }
 }
 
 function initActions() {
