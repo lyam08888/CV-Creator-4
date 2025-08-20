@@ -421,6 +421,9 @@ export function applyCurrentCustomization() {
   applyCustomization();
 }
 
+// Rendre la fonction disponible globalement pour compatibilité
+window.applyCurrentCustomization = applyCurrentCustomization;
+
 // Exporter la configuration actuelle
 export function getCurrentCustomization() {
   return { ...currentCustomization };
