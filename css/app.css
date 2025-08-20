@@ -1205,6 +1205,221 @@ label {
   break-before: page;
 }
 
+/* ===== PERSONNALISATION AVANCÉE ===== */
+.customization-group {
+  background: rgba(139, 92, 246, 0.05);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(139, 92, 246, 0.1);
+}
+
+.customization-group h3 {
+  color: var(--primary-color-dark);
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--primary-color);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.form-row .form-group {
+  margin-bottom: 0;
+}
+
+.customization-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid var(--border-color);
+}
+
+.customization-actions .btn {
+  flex: 1;
+  min-width: 120px;
+}
+
+/* Variables CSS dynamiques pour la personnalisation */
+:root {
+  --cv-font-family: 'Arial', sans-serif;
+  --cv-base-font-size: 11pt;
+  --cv-line-height: 1.4;
+  --cv-letter-spacing: 0pt;
+  --cv-margin-top: 20mm;
+  --cv-margin-bottom: 20mm;
+  --cv-margin-left: 20mm;
+  --cv-margin-right: 20mm;
+  --cv-section-spacing: 6mm;
+  --cv-paragraph-spacing: 3mm;
+  --cv-column-gap: 8mm;
+  --cv-left-column-width: 35%;
+  --cv-h1-size: 18pt;
+  --cv-h2-size: 14pt;
+  --cv-h3-size: 13pt;
+  --cv-title-spacing: 2mm;
+  --cv-line-thickness: 1pt;
+  --cv-line-color: #cccccc;
+  --cv-line-margin: 1mm;
+}
+
+/* Application des variables de personnalisation */
+.cv-preview {
+  font-family: var(--cv-font-family);
+  font-size: var(--cv-base-font-size);
+  line-height: var(--cv-line-height);
+  letter-spacing: var(--cv-letter-spacing);
+  padding: var(--cv-margin-top) var(--cv-margin-right) var(--cv-margin-bottom) var(--cv-margin-left);
+}
+
+.cv-section {
+  margin-bottom: var(--cv-section-spacing);
+}
+
+.cv-section p, .cv-section div {
+  margin-bottom: var(--cv-paragraph-spacing);
+}
+
+.cv-section-title, .cv-preview h3 {
+  font-size: var(--cv-h3-size);
+  margin-bottom: var(--cv-title-spacing);
+}
+
+.cv-name, .cv-preview h1 {
+  font-size: var(--cv-h1-size);
+}
+
+.cv-title, .cv-preview h2 {
+  font-size: var(--cv-h2-size);
+}
+
+/* Lignes de séparation personnalisables */
+.cv-section-title::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: var(--cv-line-thickness);
+  background-color: var(--cv-line-color);
+  margin-top: var(--cv-line-margin);
+  margin-bottom: var(--cv-line-margin);
+}
+
+.cv-section-title.no-line::after {
+  display: none;
+}
+
+/* Layouts de colonnes */
+.cv-preview.layout-single {
+  display: block;
+}
+
+.cv-preview.layout-two-column {
+  display: grid;
+  grid-template-columns: var(--cv-left-column-width) 1fr;
+  gap: var(--cv-column-gap);
+  align-items: start;
+}
+
+.cv-preview.layout-sidebar {
+  display: grid;
+  grid-template-columns: var(--cv-left-column-width) 1fr;
+  gap: var(--cv-column-gap);
+  align-items: start;
+}
+
+.cv-preview.layout-two-column .cv-section:nth-child(odd) {
+  grid-column: 1;
+}
+
+.cv-preview.layout-two-column .cv-section:nth-child(even) {
+  grid-column: 2;
+}
+
+.cv-preview.layout-sidebar .cv-header {
+  grid-column: 1 / -1;
+}
+
+.cv-preview.layout-sidebar .cv-section.sidebar-left {
+  grid-column: 1;
+}
+
+.cv-preview.layout-sidebar .cv-section.sidebar-right {
+  grid-column: 2;
+}
+
+/* Gestion des pages multiples avec format A4 précis */
+.cv-page {
+  width: 210mm;
+  min-height: 297mm;
+  max-height: 297mm;
+  padding: var(--cv-margin-top) var(--cv-margin-right) var(--cv-margin-bottom) var(--cv-margin-left);
+  margin: 20px auto;
+  background: white;
+  box-shadow: var(--shadow-medium);
+  border-radius: 8px;
+  box-sizing: border-box;
+  transform: scale(0.6);
+  transform-origin: top center;
+  overflow: hidden;
+  page-break-after: always;
+  break-after: page;
+}
+
+.cv-page:first-child {
+  margin-top: 0;
+}
+
+.cv-page:last-child {
+  page-break-after: avoid;
+  break-after: avoid;
+}
+
+/* Indicateur de débordement de page */
+.page-overflow-indicator {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: #ff4444;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: bold;
+  z-index: 100;
+}
+
+/* Optimisation pour l'impression A4 */
+@media print {
+  .cv-page {
+    width: 210mm !important;
+    height: 297mm !important;
+    margin: 0 !important;
+    padding: var(--cv-margin-top) var(--cv-margin-right) var(--cv-margin-bottom) var(--cv-margin-left) !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    transform: none !important;
+    page-break-after: always;
+    break-after: page;
+  }
+  
+  .cv-page:last-child {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+  
+  .page-overflow-indicator {
+    display: none !important;
+  }
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1200px) {
   .app-container {

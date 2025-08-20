@@ -4,6 +4,9 @@ console.log('CV Creator App loaded');
 // Import du module IA
 import { runAI } from './ai.js';
 
+// Import du module de personnalisation
+import { initCustomization, applyCurrentCustomization } from './customization.js';
+
 // Données d'exemple pour pré-remplir le CV
 const exampleData = {
   fullName: "Jean Dupont",
@@ -134,6 +137,7 @@ document.addEventListener('DOMContentLoaded', function() {
   initNavigation();
   initFormHandlers();
   initPreview();
+  initCustomization();
   loadSavedApiKey();
   populateExampleData();
   generatePreview();
@@ -617,6 +621,9 @@ function generatePreview() {
   
   // Initialiser le drag & drop après la génération
   initializeDragAndDrop();
+  
+  // Appliquer la personnalisation
+  applyCurrentCustomization();
   
   // Réinitialiser le mode édition si actif
   if (editMode) {

@@ -34,6 +34,7 @@
         <button class="nav-btn" data-form="projects">Projets</button>
         <button class="nav-btn" data-form="recruitment">Recrutement</button>
         <button class="nav-btn" data-form="settings">Paramètres</button>
+        <button class="nav-btn" data-form="customization">Personnalisation</button>
       </nav>
       <div class="app-actions">
         <button id="btnGenerateIA" class="btn btn-primary">Générer le CV par IA</button>
@@ -209,6 +210,173 @@
           <div class="form-group">
             <label>Couleur principale</label>
             <input type="color" id="primaryColor" class="input" value="#2563eb">
+          </div>
+        </section>
+
+        <!-- PERSONNALISATION AVANCÉE -->
+        <section id="customization" class="form-section">
+          <h2>Personnalisation Avancée</h2>
+          
+          <!-- POLICE ET TYPOGRAPHIE -->
+          <div class="customization-group">
+            <h3>Police et Typographie</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="fontFamily">Police principale</label>
+                <select id="fontFamily" class="input">
+                  <option value="Arial, sans-serif">Arial</option>
+                  <option value="'Times New Roman', serif">Times New Roman</option>
+                  <option value="'Helvetica Neue', sans-serif">Helvetica Neue</option>
+                  <option value="Georgia, serif">Georgia</option>
+                  <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+                  <option value="Verdana, sans-serif">Verdana</option>
+                  <option value="'Calibri', sans-serif">Calibri</option>
+                  <option value="'Open Sans', sans-serif">Open Sans</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="baseFontSize">Taille de base (pt)</label>
+                <input type="number" id="baseFontSize" class="input" value="11" min="8" max="16" step="0.1">
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="lineHeight">Hauteur de ligne</label>
+                <input type="number" id="lineHeight" class="input" value="1.4" min="1.0" max="2.0" step="0.1">
+              </div>
+              <div class="form-group">
+                <label for="letterSpacing">Espacement lettres (pt)</label>
+                <input type="number" id="letterSpacing" class="input" value="0" min="-1" max="2" step="0.1">
+              </div>
+            </div>
+          </div>
+
+          <!-- MARGES ET ESPACEMENT -->
+          <div class="customization-group">
+            <h3>Marges et Espacement</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="pageMarginTop">Marge haut (mm)</label>
+                <input type="number" id="pageMarginTop" class="input" value="20" min="10" max="40" step="0.1">
+              </div>
+              <div class="form-group">
+                <label for="pageMarginBottom">Marge bas (mm)</label>
+                <input type="number" id="pageMarginBottom" class="input" value="20" min="10" max="40" step="0.1">
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="pageMarginLeft">Marge gauche (mm)</label>
+                <input type="number" id="pageMarginLeft" class="input" value="20" min="10" max="40" step="0.1">
+              </div>
+              <div class="form-group">
+                <label for="pageMarginRight">Marge droite (mm)</label>
+                <input type="number" id="pageMarginRight" class="input" value="20" min="10" max="40" step="0.1">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="sectionSpacing">Espacement sections (mm)</label>
+                <input type="number" id="sectionSpacing" class="input" value="6" min="2" max="15" step="0.1">
+              </div>
+              <div class="form-group">
+                <label for="paragraphSpacing">Espacement paragraphes (mm)</label>
+                <input type="number" id="paragraphSpacing" class="input" value="3" min="1" max="10" step="0.1">
+              </div>
+            </div>
+          </div>
+
+          <!-- COLONNES ET MISE EN PAGE -->
+          <div class="customization-group">
+            <h3>Colonnes et Mise en Page</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="layoutType">Type de mise en page</label>
+                <select id="layoutType" class="input">
+                  <option value="single">Une colonne</option>
+                  <option value="two-column">Deux colonnes</option>
+                  <option value="sidebar">Colonne latérale</option>
+                </select>
+              </div>
+              <div class="form-group" id="columnWidthGroup" style="display: none;">
+                <label for="leftColumnWidth">Largeur colonne gauche (%)</label>
+                <input type="number" id="leftColumnWidth" class="input" value="35" min="20" max="50" step="0.1">
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="columnGap">Espacement colonnes (mm)</label>
+                <input type="number" id="columnGap" class="input" value="8" min="3" max="20" step="0.1">
+              </div>
+              <div class="form-group">
+                <label for="maxPages">Pages maximum</label>
+                <input type="number" id="maxPages" class="input" value="2" min="1" max="5" step="1">
+              </div>
+            </div>
+          </div>
+
+          <!-- TITRES ET EN-TÊTES -->
+          <div class="customization-group">
+            <h3>Titres et En-têtes</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="h1Size">Taille nom (pt)</label>
+                <input type="number" id="h1Size" class="input" value="18" min="14" max="24" step="0.1">
+              </div>
+              <div class="form-group">
+                <label for="h2Size">Taille titre poste (pt)</label>
+                <input type="number" id="h2Size" class="input" value="14" min="12" max="18" step="0.1">
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="h3Size">Taille sections (pt)</label>
+                <input type="number" id="h3Size" class="input" value="13" min="11" max="16" step="0.1">
+              </div>
+              <div class="form-group">
+                <label for="titleSpacing">Espacement après titres (mm)</label>
+                <input type="number" id="titleSpacing" class="input" value="2" min="1" max="8" step="0.1">
+              </div>
+            </div>
+          </div>
+
+          <!-- LIGNES ET SÉPARATEURS -->
+          <div class="customization-group">
+            <h3>Lignes et Séparateurs</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="showSectionLines">Lignes sous sections</label>
+                <input type="checkbox" id="showSectionLines" checked>
+              </div>
+              <div class="form-group">
+                <label for="lineThickness">Épaisseur lignes (pt)</label>
+                <input type="number" id="lineThickness" class="input" value="1" min="0.1" max="3" step="0.1">
+              </div>
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="lineColor">Couleur lignes</label>
+                <input type="color" id="lineColor" class="input" value="#cccccc">
+              </div>
+              <div class="form-group">
+                <label for="lineMargin">Marge lignes (mm)</label>
+                <input type="number" id="lineMargin" class="input" value="1" min="0" max="5" step="0.1">
+              </div>
+            </div>
+          </div>
+
+          <!-- BOUTONS D'ACTION -->
+          <div class="customization-actions">
+            <button type="button" id="btnApplyCustomization" class="btn btn-primary">Appliquer les modifications</button>
+            <button type="button" id="btnResetCustomization" class="btn btn-secondary">Réinitialiser</button>
+            <button type="button" id="btnSavePreset" class="btn btn-secondary">Sauvegarder preset</button>
+            <button type="button" id="btnLoadPreset" class="btn btn-secondary">Charger preset</button>
           </div>
         </section>
       </form>
