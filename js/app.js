@@ -18,7 +18,7 @@ const exampleData = {
       company: "TechCorp Solutions",
       location: "Paris, France",
       startDate: "2021-03",
-      endDate: "Présent",
+      endDate: "",
       current: true,
       description: "• Direction d'une équipe de 5 développeurs sur des projets web complexes\n• Développement d'une plateforme SaaS utilisée par 10,000+ utilisateurs\n• Amélioration des performances de 40% grâce à l'optimisation du code\n• Mise en place de pratiques DevOps et CI/CD",
       technologies: ["React", "Node.js", "PostgreSQL", "AWS", "Docker"]
@@ -249,7 +249,7 @@ function addExperience(data = null) {
       </div>
       <div class="form-group">
         <label>Date de fin</label>
-        <input type="month" name="experience[${index}][endDate]" class="input" value="${experienceData.endDate}" ${experienceData.current ? 'disabled' : ''}>
+        <input type="month" name="experience[${index}][endDate]" class="input" value="${experienceData.current ? '' : experienceData.endDate}" ${experienceData.current ? 'disabled' : ''}>
       </div>
       <div class="form-group">
         <label class="checkbox-label">
