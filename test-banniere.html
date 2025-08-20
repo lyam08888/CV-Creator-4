@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Bannière de Recrutement - CV Creator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .feature-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .feature-list li {
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            border-radius: 3px;
+        }
+        .feature-list li.implemented {
+            border-left-color: #28a745;
+            background-color: #d4edda;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 5px;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .demo-banner {
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 8px;
+            color: white;
+            background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .demo-banner img {
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 8px;
+            padding: 8px;
+        }
+        .banner-info h3 {
+            margin: 0 0 8px 0;
+            font-size: 24px;
+        }
+        .banner-info p {
+            margin: 0 0 5px 0;
+            opacity: 0.9;
+        }
+        .test-steps {
+            background-color: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #2196f3;
+        }
+        .test-steps ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .test-steps li {
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🎯 Test de la Bannière de Recrutement</h1>
+        
+        <div class="test-section">
+            <h2>✅ Fonctionnalités de la Bannière Implémentées</h2>
+            <ul class="feature-list">
+                <li class="implemented">
+                    <strong>Activation/Désactivation par checkbox</strong><br>
+                    La bannière peut être activée ou désactivée avec une simple case à cocher
+                </li>
+                <li class="implemented">
+                    <strong>Drag & Drop intégré</strong><br>
+                    La bannière peut être déplacée dans le CV comme les autres sections
+                </li>
+                <li class="implemented">
+                    <strong>Taille fixe indépendante des colonnes</strong><br>
+                    La bannière garde sa taille même en layout 2 colonnes ou sidebar
+                </li>
+                <li class="implemented">
+                    <strong>Image de fond personnalisable</strong><br>
+                    Possibilité d'ajouter une image de fond à la bannière
+                </li>
+                <li class="implemented">
+                    <strong>4 styles de bannière</strong><br>
+                    Moderne, Classique, Minimal, Corporate
+                </li>
+                <li class="implemented">
+                    <strong>Hauteur ajustable</strong><br>
+                    Slider pour ajuster la hauteur de 20mm à 80mm
+                </li>
+                <li class="implemented">
+                    <strong>Couleur personnalisable</strong><br>
+                    Sélecteur de couleur pour personnaliser l'apparence
+                </li>
+                <li class="implemented">
+                    <strong>Informations complètes</strong><br>
+                    Logo entreprise, nom recruteur, contact, message personnalisé
+                </li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h2>🎨 Aperçu des Styles de Bannière</h2>
+            
+            <h3>Style Moderne (Dégradé)</h3>
+            <div class="demo-banner" style="background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%);">
+                <div style="width: 60px; height: 60px; background: rgba(255,255,255,0.9); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #3B82F6;">LOGO</div>
+                <div class="banner-info">
+                    <h3>TechCorp Solutions</h3>
+                    <p>Contact: Sophie Martin</p>
+                    <p>sophie.martin@techcorp.com</p>
+                    <p style="font-style: italic;">Rejoignez notre équipe dynamique !</p>
+                </div>
+            </div>
+
+            <h3>Style Classique (Couleur unie)</h3>
+            <div class="demo-banner" style="background-color: #3B82F6;">
+                <div style="width: 60px; height: 60px; background: rgba(255,255,255,0.9); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #3B82F6;">LOGO</div>
+                <div class="banner-info">
+                    <h3>TechCorp Solutions</h3>
+                    <p>Contact: Sophie Martin</p>
+                    <p>sophie.martin@techcorp.com</p>
+                </div>
+            </div>
+
+            <h3>Style Minimal (Bordure)</h3>
+            <div class="demo-banner" style="background-color: #f8f9fa; border: 3px solid #3B82F6; color: #333;">
+                <div style="width: 60px; height: 60px; background: rgba(255,255,255,0.9); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #3B82F6;">LOGO</div>
+                <div class="banner-info">
+                    <h3 style="color: #333;">TechCorp Solutions</h3>
+                    <p style="color: #666;">Contact: Sophie Martin</p>
+                    <p style="color: #666;">sophie.martin@techcorp.com</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🧪 Instructions de Test</h2>
+            <div class="test-steps">
+                <ol>
+                    <li><strong>Ouvrir l'application :</strong> <a href="http://localhost:8000" class="btn" target="_blank">Ouvrir CV Creator</a></li>
+                    <li><strong>Charger les données de test :</strong> Cliquer sur "📋 Charger données de démonstration"</li>
+                    <li><strong>Aller à l'onglet Recrutement :</strong> Naviguer vers la section "Informations Recrutement"</li>
+                    <li><strong>Activer la bannière :</strong> Cocher "Afficher la bannière de recrutement dans le CV"</li>
+                    <li><strong>Tester les paramètres :</strong>
+                        <ul>
+                            <li>Modifier le style de bannière</li>
+                            <li>Changer la couleur</li>
+                            <li>Ajuster la hauteur avec le slider</li>
+                            <li>Ajouter une image de fond</li>
+                            <li>Modifier le message personnalisé</li>
+                        </ul>
+                    </li>
+                    <li><strong>Tester le drag & drop :</strong> Déplacer la bannière dans l'aperçu</li>
+                    <li><strong>Tester les layouts :</strong> Changer le type de mise en page (1 colonne, 2 colonnes, sidebar)</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>📋 Checklist de Validation</h2>
+            <ul class="feature-list">
+                <li>☐ La checkbox active/désactive la bannière</li>
+                <li>☐ Les contrôles apparaissent quand la bannière est activée</li>
+                <li>☐ La bannière s'affiche dans l'aperçu</li>
+                <li>☐ Le drag & drop fonctionne</li>
+                <li>☐ La bannière garde sa taille en layout colonnes</li>
+                <li>☐ Les 4 styles de bannière fonctionnent</li>
+                <li>☐ Le slider de hauteur fonctionne</li>
+                <li>☐ Le sélecteur de couleur fonctionne</li>
+                <li>☐ L'image de fond s'affiche</li>
+                <li>☐ Le logo de l'entreprise s'affiche</li>
+                <li>☐ Toutes les informations s'affichent correctement</li>
+                <li>☐ Les modifications se répercutent en temps réel</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h2>🎯 Cas de Test Spécifiques</h2>
+            
+            <h3>Test 1: Activation/Désactivation</h3>
+            <p>1. Décocher la case → La bannière doit disparaître de l'aperçu</p>
+            <p>2. Recocher la case → La bannière doit réapparaître</p>
+            
+            <h3>Test 2: Layouts</h3>
+            <p>1. Activer la bannière en layout 1 colonne</p>
+            <p>2. Passer en layout 2 colonnes → La bannière doit prendre toute la largeur</p>
+            <p>3. Passer en layout sidebar → La bannière doit rester pleine largeur</p>
+            
+            <h3>Test 3: Styles</h3>
+            <p>1. Tester chaque style de bannière</p>
+            <p>2. Vérifier que les couleurs s'appliquent correctement</p>
+            <p>3. Tester avec et sans image de fond</p>
+            
+            <h3>Test 4: Drag & Drop</h3>
+            <p>1. Déplacer la bannière vers le bas du CV</p>
+            <p>2. Déplacer entre les pages (si pagination active)</p>
+            <p>3. Vérifier que la position est sauvegardée</p>
+        </div>
+
+        <div class="test-section">
+            <h2>🔧 URLs de Test pour Images</h2>
+            <p><strong>Logo d'entreprise :</strong></p>
+            <code>https://via.placeholder.com/120x60/3B82F6/FFFFFF?text=TechCorp</code>
+            
+            <p><strong>Image de fond bannière :</strong></p>
+            <code>https://via.placeholder.com/800x200/E5E7EB/6B7280?text=Nous+Recrutons</code>
+            
+            <p><strong>Alternative image de fond :</strong></p>
+            <code>https://via.placeholder.com/800x200/1E40AF/FFFFFF?text=Join+Our+Team</code>
+        </div>
+    </div>
+
+    <script>
+        // Vérifier que le serveur est accessible
+        fetch('http://localhost:8000')
+            .then(response => {
+                if (response.ok) {
+                    console.log('✅ Serveur CV Creator accessible');
+                } else {
+                    console.log('❌ Problème d\'accès au serveur');
+                }
+            })
+            .catch(error => {
+                console.log('❌ Serveur non accessible:', error);
+                alert('Le serveur CV Creator n\'est pas accessible. Assurez-vous qu\'il est démarré sur le port 8000.');
+            });
+    </script>
+</body>
+</html>

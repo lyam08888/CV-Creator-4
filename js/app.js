@@ -226,6 +226,9 @@ function initFormHandlers() {
   document.getElementById('btnToggleEdit').addEventListener('click', toggleEditMode);
   document.getElementById('btnSaveApiKey').addEventListener('click', saveApiKey);
   
+  // Gestionnaires pour la bannière de recrutement
+  initRecruitmentBannerHandlers();
+  
   // Écouter les changements dans le formulaire pour mettre à jour l'aperçu
   document.getElementById('cv-form').addEventListener('input', debounce(generatePreview, 500));
 }
@@ -1101,6 +1104,18 @@ function getFormData() {
     if (project.name) data.projects.push(project);
   });
   
+  // Données de la bannière de recrutement
+  data.showRecruitmentBanner = document.getElementById('showRecruitmentBanner')?.checked || false;
+  data.recruiterName = document.getElementById('recruiterName')?.value || '';
+  data.recruiterContact = document.getElementById('recruiterContact')?.value || '';
+  data.companyName = document.getElementById('companyName')?.value || '';
+  data.companyLogoUrl = document.getElementById('companyLogoUrl')?.value || '';
+  data.bannerImageUrl = document.getElementById('bannerImageUrl')?.value || '';
+  data.bannerMessage = document.getElementById('bannerMessage')?.value || '';
+  data.bannerStyle = document.getElementById('bannerStyle')?.value || 'modern';
+  data.bannerColor = document.getElementById('bannerColor')?.value || '#3B82F6';
+  data.bannerHeight = document.getElementById('bannerHeight')?.value || '50';
+  
   return data;
 }
 
@@ -1654,4 +1669,72 @@ function exportToPDF() {
     console.error('Erreur lors de l\'export PDF:', error);
     alert('Erreur lors de l\'export PDF. Veuillez réessayer.');
   });
+}
+
+// GESTIONNAIRES POUR LA BANNIÈRE DE RECRUTEMENT
+function initRecruitmentBannerHandlers() {
+  console.log('Initializing recruitment banner handlers...');
+  
+  // Gestionnaire pour la checkbox d'affichage de la bannière
+  const showBannerCheckbox = document.getElementById('showRecruitmentBanner');
+  const bannerControls = document.getElementById('recruitmentBannerControls');
+  
+  if (showBannerCheckbox && bannerControls) {
+    showBannerCheckbox.addEventListener('change', function() {
+      if (this.checked) {
+        bannerControls.style.display = 'block';
+        // Animation d'apparition
+        bannerControls.style.opacity = '0';
+        bannerControls.style.transform = 'translateY(-10px)';
+        setTimeout(() => {
+          bannerControls.style.transition = 'all 0.3s ease';
+          bannerControls.style.opacity = '1';
+          bannerControls.style.transform = 'translateY(0)';
+        }, 10);
+      } else {
+        bannerControls.style.display = 'none';
+      }
+      // Régénérer l'aperçu
+      generatePreview();
+    });
+  }
+  
+  // Gestionnaire pour le slider de hauteur
+  const bannerHeightSlider = document.getElementById('bannerHeight');
+  const bannerHeightValue = document.querySelector('.range-value');
+  
+  if (bannerHeightSlider && bannerHeightValue) {
+    bannerHeightSlider.addEventListener('input', function() {
+      bannerHeightValue.textContent = this.value + 'mm';
+      // Régénérer l'aperçu en temps réel
+      generatePreview();
+    });
+  }
+  
+  // Gestionnaires pour les changements de style et couleur
+  const bannerStyleSelect = document.getElementById('bannerStyle');
+  const bannerColorInput = document.getElementById('bannerColor');
+  
+  if (bannerStyleSelect) {
+    bannerStyleSelect.addEventListener('change', generatePreview);
+  }
+  
+  if (bannerColorInput) {
+    bannerColorInput.addEventListener('input', generatePreview);
+  }
+  
+  // Gestionnaires pour les champs de texte de la bannière
+  const bannerTextFields = [
+    'recruiterName', 'recruiterContact', 'companyName', 
+    'companyLogoUrl', 'bannerImageUrl', 'bannerMessage'
+  ];
+  
+  bannerTextFields.forEach(fieldId => {
+    const field = document.getElementById(fieldId);
+    if (field) {
+      field.addEventListener('input', debounce(generatePreview, 300));
+    }
+  });
+  
+  console.log('Recruitment banner handlers initialized');
 }

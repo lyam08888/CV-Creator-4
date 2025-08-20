@@ -170,26 +170,76 @@
         <!-- INFORMATIONS RECRUTEMENT -->
         <section id="recruitment" class="form-section">
           <h2>Informations Recrutement</h2>
-          <div class="form-grid">
+          
+          <!-- Contrôle d'affichage de la bannière -->
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="showRecruitmentBanner" name="showRecruitmentBanner">
+              <span class="checkmark"></span>
+              Afficher la bannière de recrutement dans le CV
+            </label>
+            <small class="form-help">La bannière apparaîtra en haut du CV et pourra être déplacée par drag & drop</small>
+          </div>
+
+          <div id="recruitmentBannerControls" class="recruitment-controls" style="display: none;">
+            <h3>Configuration de la bannière</h3>
+            
+            <!-- Image de la bannière -->
             <div class="form-group">
-              <label for="recruiterName">Nom du Recruteur</label>
-              <input type="text" id="recruiterName" name="recruiterName" class="input">
+              <label for="bannerImageUrl">Image de fond de la bannière (optionnel)</label>
+              <input type="url" id="bannerImageUrl" name="bannerImageUrl" class="input" placeholder="https://exemple.com/image-banniere.jpg">
+              <small class="form-help">Image qui s'affichera en arrière-plan de la bannière</small>
             </div>
-            <div class="form-group">
-              <label for="recruiterContact">Contact Recruteur</label>
-              <input type="text" id="recruiterContact" name="recruiterContact" class="input">
+
+            <!-- Informations recruteur -->
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="recruiterName">Nom du Recruteur</label>
+                <input type="text" id="recruiterName" name="recruiterName" class="input" placeholder="Marie Dupont">
+              </div>
+              <div class="form-group">
+                <label for="recruiterContact">Contact Recruteur</label>
+                <input type="text" id="recruiterContact" name="recruiterContact" class="input" placeholder="marie.dupont@entreprise.com">
+              </div>
+              <div class="form-group">
+                <label for="companyName">Nom de l'Entreprise</label>
+                <input type="text" id="companyName" name="companyName" class="input" placeholder="TechCorp Solutions">
+              </div>
+              <div class="form-group">
+                <label for="companyLogoUrl">URL du Logo de l'Entreprise</label>
+                <input type="url" id="companyLogoUrl" name="companyLogoUrl" class="input" placeholder="https://exemple.com/logo.png">
+              </div>
             </div>
+
+            <!-- Message personnalisé -->
             <div class="form-group">
-              <label for="companyName">Nom de l'Entreprise</label>
-              <input type="text" id="companyName" name="companyName" class="input">
+              <label for="bannerMessage">Message personnalisé (optionnel)</label>
+              <textarea id="bannerMessage" name="bannerMessage" class="textarea" rows="3" placeholder="Candidature pour le poste de Développeur Full Stack..."></textarea>
+              <small class="form-help">Message qui s'affichera dans la bannière</small>
             </div>
-            <div class="form-group">
-              <label for="companyLogoUrl">URL du Logo de l'Entreprise</label>
-              <input type="url" id="companyLogoUrl" name="companyLogoUrl" class="input">
+
+            <!-- Style de la bannière -->
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="bannerStyle">Style de la bannière</label>
+                <select id="bannerStyle" name="bannerStyle" class="input">
+                  <option value="modern">Moderne (dégradé)</option>
+                  <option value="classic">Classique (couleur unie)</option>
+                  <option value="minimal">Minimal (bordure)</option>
+                  <option value="corporate">Corporate (professionnel)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="bannerColor">Couleur principale</label>
+                <input type="color" id="bannerColor" name="bannerColor" class="input" value="#3B82F6">
+              </div>
             </div>
+
+            <!-- Position et taille -->
             <div class="form-group">
-              <label for="jobDescription">Description du poste visé</label>
-              <textarea id="jobDescription" name="jobDescription" class="textarea" rows="4"></textarea>
+              <label for="bannerHeight">Hauteur de la bannière (mm)</label>
+              <input type="range" id="bannerHeight" name="bannerHeight" class="range-input" min="20" max="80" value="50">
+              <span class="range-value">50mm</span>
             </div>
           </div>
         </section>
@@ -407,6 +457,7 @@
 
   <script type="module" src="./js/app.js"></script>
   <script type="module" src="./demo-data.js"></script>
+  <script src="./verification-banniere.js"></script>
   <script>
     // Gestionnaire pour le bouton de démonstration
     document.addEventListener('DOMContentLoaded', function() {

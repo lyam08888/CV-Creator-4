@@ -21,19 +21,16 @@ function generateSections(formData) {
   const sections = [];
 
   // Bannière de recrutement
-  if (formData.recruiterName || formData.companyName || formData.companyLogoUrl) {
+  if (formData.showRecruitmentBanner && (formData.recruiterName || formData.companyName || formData.companyLogoUrl || formData.bannerMessage)) {
+    const bannerStyle = formData.bannerStyle || 'modern';
+    const bannerColor = formData.bannerColor || '#3B82F6';
+    const bannerHeight = formData.bannerHeight || 50;
+    const bannerImageUrl = formData.bannerImageUrl || '';
+    
     sections.push({
       type: 'recruitment-banner',
-      content: `
-        <div class="cv-recruitment-banner">
-          ${formData.companyLogoUrl ? `<img src="${formData.companyLogoUrl}" alt="${formData.companyName || 'Company'} Logo" class="company-logo">` : ''}
-          <div class="recruiter-info">
-            <h3>${formData.companyName || 'Entreprise de Recrutement'}</h3>
-            <p>Contact: ${formData.recruiterName || 'Recruteur'} (${formData.recruiterContact || 'Non spécifié'})</p>
-          </div>
-        </div>
-      `,
-      height: 80 // estimation en mm
+      content: generateRecruitmentBanner(formData, bannerStyle, bannerColor, bannerHeight, bannerImageUrl),
+      height: parseInt(bannerHeight) + 10 // hauteur + marge
     });
   }
 
@@ -196,6 +193,53 @@ function createPageHTML(sections, pageNumber) {
       <div class="page-number">Page ${pageNumber}</div>
     </div>
   `;
+}
+
+function generateRecruitmentBanner(formData, bannerStyle, bannerColor, bannerHeight, bannerImageUrl) {
+  const companyName = formData.companyName || '';
+  const recruiterName = formData.recruiterName || '';
+  const recruiterContact = formData.recruiterContact || '';
+  const companyLogoUrl = formData.companyLogoUrl || '';
+  const bannerMessage = formData.bannerMessage || '';
+  
+  // Styles CSS inline pour la bannière
+  const bannerStyles = `
+    --banner-height: ${bannerHeight}mm;
+    --banner-color: ${bannerColor};
+    --banner-color-secondary: ${adjustColor(bannerColor, -20)};
+    ${bannerImageUrl ? `background-image: url('${bannerImageUrl}');` : ''}
+  `;
+  
+  return `
+    <div class="cv-section cv-recruitment-banner banner-${bannerStyle} sortable" 
+         data-section="recruitment-banner" 
+         style="${bannerStyles}">
+      <div class="drag-handle">⋮⋮</div>
+      <div class="banner-content">
+        ${companyLogoUrl ? `<img src="${companyLogoUrl}" alt="${companyName} Logo" class="banner-logo">` : ''}
+        <div class="banner-info">
+          ${companyName ? `<h3 class="banner-company">${companyName}</h3>` : ''}
+          ${recruiterName ? `<p class="banner-recruiter">Contact: ${recruiterName}</p>` : ''}
+          ${recruiterContact ? `<p class="banner-contact">${recruiterContact}</p>` : ''}
+          ${bannerMessage ? `<p class="banner-message">${bannerMessage}</p>` : ''}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function adjustColor(color, amount) {
+  // Fonction utilitaire pour ajuster la luminosité d'une couleur
+  const usePound = color[0] === '#';
+  const col = usePound ? color.slice(1) : color;
+  const num = parseInt(col, 16);
+  let r = (num >> 16) + amount;
+  let g = (num >> 8 & 0x00FF) + amount;
+  let b = (num & 0x0000FF) + amount;
+  r = r > 255 ? 255 : r < 0 ? 0 : r;
+  g = g > 255 ? 255 : g < 0 ? 0 : g;
+  b = b > 255 ? 255 : b < 0 ? 0 : b;
+  return (usePound ? '#' : '') + (r << 16 | g << 8 | b).toString(16).padStart(6, '0');
 }
 
 function applyCustomizationToPreview() {

@@ -147,7 +147,19 @@ const demoData = {
       startDate: "2022-01",
       endDate: "2022-05"
     }
-  ]
+  ],
+  
+  // Données de la bannière de recrutement
+  showRecruitmentBanner: true,
+  recruiterName: "Sophie Martin",
+  recruiterContact: "sophie.martin@techcorp.com | +33 1 23 45 67 89",
+  companyName: "TechCorp Solutions",
+  companyLogoUrl: "https://via.placeholder.com/120x60/3B82F6/FFFFFF?text=TechCorp",
+  bannerImageUrl: "https://via.placeholder.com/800x200/E5E7EB/6B7280?text=Nous+Recrutons",
+  bannerMessage: "Rejoignez notre équipe dynamique ! Nous recherchons un(e) Développeur(se) Full Stack passionné(e) pour contribuer à nos projets innovants.",
+  bannerStyle: "modern",
+  bannerColor: "#3B82F6",
+  bannerHeight: "60"
 };
 
 // Fonction pour charger les données de démonstration
@@ -164,6 +176,27 @@ function loadDemoData() {
   if (document.getElementById('website')) document.getElementById('website').value = demoData.website;
   if (document.getElementById('github')) document.getElementById('github').value = demoData.github;
   if (document.getElementById('summary-text')) document.getElementById('summary-text').value = demoData.summary;
+  
+  // Remplir les données de la bannière de recrutement
+  if (document.getElementById('showRecruitmentBanner')) {
+    document.getElementById('showRecruitmentBanner').checked = demoData.showRecruitmentBanner;
+    // Déclencher l'événement change pour afficher les contrôles
+    document.getElementById('showRecruitmentBanner').dispatchEvent(new Event('change'));
+  }
+  if (document.getElementById('recruiterName')) document.getElementById('recruiterName').value = demoData.recruiterName;
+  if (document.getElementById('recruiterContact')) document.getElementById('recruiterContact').value = demoData.recruiterContact;
+  if (document.getElementById('companyName')) document.getElementById('companyName').value = demoData.companyName;
+  if (document.getElementById('companyLogoUrl')) document.getElementById('companyLogoUrl').value = demoData.companyLogoUrl;
+  if (document.getElementById('bannerImageUrl')) document.getElementById('bannerImageUrl').value = demoData.bannerImageUrl;
+  if (document.getElementById('bannerMessage')) document.getElementById('bannerMessage').value = demoData.bannerMessage;
+  if (document.getElementById('bannerStyle')) document.getElementById('bannerStyle').value = demoData.bannerStyle;
+  if (document.getElementById('bannerColor')) document.getElementById('bannerColor').value = demoData.bannerColor;
+  if (document.getElementById('bannerHeight')) {
+    document.getElementById('bannerHeight').value = demoData.bannerHeight;
+    // Mettre à jour l'affichage de la valeur
+    const rangeValue = document.querySelector('.range-value');
+    if (rangeValue) rangeValue.textContent = demoData.bannerHeight + 'mm';
+  }
   
   console.log('Données de démonstration chargées avec succès !');
   
