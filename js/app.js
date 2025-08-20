@@ -601,25 +601,32 @@ function generatePreview() {
     </div>
   `;
   
-  // Réinitialiser le drag & drop après la génération
+  // Initialiser le drag & drop après la génération
+  initializeDragAndDrop();
+  
+  // Réinitialiser le mode édition si actif
   if (editMode) {
-    initDragAndDrop();
+    const editableElements = document.querySelectorAll('[contenteditable]');
+    editableElements.forEach(element => {
+      element.setAttribute('contenteditable', 'true');
+    });
   }
 }
 
 function generateHeader(data) {
   return `
-    <div class="cv-section cv-header" data-section="header">
+    <div class="cv-section cv-header sortable" data-section="header">
+      <div class="drag-handle">⋮⋮</div>
       <div class="cv-header-content">
-        <h1 class="cv-name">${data.fullName || 'Votre Nom'}</h1>
-        <h2 class="cv-title">${data.jobTitle || 'Votre Titre'}</h2>
+        <h1 class="cv-name" contenteditable="false">${data.fullName || 'Votre Nom'}</h1>
+        <h2 class="cv-title" contenteditable="false">${data.jobTitle || 'Votre Titre'}</h2>
         <div class="cv-contact">
-          ${data.email ? `<span class="cv-contact-item">📧 ${data.email}</span>` : ''}
-          ${data.phone ? `<span class="cv-contact-item">📱 ${data.phone}</span>` : ''}
-          ${data.address ? `<span class="cv-contact-item">📍 ${data.address}</span>` : ''}
-          ${data.linkedin ? `<span class="cv-contact-item">💼 <a href="${data.linkedin}" target="_blank">LinkedIn</a></span>` : ''}
-          ${data.website ? `<span class="cv-contact-item">🌐 <a href="${data.website}" target="_blank">Portfolio</a></span>` : ''}
-          ${data.github ? `<span class="cv-contact-item">💻 <a href="${data.github}" target="_blank">GitHub</a></span>` : ''}
+          ${data.email ? `<span class="cv-contact-item" contenteditable="false">📧 ${data.email}</span>` : ''}
+          ${data.phone ? `<span class="cv-contact-item" contenteditable="false">📱 ${data.phone}</span>` : ''}
+          ${data.address ? `<span class="cv-contact-item" contenteditable="false">📍 ${data.address}</span>` : ''}
+          ${data.linkedin ? `<span class="cv-contact-item" contenteditable="false">💼 <a href="${data.linkedin}" target="_blank">LinkedIn</a></span>` : ''}
+          ${data.website ? `<span class="cv-contact-item" contenteditable="false">🌐 <a href="${data.website}" target="_blank">Portfolio</a></span>` : ''}
+          ${data.github ? `<span class="cv-contact-item" contenteditable="false">💻 <a href="${data.github}" target="_blank">GitHub</a></span>` : ''}
         </div>
       </div>
     </div>
@@ -630,9 +637,10 @@ function generateSummary(data) {
   if (!data.summary) return '';
   
   return `
-    <div class="cv-section cv-summary" data-section="summary">
-      <h3 class="cv-section-title">Résumé Professionnel</h3>
-      <p class="cv-summary-text">${data.summary}</p>
+    <div class="cv-section cv-summary sortable" data-section="summary">
+      <div class="drag-handle">⋮⋮</div>
+      <h3 class="cv-section-title" contenteditable="false">Résumé Professionnel</h3>
+      <p class="cv-summary-text" contenteditable="false">${data.summary}</p>
     </div>
   `;
 }
@@ -836,27 +844,103 @@ function initDragAndDrop() {
 function toggleEditMode() {
   editMode = !editMode;
   const button = document.getElementById('btnToggleEdit');
-  const cvSections = document.querySelectorAll('.cv-section');
+  const cvPreview = document.getElementById('cv-preview');
+  const editableElements = document.querySelectorAll('[contenteditable]');
   
   if (editMode) {
     button.textContent = 'Mode Lecture';
     button.classList.add('active');
-    cvSections.forEach(section => {
-      section.classList.add('editable');
-      section.title = 'Glissez pour réorganiser';
+    cvPreview.classList.add('edit-mode');
+    
+    // Activer l'édition directe
+    editableElements.forEach(element => {
+      element.setAttribute('contenteditable', 'true');
     });
+    
+    // Ajouter les gestionnaires d'événements pour sauvegarder les modifications
+    editableElements.forEach(element => {
+      element.addEventListener('blur', saveDirectEdit);
+      element.addEventListener('keydown', handleEditKeydown);
+    });
+    
     initDragAndDrop();
   } else {
     button.textContent = 'Mode Édition';
     button.classList.remove('active');
-    cvSections.forEach(section => {
-      section.classList.remove('editable');
-      section.title = '';
+    cvPreview.classList.remove('edit-mode');
+    
+    // Désactiver l'édition directe
+    editableElements.forEach(element => {
+      element.setAttribute('contenteditable', 'false');
+      element.removeEventListener('blur', saveDirectEdit);
+      element.removeEventListener('keydown', handleEditKeydown);
     });
+    
     // Détruire les instances de drag & drop
     sortableInstances.forEach(instance => instance.destroy());
     sortableInstances = [];
   }
+}
+
+function saveDirectEdit(event) {
+  // Sauvegarder les modifications dans le localStorage ou synchroniser avec le formulaire
+  const element = event.target;
+  const section = element.closest('[data-section]');
+  if (section) {
+    const sectionType = section.dataset.section;
+    const content = element.innerHTML;
+    localStorage.setItem(`cv-edit-${sectionType}-${element.tagName.toLowerCase()}`, content);
+  }
+}
+
+function handleEditKeydown(event) {
+  // Gérer les raccourcis clavier en mode édition
+  if (event.ctrlKey || event.metaKey) {
+    switch(event.key) {
+      case 's':
+        event.preventDefault();
+        saveDirectEdit(event);
+        break;
+      case 'z':
+        if (event.shiftKey) {
+          document.execCommand('redo');
+        } else {
+          document.execCommand('undo');
+        }
+        event.preventDefault();
+        break;
+    }
+  }
+}
+
+function initializeDragAndDrop() {
+  const cvContainer = document.getElementById('cv-container');
+  
+  if (window.Sortable && cvContainer) {
+    // Détruire l'instance existante si elle existe
+    if (cvContainer.sortableInstance) {
+      cvContainer.sortableInstance.destroy();
+    }
+    
+    // Créer une nouvelle instance Sortable
+    cvContainer.sortableInstance = Sortable.create(cvContainer, {
+      animation: 150,
+      handle: '.drag-handle',
+      ghostClass: 'dragging',
+      chosenClass: 'drag-over',
+      onEnd: function(evt) {
+        // Sauvegarder l'ordre des sections après le drag & drop
+        saveSectionOrder();
+      }
+    });
+  }
+}
+
+function saveSectionOrder() {
+  const sections = document.querySelectorAll('.cv-section[data-section]');
+  const order = Array.from(sections).map(section => section.dataset.section);
+  localStorage.setItem('cv-section-order', JSON.stringify(order));
+  console.log('Section order saved:', order);
 }
 
 // RÉCUPÉRATION DES DONNÉES DU FORMULAIRE

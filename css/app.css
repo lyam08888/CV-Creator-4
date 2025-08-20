@@ -234,24 +234,29 @@ label {
 
 .preview-panel {
   flex-shrink: 0;
-  width: 500px;
+  width: 600px;
   padding: 30px;
   background-color: var(--bg-color);
   overflow-y: auto;
-  box-shadow: -8px 0 15px rgba(0, 0, 0, 0.2); /* Shadow on left side */
+  box-shadow: -8px 0 15px rgba(0, 0, 0, 0.2);
   z-index: 5;
 }
 
 .cv-preview {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 0 auto;
+  padding: 20mm;
   background-color: white;
   color: #1E293B;
-  padding: 30px;
-  border-radius: 12px;
+  border-radius: 8px;
   box-shadow: var(--shadow-medium);
-  min-height: calc(100% - 60px);
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 20px;
+  transform: scale(0.6);
+  transform-origin: top center;
 }
 
 .cv-preview .cv-header {
@@ -1024,6 +1029,180 @@ label {
 
 .cv-project-url a:hover {
   text-decoration: underline;
+}
+
+/* ===== FORMAT A4 ET IMPRESSION ===== */
+@media print {
+  body {
+    margin: 0;
+    padding: 0;
+    background: white !important;
+  }
+  
+  .app-container {
+    display: block !important;
+  }
+  
+  .sidebar,
+  .main-content {
+    display: none !important;
+  }
+  
+  .preview-panel {
+    width: 100% !important;
+    padding: 0 !important;
+    background: white !important;
+    box-shadow: none !important;
+  }
+  
+  .cv-preview {
+    width: 210mm !important;
+    min-height: 297mm !important;
+    margin: 0 auto !important;
+    padding: 20mm !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    page-break-after: always;
+  }
+  
+  .cv-page {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 20mm;
+    margin: 0 auto;
+    background: white;
+    page-break-after: always;
+    box-sizing: border-box;
+  }
+  
+  .cv-page:last-child {
+    page-break-after: avoid;
+  }
+}
+
+/* Format A4 pour l'aperçu à l'écran - styles déjà définis plus haut */
+
+/* ===== DRAG & DROP ET ÉDITION DIRECTE ===== */
+.cv-section.sortable {
+  position: relative;
+}
+
+.cv-section.sortable:hover {
+  background-color: rgba(139, 92, 246, 0.05);
+  border-radius: 8px;
+}
+
+.cv-section.dragging {
+  opacity: 0.5;
+  transform: rotate(2deg);
+}
+
+.cv-section.drag-over {
+  border: 2px dashed var(--primary-color);
+  background-color: rgba(139, 92, 246, 0.1);
+}
+
+.drag-handle {
+  position: absolute;
+  left: -30px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  background: var(--primary-color);
+  border-radius: 50%;
+  cursor: grab;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 12px;
+}
+
+.cv-section:hover .drag-handle {
+  display: flex;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+/* Mode édition */
+.edit-mode .cv-preview {
+  border: 2px dashed var(--primary-color);
+}
+
+.edit-mode [contenteditable="true"] {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+  border-radius: 4px;
+  padding: 4px;
+  background-color: rgba(139, 92, 246, 0.1);
+  transition: all 0.2s ease;
+}
+
+.edit-mode [contenteditable="true"]:focus {
+  background-color: rgba(139, 92, 246, 0.2);
+  outline-color: var(--primary-color-dark);
+}
+
+.edit-mode [contenteditable="true"]:hover {
+  background-color: rgba(139, 92, 246, 0.15);
+}
+
+.edit-toolbar {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: var(--shadow-medium);
+  padding: 10px;
+  display: none;
+  gap: 10px;
+  z-index: 1000;
+}
+
+.edit-mode .edit-toolbar {
+  display: flex;
+}
+
+.edit-toolbar button {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+
+.edit-toolbar button:hover {
+  background: var(--primary-color-dark);
+}
+
+/* Gestion des pages multiples */
+.cv-page {
+  width: 210mm;
+  min-height: 297mm;
+  padding: 20mm;
+  margin: 20px auto;
+  background: white;
+  box-shadow: var(--shadow-medium);
+  border-radius: 8px;
+  box-sizing: border-box;
+  transform: scale(0.6);
+  transform-origin: top center;
+}
+
+.cv-page:first-child {
+  margin-top: 0;
+}
+
+.page-break {
+  page-break-before: always;
+  break-before: page;
 }
 
 /* ===== RESPONSIVE ===== */

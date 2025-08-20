@@ -225,6 +225,15 @@
     </aside>
   </div>
 
+  <!-- Barre d'outils d'édition -->
+  <div class="edit-toolbar">
+    <button onclick="document.execCommand('bold')">Gras</button>
+    <button onclick="document.execCommand('italic')">Italique</button>
+    <button onclick="document.execCommand('underline')">Souligné</button>
+    <button onclick="addNewPage()">+ Page</button>
+    <button onclick="toggleEditMode()">Quitter</button>
+  </div>
+
   <script src="./js/app.js"></script>
 </body>
 </html>
