@@ -137,10 +137,12 @@ document.addEventListener('DOMContentLoaded', function() {
   initNavigation();
   initFormHandlers();
   initPreview();
-  initCustomization();
   loadSavedApiKey();
   populateExampleData();
   generatePreview();
+  
+  // Initialiser la personnalisation de manière asynchrone
+  initCustomizationAsync();
   
   // Écouter l'événement de régénération depuis la personnalisation
   window.addEventListener('regeneratePreview', () => {
@@ -184,13 +186,18 @@ function initPreview() {
   console.log('Preview initialized');
 }
 
-// FONCTION POUR PEUPLER AVEC LES DONNÉES D'EXEMPLE
-function populateExampleData() {
-  console.log('Populating example data...');
-  
-  // Ne pas charger automatiquement les données d'exemple
-  // L'utilisateur peut les charger via le bouton "Charger Démo"
-  console.log('Example data ready to load on demand');
+// FONCTION POUR INITIALISER LA PERSONNALISATION DE MANIÈRE ASYNCHRONE
+async function initCustomizationAsync() {
+  try {
+    const customizationModule = await import('./customization.js');
+    if (customizationModule.initCustomization) {
+      customizationModule.initCustomization();
+      console.log('Customization module loaded successfully');
+    }
+  } catch (error) {
+    console.warn('Customization module not available:', error);
+    // Continuer sans la personnalisation
+  }
 }
 
 // Charger la clé API sauvegardée
@@ -209,11 +216,21 @@ function initNavigation() {
   const navButtons = document.querySelectorAll('.nav-btn');
   const formSections = document.querySelectorAll('.form-section');
   
-  navButtons.forEach(function(button) {
+  console.log(`Found ${navButtons.length} navigation buttons`);
+  console.log(`Found ${formSections.length} form sections`);
+  
+  if (navButtons.length === 0) {
+    console.error('❌ Aucun bouton de navigation trouvé');
+    return;
+  }
+  
+  navButtons.forEach(function(button, index) {
+    const targetId = button.getAttribute('data-form');
+    console.log(`Setting up button ${index + 1}: ${targetId}`);
+    
     button.addEventListener('click', function(e) {
       e.preventDefault();
-      
-      const targetId = this.getAttribute('data-form');
+      console.log(`Navigation clicked: ${targetId}`);
       
       // Remove active from all buttons
       navButtons.forEach(function(btn) {
@@ -234,6 +251,9 @@ function initNavigation() {
       if (targetSection) {
         targetSection.classList.add('active');
         targetSection.style.display = 'block';
+        console.log(`✓ Section ${targetId} affichée`);
+      } else {
+        console.error(`❌ Section ${targetId} non trouvée`);
       }
     });
   });
@@ -243,39 +263,62 @@ function initNavigation() {
   if (firstSection) {
     firstSection.style.display = 'block';
     firstSection.classList.add('active');
+    console.log('✓ Section personal-info initialisée');
+  } else {
+    console.error('❌ Section personal-info non trouvée');
   }
+  
+  console.log('Navigation initialization completed');
 }
 
 // GESTIONNAIRES DE FORMULAIRES
 function initFormHandlers() {
   console.log('Initializing form handlers...');
   
+  // Fonction utilitaire pour ajouter un listener de manière sécurisée
+  function addSafeListener(id, event, handler) {
+    const element = document.getElementById(id);
+    if (element) {
+      element.addEventListener(event, handler);
+      console.log(`✓ Listener ajouté pour ${id}`);
+    } else {
+      console.warn(`⚠️ Élément ${id} non trouvé`);
+    }
+  }
+  
   // Boutons d'ajout
-  document.getElementById('btnAddExperience').addEventListener('click', addExperience);
-  document.getElementById('btnAddEducation').addEventListener('click', addEducation);
-  document.getElementById('btnAddTechnicalSkill').addEventListener('click', addTechnicalSkill);
-  document.getElementById('btnAddSoftSkill').addEventListener('click', addSoftSkill);
-  document.getElementById('btnAddLanguage').addEventListener('click', addLanguage);
-  document.getElementById('btnAddCertification').addEventListener('click', addCertification);
-  document.getElementById('btnAddProject').addEventListener('click', addProject);
+  addSafeListener('btnAddExperience', 'click', addExperience);
+  addSafeListener('btnAddEducation', 'click', addEducation);
+  addSafeListener('btnAddTechnicalSkill', 'click', addTechnicalSkill);
+  addSafeListener('btnAddSoftSkill', 'click', addSoftSkill);
+  addSafeListener('btnAddLanguage', 'click', addLanguage);
+  addSafeListener('btnAddCertification', 'click', addCertification);
+  addSafeListener('btnAddProject', 'click', addProject);
   
   // Boutons d'action
-  document.getElementById('btnAutoFillAI').addEventListener('click', autoFillWithAI);
-  document.getElementById('btnGenerateSummaryAI').addEventListener('click', generateSummaryAI);
-  document.getElementById('btnSuggestSkillsAI').addEventListener('click', suggestSkillsAI);
-  document.getElementById('btnGenerateIA').addEventListener('click', generateFullCVWithAI);
-  document.getElementById('btnExport').addEventListener('click', exportToPDF);
-  document.getElementById('btnAnalyzeCVAI').addEventListener('click', analyzeCVWithAI);
-  document.getElementById('btnToggleEdit').addEventListener('click', toggleEditMode);
-  document.getElementById('btnSaveApiKey').addEventListener('click', saveApiKey);
-  document.getElementById('btnNewCV').addEventListener('click', createNewCV);
-  document.getElementById('btnResetToDemo').addEventListener('click', loadDemoData);
+  addSafeListener('btnAutoFillAI', 'click', autoFillWithAI);
+  addSafeListener('btnGenerateSummaryAI', 'click', generateSummaryAI);
+  addSafeListener('btnSuggestSkillsAI', 'click', suggestSkillsAI);
+  addSafeListener('btnGenerateIA', 'click', generateFullCVWithAI);
+  addSafeListener('btnExport', 'click', exportToPDF);
+  addSafeListener('btnAnalyzeCVAI', 'click', analyzeCVWithAI);
+  addSafeListener('btnToggleEdit', 'click', toggleEditMode);
+  addSafeListener('btnSaveApiKey', 'click', saveApiKey);
+  addSafeListener('btnNewCV', 'click', createNewCV);
+  addSafeListener('btnResetToDemo', 'click', loadDemoData);
+  addSafeListener('btnLoadDemo', 'click', loadDemoData);
   
   // Gestionnaires pour la bannière de recrutement
   initRecruitmentBannerHandlers();
   
   // Écouter les changements dans le formulaire pour mettre à jour l'aperçu
-  document.getElementById('cv-form').addEventListener('input', debounce(generatePreview, 500));
+  const cvForm = document.getElementById('cv-form');
+  if (cvForm) {
+    cvForm.addEventListener('input', debounce(generatePreview, 500));
+    console.log('✓ Listener ajouté pour cv-form');
+  } else {
+    console.warn('⚠️ Formulaire cv-form non trouvé');
+  }
 }
 
 // FONCTIONS D'AJOUT D'ÉLÉMENTS
@@ -1871,7 +1914,7 @@ function loadDemoData() {
     clearAllFormFields();
     
     // Remplir avec les données d'exemple
-    fillFormWithData(exampleData);
+    populateExampleData();
     
     // Régénérer l'aperçu
     generatePreview();
