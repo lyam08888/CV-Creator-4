@@ -1803,7 +1803,11 @@ function exportToPDF() {
     height: cvPreview.scrollHeight
   }).then(canvas => {
     const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF('p', 'mm', 'a4');
+    const PDFConstructor = window.jspdf?.jsPDF || window.jsPDF;
+    if (!PDFConstructor) {
+      throw new Error('Bibliothèque jsPDF non chargée');
+    }
+    const pdf = new PDFConstructor('p', 'mm', 'a4');
     const imgWidth = 210;
     const pageHeight = 297;
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
