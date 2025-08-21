@@ -1192,8 +1192,11 @@ function getFormData() {
   
   // Données de la bannière de recrutement
   data.showRecruitmentBanner = document.getElementById('showRecruitmentBanner')?.checked || false;
-  data.recruiterName = document.getElementById('recruiterName')?.value || '';
-  data.recruiterContact = document.getElementById('recruiterContact')?.value || '';
+  data.recruiterFirstName = document.getElementById('recruiterFirstName')?.value || '';
+  data.recruiterLastName = document.getElementById('recruiterLastName')?.value || '';
+  data.recruiterPosition = document.getElementById('recruiterPosition')?.value || '';
+  data.recruiterPhone = document.getElementById('recruiterPhone')?.value || '';
+  data.recruiterEmail = document.getElementById('recruiterEmail')?.value || '';
   data.companyName = document.getElementById('companyName')?.value || '';
   data.companyLogoUrl = document.getElementById('companyLogoUrl')?.value || '';
   data.bannerImageUrl = document.getElementById('bannerImageUrl')?.value || '';
@@ -1826,7 +1829,8 @@ function initRecruitmentBannerHandlers() {
   
   // Gestionnaires pour les champs de texte de la bannière
   const bannerTextFields = [
-    'recruiterName', 'recruiterContact', 'companyName', 
+    'recruiterFirstName', 'recruiterLastName', 'recruiterPosition',
+    'recruiterPhone', 'recruiterEmail', 'companyName',
     'companyLogoUrl', 'bannerImageUrl', 'bannerMessage'
   ];
   
@@ -1885,7 +1889,8 @@ function clearAllFormFields() {
   
   // Vider les champs de recrutement
   const recruitmentFields = [
-    'recruiterName', 'recruiterContact', 'companyName', 
+    'recruiterFirstName', 'recruiterLastName', 'recruiterPosition',
+    'recruiterPhone', 'recruiterEmail', 'companyName',
     'companyLogoUrl', 'bannerImageUrl', 'bannerMessage'
   ];
   

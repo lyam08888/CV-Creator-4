@@ -23,8 +23,11 @@
 - **Overlay intelligent** : Assombrit l'image de fond pour améliorer la lisibilité
 
 ### 4. 📝 Contenu Personnalisable
-- **Nom du recruteur** : Champ texte pour identifier le contact
-- **Contact recruteur** : Email, téléphone ou autres informations
+- **Prénom du recruteur** : Champ texte pour le prénom du contact
+- **Nom du recruteur** : Champ texte pour le nom du contact
+- **Poste du recruteur** : Fonction ou titre du recruteur
+- **Téléphone du recruteur** : Numéro de contact direct
+- **Email du recruteur** : Adresse email professionnelle
 - **Nom de l'entreprise** : Affiché en titre principal
 - **Message personnalisé** : Zone de texte libre pour un message d'accroche
 
@@ -109,8 +112,11 @@ document.getElementById('showRecruitmentBanner').checked = true;
 ```javascript
 const bannerData = {
     showRecruitmentBanner: true,
-    recruiterName: "Sophie Martin",
-    recruiterContact: "sophie.martin@entreprise.com",
+    recruiterFirstName: "Sophie",
+    recruiterLastName: "Martin",
+    recruiterPosition: "Responsable RH",
+    recruiterPhone: "+33 1 23 45 67 89",
+    recruiterEmail: "sophie.martin@entreprise.com",
     companyName: "TechCorp Solutions",
     companyLogoUrl: "https://exemple.com/logo.png",
     bannerImageUrl: "https://exemple.com/background.jpg",

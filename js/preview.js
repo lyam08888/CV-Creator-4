@@ -21,7 +21,12 @@ function generateSections(formData) {
   const sections = [];
 
   // Bannière de recrutement
-  if (formData.showRecruitmentBanner && (formData.recruiterName || formData.companyName || formData.companyLogoUrl || formData.bannerMessage)) {
+  if (formData.showRecruitmentBanner && (
+    formData.recruiterFirstName || formData.recruiterLastName ||
+    formData.recruiterPosition || formData.recruiterPhone ||
+    formData.recruiterEmail || formData.companyName ||
+    formData.companyLogoUrl || formData.bannerMessage
+  )) {
     const bannerStyle = formData.bannerStyle || 'modern';
     const bannerColor = formData.bannerColor || '#3B82F6';
     const bannerHeight = formData.bannerHeight || 50;
@@ -197,10 +202,15 @@ function createPageHTML(sections, pageNumber) {
 
 function generateRecruitmentBanner(formData, bannerStyle, bannerColor, bannerHeight, bannerImageUrl) {
   const companyName = formData.companyName || '';
-  const recruiterName = formData.recruiterName || '';
-  const recruiterContact = formData.recruiterContact || '';
+  const recruiterFirstName = formData.recruiterFirstName || '';
+  const recruiterLastName = formData.recruiterLastName || '';
+  const recruiterPosition = formData.recruiterPosition || '';
+  const recruiterPhone = formData.recruiterPhone || '';
+  const recruiterEmail = formData.recruiterEmail || '';
   const companyLogoUrl = formData.companyLogoUrl || '';
   const bannerMessage = formData.bannerMessage || '';
+
+  const recruiterName = [recruiterFirstName, recruiterLastName].filter(Boolean).join(' ');
   
   // Styles CSS inline pour la bannière
   const bannerStyles = `
@@ -220,7 +230,9 @@ function generateRecruitmentBanner(formData, bannerStyle, bannerColor, bannerHei
         <div class="banner-info">
           ${companyName ? `<h3 class="banner-company">${companyName}</h3>` : ''}
           ${recruiterName ? `<p class="banner-recruiter">Contact: ${recruiterName}</p>` : ''}
-          ${recruiterContact ? `<p class="banner-contact">${recruiterContact}</p>` : ''}
+          ${recruiterPosition ? `<p class="banner-position">${recruiterPosition}</p>` : ''}
+          ${recruiterPhone ? `<p class="banner-phone">Tel: ${recruiterPhone}</p>` : ''}
+          ${recruiterEmail ? `<p class="banner-email">${recruiterEmail}</p>` : ''}
           ${bannerMessage ? `<p class="banner-message">${bannerMessage}</p>` : ''}
         </div>
       </div>

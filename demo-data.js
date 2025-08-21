@@ -151,8 +151,11 @@ const demoData = {
   
   // Données de la bannière de recrutement
   showRecruitmentBanner: true,
-  recruiterName: "Sophie Martin",
-  recruiterContact: "sophie.martin@techcorp.com | +33 1 23 45 67 89",
+  recruiterFirstName: "Sophie",
+  recruiterLastName: "Martin",
+  recruiterPosition: "Responsable RH",
+  recruiterPhone: "+33 1 23 45 67 89",
+  recruiterEmail: "sophie.martin@techcorp.com",
   companyName: "TechCorp Solutions",
   companyLogoUrl: "https://via.placeholder.com/120x60/3B82F6/FFFFFF?text=TechCorp",
   bannerImageUrl: "https://via.placeholder.com/800x200/E5E7EB/6B7280?text=Nous+Recrutons",
@@ -183,8 +186,11 @@ function loadDemoData() {
     // Déclencher l'événement change pour afficher les contrôles
     document.getElementById('showRecruitmentBanner').dispatchEvent(new Event('change'));
   }
-  if (document.getElementById('recruiterName')) document.getElementById('recruiterName').value = demoData.recruiterName;
-  if (document.getElementById('recruiterContact')) document.getElementById('recruiterContact').value = demoData.recruiterContact;
+  if (document.getElementById('recruiterFirstName')) document.getElementById('recruiterFirstName').value = demoData.recruiterFirstName;
+  if (document.getElementById('recruiterLastName')) document.getElementById('recruiterLastName').value = demoData.recruiterLastName;
+  if (document.getElementById('recruiterPosition')) document.getElementById('recruiterPosition').value = demoData.recruiterPosition;
+  if (document.getElementById('recruiterPhone')) document.getElementById('recruiterPhone').value = demoData.recruiterPhone;
+  if (document.getElementById('recruiterEmail')) document.getElementById('recruiterEmail').value = demoData.recruiterEmail;
   if (document.getElementById('companyName')) document.getElementById('companyName').value = demoData.companyName;
   if (document.getElementById('companyLogoUrl')) document.getElementById('companyLogoUrl').value = demoData.companyLogoUrl;
   if (document.getElementById('bannerImageUrl')) document.getElementById('bannerImageUrl').value = demoData.bannerImageUrl;
