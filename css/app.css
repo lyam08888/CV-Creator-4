@@ -1685,6 +1685,8 @@ label {
   position: sticky;
   top: 0;
   z-index: 1000;
+  grid-column: 1 / -1;
+  margin-top: calc(-1 * var(--cv-margin-top, 20mm));
 }
 
 /* Styles selon le type de bannière */

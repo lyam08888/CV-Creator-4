@@ -179,6 +179,15 @@ function generateSections(formData) {
     });
   }
 
+  // Si la bannière doit être fixée, la forcer en première position
+  if (formData.fixRecruitmentBanner) {
+    const bannerIndex = sections.findIndex(sec => sec.type === 'recruitment-banner');
+    if (bannerIndex > 0) {
+      const [banner] = sections.splice(bannerIndex, 1);
+      sections.unshift(banner);
+    }
+  }
+
   return sections;
 }
 
