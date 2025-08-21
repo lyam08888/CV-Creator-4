@@ -1,3 +1,5 @@
+import { initDragAndDrop } from './drag.js';
+
 export function generatePreview(formData) {
   const previewContainer = document.getElementById('cv-preview');
   
@@ -11,7 +13,7 @@ export function generatePreview(formData) {
   previewContainer.innerHTML = pages;
   
   // Initialiser le drag & drop après avoir généré le contenu
-  initializeDragAndDrop();
+  initDragAndDrop();
   
   // Appliquer la personnalisation
   applyCustomizationToPreview();
@@ -302,44 +304,6 @@ function applyCustomizationToPreview() {
   }
 }
 
-function initializeDragAndDrop() {
-  const previewPanel = document.getElementById('cv-preview');
-  
-  if (window.Sortable && previewPanel) {
-    // Détruire les instances existantes
-    if (previewPanel.sortableInstances) {
-      previewPanel.sortableInstances.forEach(instance => instance.destroy());
-    }
-    previewPanel.sortableInstances = [];
-    
-    // Créer une instance Sortable pour chaque page
-    const pages = previewPanel.querySelectorAll('.cv-page');
-    pages.forEach(page => {
-      const sortableInstance = Sortable.create(page, {
-        group: 'cv-sections', // Permet le drag & drop entre pages
-        animation: 150,
-        handle: '.drag-handle',
-        ghostClass: 'dragging',
-        chosenClass: 'drag-over',
-        onEnd: function(evt) {
-          // Sauvegarder l'ordre des sections après le drag & drop
-          saveSectionOrder();
-          // Régénérer l'aperçu pour recalculer la pagination
-          setTimeout(() => {
-            window.dispatchEvent(new CustomEvent('regeneratePreview'));
-          }, 100);
-        }
-      });
-      previewPanel.sortableInstances.push(sortableInstance);
-    });
-  }
-}
-
-function saveSectionOrder() {
-  const sections = document.querySelectorAll('.cv-section[data-section]');
-  const order = Array.from(sections).map(section => section.dataset.section);
-  localStorage.setItem('cv-section-order', JSON.stringify(order));
-}
 
 // Fonction pour ajouter une nouvelle page
 window.addNewPage = function() {
@@ -354,5 +318,5 @@ window.addNewPage = function() {
     </div>
   `;
   previewPanel.appendChild(newPage);
-  initializeDragAndDrop();
+  initDragAndDrop();
 };
