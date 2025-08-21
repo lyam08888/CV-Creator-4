@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Sortable.js - CV Creator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .warning { background: #fff3cd; color: #856404; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        .test-button {
+            background: #8B5CF6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .sortable-demo {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .demo-item {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            cursor: move;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Sortable.js - CV Creator</h1>
+    
+    <div class="test-section">
+        <h2>📊 État du chargement</h2>
+        <div id="loading-status"></div>
+        <button class="test-button" onclick="checkSortable()">🔍 Vérifier Sortable.js</button>
+        <button class="test-button" onclick="testDragAndDrop()">🖱️ Tester Drag & Drop</button>
+    </div>
+
+    <div class="test-section">
+        <h2>🎯 Test de démonstration</h2>
+        <p>Si Sortable.js fonctionne, vous devriez pouvoir glisser-déposer les éléments ci-dessous :</p>
+        <div id="sortable-demo" class="sortable-demo">
+            <div class="demo-item">📄 Élément 1 - Glissez-moi !</div>
+            <div class="demo-item">📋 Élément 2 - Déplacez-moi !</div>
+            <div class="demo-item">📝 Élément 3 - Réorganisez-moi !</div>
+        </div>
+        <div id="demo-status"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔧 Diagnostic réseau</h2>
+        <div id="network-status"></div>
+        <button class="test-button" onclick="testCDN()">🌐 Tester CDN</button>
+    </div>
+
+    <!-- Chargement de Sortable.js avec fallback -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js" 
+            onerror="handleSortableError()"></script>
+    <script src="./lib/sortable-fallback.js"></script>
+
+    <script>
+        let sortableLoaded = false;
+        let fallbackLoaded = false;
+
+        function addStatus(containerId, message, type = 'info') {
+            const container = document.getElementById(containerId);
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.innerHTML = `${new Date().toLocaleTimeString()} - ${message}`;
+            container.appendChild(div);
+        }
+
+        function handleSortableError() {
+            addStatus('loading-status', '❌ Échec du chargement de Sortable.js depuis le CDN', 'error');
+            addStatus('loading-status', '🔄 Tentative de chargement du fallback...', 'warning');
+        }
+
+        function checkSortable() {
+            addStatus('loading-status', '🔍 Vérification de Sortable.js...', 'info');
+            
+            if (typeof window.Sortable !== 'undefined') {
+                addStatus('loading-status', '✅ Sortable.js est disponible !', 'success');
+                addStatus('loading-status', `📦 Version: ${window.Sortable.version || 'inconnue'}`, 'info');
+                sortableLoaded = true;
+                initDemo();
+            } else {
+                addStatus('loading-status', '❌ Sortable.js non disponible', 'error');
+                addStatus('loading-status', '🔄 Tentative de rechargement...', 'warning');
+                
+                // Essayer de charger le fallback
+                setTimeout(() => {
+                    if (typeof window.Sortable !== 'undefined') {
+                        addStatus('loading-status', '✅ Fallback Sortable.js chargé !', 'success');
+                        fallbackLoaded = true;
+                        initDemo();
+                    } else {
+                        addStatus('loading-status', '❌ Impossible de charger Sortable.js', 'error');
+                    }
+                }, 1000);
+            }
+        }
+
+        function initDemo() {
+            const demoContainer = document.getElementById('sortable-demo');
+            
+            try {
+                const sortable = Sortable.create(demoContainer, {
+                    animation: 150,
+                    onEnd: function(evt) {
+                        addStatus('demo-status', `✅ Élément déplacé de la position ${evt.oldIndex + 1} à ${evt.newIndex + 1}`, 'success');
+                    }
+                });
+                
+                addStatus('demo-status', '✅ Démonstration Sortable.js initialisée !', 'success');
+                
+                if (fallbackLoaded) {
+                    addStatus('demo-status', '⚠️ Mode fallback actif (fonctionnalités limitées)', 'warning');
+                }
+                
+            } catch (error) {
+                addStatus('demo-status', `❌ Erreur lors de l'initialisation: ${error.message}`, 'error');
+            }
+        }
+
+        function testDragAndDrop() {
+            addStatus('loading-status', '🧪 Test des fonctions de drag & drop...', 'info');
+            
+            // Simuler l'import du module drag.js
+            import('./js/drag.js')
+                .then(module => {
+                    addStatus('loading-status', '✅ Module drag.js chargé', 'success');
+                    
+                    if (typeof module.initDragAndDrop === 'function') {
+                        addStatus('loading-status', '✅ Fonction initDragAndDrop disponible', 'success');
+                        
+                        try {
+                            module.initDragAndDrop();
+                            addStatus('loading-status', '✅ initDragAndDrop exécutée avec succès', 'success');
+                        } catch (error) {
+                            addStatus('loading-status', `❌ Erreur lors de l'exécution: ${error.message}`, 'error');
+                        }
+                    } else {
+                        addStatus('loading-status', '❌ Fonction initDragAndDrop non trouvée', 'error');
+                    }
+                })
+                .catch(error => {
+                    addStatus('loading-status', `❌ Erreur de chargement du module: ${error.message}`, 'error');
+                });
+        }
+
+        function testCDN() {
+            addStatus('network-status', '🌐 Test de connectivité CDN...', 'info');
+            
+            const testUrls = [
+                'https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js',
+                'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js',
+                'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js'
+            ];
+            
+            testUrls.forEach(url => {
+                fetch(url, { method: 'HEAD' })
+                    .then(response => {
+                        if (response.ok) {
+                            addStatus('network-status', `✅ ${url.split('/').pop()} - Accessible`, 'success');
+                        } else {
+                            addStatus('network-status', `❌ ${url.split('/').pop()} - Erreur ${response.status}`, 'error');
+                        }
+                    })
+                    .catch(error => {
+                        addStatus('network-status', `❌ ${url.split('/').pop()} - ${error.message}`, 'error');
+                    });
+            });
+        }
+
+        // Vérification automatique au chargement
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                checkSortable();
+            }, 500);
+        });
+
+        // Vérification périodique
+        setInterval(() => {
+            if (!sortableLoaded && !fallbackLoaded) {
+                if (typeof window.Sortable !== 'undefined') {
+                    addStatus('loading-status', '🎉 Sortable.js détecté après rechargement !', 'success');
+                    sortableLoaded = true;
+                    initDemo();
+                }
+            }
+        }, 2000);
+    </script>
+</body>
+</html>

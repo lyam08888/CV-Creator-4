@@ -82,7 +82,6 @@ function generateSections(formData) {
     const bannerColor = formData.bannerColor || '#3B82F6';
     const bannerHeight = parseInt(formData.bannerHeight) || 20;
     const bannerImageUrl = formData.bannerImageUrl || '';
-<<<<<<< HEAD
     
     // Ne pas ajouter la bannière si la hauteur est 0
     if (bannerHeight > 0) {
@@ -92,20 +91,6 @@ function generateSections(formData) {
         height: bannerHeight + 5 // hauteur + marge réduite
       });
     }
-=======
-
-    sections.push({
-      type: 'recruitment-banner',
-      content: generateRecruitmentBanner(
-        formData,
-        bannerStyle,
-        bannerColor,
-        bannerHeight,
-        bannerImageUrl
-      ),
-      height: parseFloat(bannerHeight) + 10 // hauteur + marge
-    });
->>>>>>> 5ad1599266110d7d8368dd4989b5393c44f14647
   }
 
   // En-tête
@@ -121,17 +106,10 @@ function generateSections(formData) {
             <p contenteditable="false">${formData.email || ''} | ${formData.phone || ''} | ${formData.address || ''}</p>
           </div>
         </div>
-<<<<<<< HEAD
-      </div>
-    `,
-    height: 35
-  });
-=======
       `,
-      height: 60
+      height: 35
     });
   }
->>>>>>> 5ad1599266110d7d8368dd4989b5393c44f14647
 
   // Résumé
   if (formData.summary && !hiddenSections.includes('summary')) {
@@ -151,14 +129,8 @@ function generateSections(formData) {
   // Expérience
   if (formData.experience && formData.experience.length > 0 && !hiddenSections.includes('experience')) {
     let experienceContent = '<div class="cv-section sortable" data-section="experience"><div class="drag-handle">⋮⋮</div><h2 contenteditable="false">Expérience Professionnelle</h2>';
-<<<<<<< HEAD
     let experienceHeight = 20; // titre réduit
-    
-=======
-    let experienceHeight = 30; // titre
     let experienceItems = 0;
-
->>>>>>> 5ad1599266110d7d8368dd4989b5393c44f14647
     formData.experience.forEach(exp => {
       const title = (exp.title || '').trim();
       const company = (exp.company || '').trim();
@@ -177,12 +149,8 @@ function generateSections(formData) {
           ${description ? `<p contenteditable="false">${description}</p>` : ''}
         </div>
       `;
-<<<<<<< HEAD
       experienceHeight += 18 + (description ? Math.min(description.length / 200 * 8, 15) : 0); // plus compact
-=======
-      experienceHeight += 25 + (description ? description.length / 150 * 10 : 0);
       experienceItems++;
->>>>>>> 5ad1599266110d7d8368dd4989b5393c44f14647
     });
 
     if (experienceItems > 0) {

@@ -14,7 +14,26 @@
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <!-- Sortable.js for drag & drop -->
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js" 
+          onerror="console.warn('CDN Sortable.js failed, loading fallback...'); loadSortableFallback();"></script>
+  <script>
+    function loadSortableFallback() {
+      const script = document.createElement('script');
+      script.src = './lib/sortable-fallback.js';
+      script.onload = function() {
+        console.log('✅ Fallback Sortable.js chargé avec succès');
+      };
+      document.head.appendChild(script);
+    }
+    
+    // Vérifier si Sortable est chargé après un délai
+    setTimeout(function() {
+      if (typeof window.Sortable === 'undefined') {
+        console.warn('⚠️ Sortable.js non détecté, chargement du fallback...');
+        loadSortableFallback();
+      }
+    }, 2000);
+  </script>
 </head>
 <body>
   <div class="app-container">
@@ -498,6 +517,7 @@
   <script type="module" src="./js/app.js"></script>
   <script type="module" src="./demo-data.js"></script>
   <script src="./verification-banniere.js"></script>
+  <script src="./diagnostic.js"></script>
   <script>
     // Gestionnaire pour le bouton de démonstration
     document.addEventListener('DOMContentLoaded', function() {
