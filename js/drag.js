@@ -5,8 +5,7 @@ export function initDragAndDrop() {
   if (!previewPanel || !window.Sortable) return;
 
   // Destroy existing instances
-  sortableInstances.forEach(inst => inst.destroy());
-  sortableInstances = [];
+  destroyDragAndDrop();
 
   const pages = previewPanel.querySelectorAll('.cv-page');
   pages.forEach(page => {
