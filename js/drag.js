@@ -1,4 +1,4 @@
-export let sortableInstances = [];
+let sortableInstances = [];
 
 export function initDragAndDrop() {
   const previewPanel = document.getElementById('cv-preview');
