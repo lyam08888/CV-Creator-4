@@ -130,9 +130,10 @@ function generateSections(formData) {
         <div class="cv-item">
           <h3 contenteditable="false">${degree}${school ? ` - ${school}` : ''}</h3>
           ${period ? `<p class="cv-period" contenteditable="false">${period}</p>` : ''}
+          ${description ? `<p contenteditable="false">${description}</p>` : ''}
         </div>
       `;
-      educationHeight += 20;
+      educationHeight += 20 + (description ? description.length / 150 * 10 : 0);
       educationItems++;
     });
 
