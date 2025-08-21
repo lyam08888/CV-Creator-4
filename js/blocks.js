@@ -47,6 +47,10 @@ export function initBlocksTab() {
     Sortable.create(list, {
       animation: 150,
       handle: '.drag-handle',
+      // Allow checkboxes to remain interactive while using drag handles
+      // "filter" prevents Sortable from hijacking clicks on the inputs
+      filter: '.block-visibility',
+      preventOnFilter: false,
       onEnd: saveOrder
     });
   }
