@@ -15,7 +15,7 @@
   - **Corporate** : Dégradé horizontal avec bordure latérale
 
 - **Couleur personnalisable** : Sélecteur de couleur avec aperçu en temps réel
-- **Hauteur ajustable** : Slider de 20mm à 80mm par pas de 0,1mm avec affichage de la valeur
+- **Hauteur ajustable** : Slider de 0mm à 80mm par pas de 0,1mm avec affichage de la valeur
 - **Padding adaptatif** : Espacement interne basé sur la taille du texte
 
 ### 3. 🖼️ Gestion des Images
