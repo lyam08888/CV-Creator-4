@@ -1834,3 +1834,27 @@ label {
   color: rgba(0, 0, 0, 0.8);
   background: rgba(0, 0, 0, 0.2);
 }
+
+/* Organisation des blocs */
+.block-order-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.block-order-list .block-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  margin-bottom: 6px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+}
+
+.block-order-list .drag-handle {
+  cursor: grab;
+  font-size: 18px;
+  padding-left: 8px;
+}
