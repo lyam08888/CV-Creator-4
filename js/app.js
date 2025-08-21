@@ -144,6 +144,7 @@ document.addEventListener('DOMContentLoaded', function() {
   initPreview();
   loadSavedApiKey();
   populateExampleData();
+  loadRecruitmentBannerData();
   generatePreview();
   
   // Initialiser la personnalisation de manière asynchrone
@@ -1865,6 +1866,7 @@ function initRecruitmentBannerHandlers() {
       }
       // Régénérer l'aperçu
       generatePreview();
+      saveRecruitmentBannerData();
     });
   }
   
@@ -1877,6 +1879,7 @@ function initRecruitmentBannerHandlers() {
       bannerHeightValue.textContent = this.value + 'mm';
       // Régénérer l'aperçu en temps réel
       generatePreview();
+      saveRecruitmentBannerData();
     });
   }
   
@@ -1885,11 +1888,17 @@ function initRecruitmentBannerHandlers() {
   const bannerColorInput = document.getElementById('bannerColor');
   
   if (bannerStyleSelect) {
-    bannerStyleSelect.addEventListener('change', generatePreview);
+    bannerStyleSelect.addEventListener('change', () => {
+      generatePreview();
+      saveRecruitmentBannerData();
+    });
   }
-  
+
   if (bannerColorInput) {
-    bannerColorInput.addEventListener('input', generatePreview);
+    bannerColorInput.addEventListener('input', () => {
+      generatePreview();
+      saveRecruitmentBannerData();
+    });
   }
   
   // Gestionnaires pour les champs de texte de la bannière
@@ -1902,15 +1911,92 @@ function initRecruitmentBannerHandlers() {
   bannerTextFields.forEach(fieldId => {
     const field = document.getElementById(fieldId);
     if (field) {
-      field.addEventListener('input', debounce(generatePreview, 300));
+      field.addEventListener('input', debounce(() => {
+        generatePreview();
+        saveRecruitmentBannerData();
+      }, 300));
     }
   });
 
   if (fixBannerCheckbox) {
-    fixBannerCheckbox.addEventListener('change', generatePreview);
+    fixBannerCheckbox.addEventListener('change', () => {
+      generatePreview();
+      saveRecruitmentBannerData();
+    });
   }
   
   console.log('Recruitment banner handlers initialized');
+}
+
+function saveRecruitmentBannerData() {
+  const data = {
+    showRecruitmentBanner: document.getElementById('showRecruitmentBanner')?.checked || false,
+    fixRecruitmentBanner: document.getElementById('fixRecruitmentBanner')?.checked || false,
+    recruiterFirstName: document.getElementById('recruiterFirstName')?.value || '',
+    recruiterLastName: document.getElementById('recruiterLastName')?.value || '',
+    recruiterPosition: document.getElementById('recruiterPosition')?.value || '',
+    recruiterPhone: document.getElementById('recruiterPhone')?.value || '',
+    recruiterEmail: document.getElementById('recruiterEmail')?.value || '',
+    companyName: document.getElementById('companyName')?.value || '',
+    companyLogoUrl: document.getElementById('companyLogoUrl')?.value || '',
+    bannerImageUrl: document.getElementById('bannerImageUrl')?.value || '',
+    bannerMessage: document.getElementById('bannerMessage')?.value || '',
+    bannerStyle: document.getElementById('bannerStyle')?.value || 'modern',
+    bannerColor: document.getElementById('bannerColor')?.value || '#3B82F6',
+    bannerHeight: document.getElementById('bannerHeight')?.value || '50'
+  };
+  localStorage.setItem('cv-recruitment-banner', JSON.stringify(data));
+}
+
+function loadRecruitmentBannerData() {
+  const raw = localStorage.getItem('cv-recruitment-banner');
+  if (!raw) return;
+  try {
+    const data = JSON.parse(raw);
+    const showBannerCheckbox = document.getElementById('showRecruitmentBanner');
+    const bannerControls = document.getElementById('recruitmentBannerControls');
+    const fixBannerCheckbox = document.getElementById('fixRecruitmentBanner');
+
+    if (showBannerCheckbox && bannerControls) {
+      showBannerCheckbox.checked = !!data.showRecruitmentBanner;
+      bannerControls.style.display = showBannerCheckbox.checked ? 'block' : 'none';
+    }
+    if (fixBannerCheckbox) {
+      fixBannerCheckbox.checked = !!data.fixRecruitmentBanner;
+    }
+
+    const fields = {
+      recruiterFirstName: 'recruiterFirstName',
+      recruiterLastName: 'recruiterLastName',
+      recruiterPosition: 'recruiterPosition',
+      recruiterPhone: 'recruiterPhone',
+      recruiterEmail: 'recruiterEmail',
+      companyName: 'companyName',
+      companyLogoUrl: 'companyLogoUrl',
+      bannerImageUrl: 'bannerImageUrl',
+      bannerMessage: 'bannerMessage',
+      bannerStyle: 'bannerStyle',
+      bannerColor: 'bannerColor',
+      bannerHeight: 'bannerHeight'
+    };
+
+    Object.keys(fields).forEach(key => {
+      const el = document.getElementById(fields[key]);
+      if (el) {
+        if (el.type === 'checkbox') {
+          el.checked = !!data[key];
+        } else {
+          el.value = data[key] || '';
+          if (key === 'bannerHeight') {
+            const bannerHeightValue = document.querySelector('.range-value');
+            if (bannerHeightValue) bannerHeightValue.textContent = el.value + 'mm';
+          }
+        }
+      }
+    });
+  } catch (e) {
+    console.error('Erreur lors du chargement de la bannière de recrutement', e);
+  }
 }
 
 // FONCTION POUR CRÉER UN NOUVEAU CV
@@ -1918,8 +2004,9 @@ function createNewCV() {
   if (confirm('Êtes-vous sûr de vouloir créer un nouveau CV ? Toutes les données actuelles seront perdues.')) {
     // Vider tous les champs du formulaire
     clearAllFormFields();
-    
-    // Régénérer l'aperçu vide
+
+    // Recharger la bannière et régénérer l'aperçu
+    loadRecruitmentBannerData();
     generatePreview();
     
     // Retourner à la première section
