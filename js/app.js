@@ -1792,7 +1792,17 @@ function exportToPDF() {
     alert('Erreur: Impossible de trouver le contenu du CV');
     return;
   }
-  
+
+  // Préparer l'aperçu pour une exportation propre
+  const wasInEditMode = cvPreview.classList.contains('edit-mode');
+  if (wasInEditMode) {
+    cvPreview.classList.remove('edit-mode');
+  }
+  const overflowIndicators = Array.from(cvPreview.querySelectorAll('.page-overflow-indicator'));
+  overflowIndicators.forEach(indicator => {
+    indicator.style.display = 'none';
+  });
+
   // Afficher un indicateur de chargement
   const button = document.getElementById('btnExport');
   const originalText = button.textContent;
@@ -1842,6 +1852,12 @@ function exportToPDF() {
   }).finally(() => {
     button.textContent = originalText;
     button.disabled = false;
+    overflowIndicators.forEach(indicator => {
+      indicator.style.display = '';
+    });
+    if (wasInEditMode) {
+      cvPreview.classList.add('edit-mode');
+    }
   });
 }
 
