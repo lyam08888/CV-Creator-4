@@ -7,8 +7,11 @@ function verifyHTMLElements() {
         'showRecruitmentBanner',
         'recruitmentBannerControls',
         'bannerImageUrl',
-        'recruiterName',
-        'recruiterContact',
+        'recruiterFirstName',
+        'recruiterLastName',
+        'recruiterPosition',
+        'recruiterPhone',
+        'recruiterEmail',
         'companyName',
         'companyLogoUrl',
         'bannerMessage',
@@ -119,7 +122,8 @@ function testBannerGeneration() {
         // Simuler des données de test
         const testData = {
             showRecruitmentBanner: true,
-            recruiterName: "Test Recruiter",
+            recruiterFirstName: "Test",
+            recruiterLastName: "Recruiter",
             companyName: "Test Company",
             bannerStyle: "modern",
             bannerColor: "#3B82F6",
