@@ -41,6 +41,11 @@
 - **Indépendante des colonnes** : Ne se redimensionne pas selon le layout
 - **Position flexible** : Peut être placée n'importe où dans le CV
 
+### 7. 📌 Bannière Fixable
+- **Option de fixation** : Épingle la bannière en haut du document
+- **Désactive le drag & drop** : Lorsque fixée, la bannière n'est plus déplaçable
+- **Compatible multi-colonnes** : Reste en haut quel que soit le layout
+
 ## 🏗️ Architecture Technique
 
 ### Structure des Fichiers
@@ -99,6 +104,7 @@
 - [x] Drag & drop fonctionnel
 - [x] Adaptation aux layouts
 - [x] Mise à jour temps réel
+- [x] Option de bannière fixable
 
 ## 🚀 Utilisation
 
@@ -112,6 +118,7 @@ document.getElementById('showRecruitmentBanner').checked = true;
 ```javascript
 const bannerData = {
     showRecruitmentBanner: true,
+    fixRecruitmentBanner: true,
     recruiterFirstName: "Sophie",
     recruiterLastName: "Martin",
     recruiterPosition: "Responsable RH",

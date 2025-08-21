@@ -255,12 +255,15 @@ function generateRecruitmentBanner(formData, bannerStyle, bannerColor, bannerHei
     --banner-color-secondary: ${adjustColor(bannerColor, -20)};
     ${bannerImageUrl ? `background-image: url('${bannerImageUrl}');` : ''}
   `;
-  
+
+  const fixedClass = formData.fixRecruitmentBanner ? ' fixed-banner' : ' sortable';
+  const dragHandle = formData.fixRecruitmentBanner ? '' : '<div class="drag-handle">⋮⋮</div>';
+
   return `
-    <div class="cv-section cv-recruitment-banner banner-${bannerStyle} sortable" 
-         data-section="recruitment-banner" 
+    <div class="cv-section cv-recruitment-banner banner-${bannerStyle}${fixedClass}"
+         data-section="recruitment-banner"
          style="${bannerStyles}">
-      <div class="drag-handle">⋮⋮</div>
+      ${dragHandle}
       <div class="banner-content">
         ${companyLogoUrl ? `<img src="${companyLogoUrl}" alt="${companyName} Logo" class="banner-logo">` : ''}
         <div class="banner-info">
