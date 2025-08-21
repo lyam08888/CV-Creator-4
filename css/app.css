@@ -1840,14 +1840,16 @@ label {
   list-style: none;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
 .block-order-list .block-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 8px;
-  margin-bottom: 6px;
+  gap: 6px;
+  padding: 4px 8px;
   background: #fff;
   border: 1px solid #e5e7eb;
   border-radius: 4px;
@@ -1856,5 +1858,5 @@ label {
 .block-order-list .drag-handle {
   cursor: grab;
   font-size: 18px;
-  padding-left: 8px;
+  padding-left: 0;
 }
