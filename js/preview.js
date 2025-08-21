@@ -21,20 +21,21 @@ function generateSections(formData) {
   const sections = [];
 
   // Bannière de recrutement
-  if (formData.showRecruitmentBanner && (
-    formData.recruiterFirstName || formData.recruiterLastName ||
-    formData.recruiterPosition || formData.recruiterPhone ||
-    formData.recruiterEmail || formData.companyName ||
-    formData.companyLogoUrl || formData.bannerMessage
-  )) {
+  if (formData.showRecruitmentBanner) {
     const bannerStyle = formData.bannerStyle || 'modern';
     const bannerColor = formData.bannerColor || '#3B82F6';
     const bannerHeight = formData.bannerHeight || 50;
     const bannerImageUrl = formData.bannerImageUrl || '';
-    
+
     sections.push({
       type: 'recruitment-banner',
-      content: generateRecruitmentBanner(formData, bannerStyle, bannerColor, bannerHeight, bannerImageUrl),
+      content: generateRecruitmentBanner(
+        formData,
+        bannerStyle,
+        bannerColor,
+        bannerHeight,
+        bannerImageUrl
+      ),
       height: parseInt(bannerHeight) + 10 // hauteur + marge
     });
   }
