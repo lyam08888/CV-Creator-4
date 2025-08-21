@@ -2182,15 +2182,7 @@ function formatProjectPeriod(project) {
   return start;
 }
 
-function formatDate(dateString) {
-  if (!dateString) return '';
-  
-  const date = new Date(dateString + '-01');
-  return date.toLocaleDateString('fr-FR', { 
-    month: 'long', 
-    year: 'numeric' 
-  });
-}
+
 
 // FONCTIONS UTILITAIRES SUPPLÉMENTAIRES
 
@@ -2198,38 +2190,9 @@ function formatDate(dateString) {
 
 
 
-// FONCTION POUR BASCULER LE MODE ÉDITION
-function toggleEditMode() {
-  const body = document.body;
-  const button = document.getElementById('btnToggleEdit');
-  
-  if (body.classList.contains('edit-mode')) {
-    body.classList.remove('edit-mode');
-    button.textContent = 'Mode Édition';
-    
-    // Désactiver l'édition directe
-    const editableElements = document.querySelectorAll('[contenteditable="true"]');
-    editableElements.forEach(el => el.contentEditable = false);
-  } else {
-    body.classList.add('edit-mode');
-    button.textContent = 'Quitter Édition';
-    
-    // Activer l'édition directe
-    const editableElements = document.querySelectorAll('.cv-preview h1, .cv-preview h2, .cv-preview h3, .cv-preview p');
-    editableElements.forEach(el => el.contentEditable = true);
-  }
-}
 
-// FONCTION POUR SAUVEGARDER LA CLÉ API
-function saveApiKey() {
-  const apiKey = document.getElementById('geminiApiKey').value.trim();
-  if (apiKey) {
-    localStorage.setItem('cvpro_api_key', apiKey);
-    alert('Clé API sauvegardée avec succès !');
-  } else {
-    alert('Veuillez saisir une clé API valide.');
-  }
-}
+
+
 
 // Rendre les fonctions disponibles globalement
 window.toggleCurrentJob = toggleCurrentJob;
