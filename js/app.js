@@ -7,6 +7,9 @@ import { runAI } from './ai.js';
 // Import du module de personnalisation
 import { initCustomization, applyCurrentCustomization } from './customization.js';
 
+// Import du module de gestion du drag & drop
+import { initDragAndDrop, destroyDragAndDrop } from './drag.js';
+
 // Données d'exemple pour pré-remplir le CV
 const exampleData = {
   fullName: "Jean Dupont",
@@ -128,7 +131,6 @@ const exampleData = {
 
 // Variables globales
 let editMode = false;
-let sortableInstances = [];
 
 // Initialisation de l'application
 document.addEventListener('DOMContentLoaded', function() {
@@ -758,7 +760,7 @@ function generatePreviewFallback(formData) {
   `;
 
   // Initialiser le drag & drop après la génération
-  initializeDragAndDrop();
+  initDragAndDrop();
 
   // Appliquer la personnalisation
   if (window.applyCurrentCustomization) {
@@ -972,30 +974,6 @@ function generateProjects(data) {
   `;
 }
 
-// DRAG & DROP
-function initDragAndDrop() {
-  console.log('Initializing drag & drop...');
-  
-  // Nettoyer les instances existantes
-  sortableInstances.forEach(instance => instance.destroy());
-  sortableInstances = [];
-  
-  const cvContainer = document.getElementById('cv-container');
-  if (cvContainer && editMode) {
-    const sortable = Sortable.create(cvContainer, {
-      animation: 150,
-      ghostClass: 'cv-section-ghost',
-      chosenClass: 'cv-section-chosen',
-      dragClass: 'cv-section-drag',
-      onEnd: function(evt) {
-        console.log('Section moved from', evt.oldIndex, 'to', evt.newIndex);
-        // Ici on pourrait sauvegarder l'ordre des sections
-      }
-    });
-    sortableInstances.push(sortable);
-  }
-}
-
 function toggleEditMode() {
   editMode = !editMode;
   const button = document.getElementById('btnToggleEdit');
@@ -1032,8 +1010,7 @@ function toggleEditMode() {
     });
     
     // Détruire les instances de drag & drop
-    sortableInstances.forEach(instance => instance.destroy());
-    sortableInstances = [];
+    destroyDragAndDrop();
   }
 }
 
@@ -1068,35 +1045,6 @@ function handleEditKeydown(event) {
   }
 }
 
-function initializeDragAndDrop() {
-  const cvContainer = document.getElementById('cv-container');
-  
-  if (window.Sortable && cvContainer) {
-    // Détruire l'instance existante si elle existe
-    if (cvContainer.sortableInstance) {
-      cvContainer.sortableInstance.destroy();
-    }
-    
-    // Créer une nouvelle instance Sortable
-    cvContainer.sortableInstance = Sortable.create(cvContainer, {
-      animation: 150,
-      handle: '.drag-handle',
-      ghostClass: 'dragging',
-      chosenClass: 'drag-over',
-      onEnd: function(evt) {
-        // Sauvegarder l'ordre des sections après le drag & drop
-        saveSectionOrder();
-      }
-    });
-  }
-}
-
-function saveSectionOrder() {
-  const sections = document.querySelectorAll('.cv-section[data-section]');
-  const order = Array.from(sections).map(section => section.dataset.section);
-  localStorage.setItem('cv-section-order', JSON.stringify(order));
-  console.log('Section order saved:', order);
-}
 
 // RÉCUPÉRATION DES DONNÉES DU FORMULAIRE
 function getFormData() {
