@@ -1,6 +1,9 @@
 // CV Creator App - Version complète avec drag & drop
 console.log('CV Creator App loaded');
 
+// Import du gestionnaire d'erreurs
+import { logError, logWarning, logSuccess } from './error-handler.js';
+
 // Import du module IA
 import { runAI } from './ai.js';
 
@@ -8,10 +11,13 @@ import { runAI } from './ai.js';
 import { initCustomization, applyCurrentCustomization } from './customization.js';
 
 // Import du module de gestion du drag & drop
-import { initDragAndDrop, destroyDragAndDrop } from './drag.js';
+import { initDragAndDrop, cleanupDragAndDrop } from './drag.js';
 
 // Import du module d'organisation des blocs
 import { initBlocksTab } from './blocks.js';
+
+// Import du module de prévisualisation
+import { generatePreview } from './preview.js';
 
 // Données d'exemple pour pré-remplir le CV
 const exampleData = {
@@ -148,7 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
   loadSavedApiKey();
   populateExampleData();
   loadRecruitmentBannerData();
-  generatePreview();
+  generatePreviewWrapper();
   initBlocksTab();
   
   // Initialiser la personnalisation de manière asynchrone
@@ -156,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Écouter l'événement de régénération depuis la personnalisation
   window.addEventListener('regeneratePreview', () => {
-    generatePreview();
+    generatePreviewWrapper();
   });
   
   console.log('CV Creator initialized successfully');
@@ -330,7 +336,7 @@ function initFormHandlers() {
   // Écouter les changements dans le formulaire pour mettre à jour l'aperçu
   const cvForm = document.getElementById('cv-form');
   if (cvForm) {
-    cvForm.addEventListener('input', debounce(generatePreview, 500));
+    cvForm.addEventListener('input', debounce(generatePreviewWrapper, 500));
     console.log('✓ Listener ajouté pour cv-form');
   } else {
     console.warn('⚠️ Formulaire cv-form non trouvé');
@@ -1029,7 +1035,7 @@ function toggleEditMode() {
     });
     
     // Détruire les instances de drag & drop
-    destroyDragAndDrop();
+    cleanupDragAndDrop();
   }
 }
 
@@ -1082,7 +1088,7 @@ function getFormData() {
   data.summary = formData.get('summary') || '';
   
   // Expériences
-  data.experiences = [];
+  data.experience = [];
   const experienceElements = document.querySelectorAll('#experience-list .form-item');
   experienceElements.forEach((element, index) => {
     const exp = {
@@ -1095,7 +1101,11 @@ function getFormData() {
       description: formData.get(`experience[${index}][description]`) || '',
       technologies: (formData.get(`experience[${index}][technologies]`) || '').split(',').map(t => t.trim()).filter(t => t)
     };
-    data.experiences.push(exp);
+    
+    // Add period formatting for preview
+    exp.period = formatExperiencePeriod(exp);
+    
+    data.experience.push(exp);
   });
   
   // Formation
@@ -1111,6 +1121,10 @@ function getFormData() {
       description: formData.get(`education[${index}][description]`) || '',
       grade: formData.get(`education[${index}][grade]`) || ''
     };
+    
+    // Add period formatting for preview
+    edu.period = formatEducationPeriod(edu);
+    
     data.education.push(edu);
   });
   
@@ -1135,6 +1149,16 @@ function getFormData() {
     };
     if (skill.name) data.softSkills.push(skill);
   });
+  
+  // Créer une chaîne de compétences combinée pour l'aperçu
+  const allSkills = [];
+  if (data.technicalSkills.length > 0) {
+    allSkills.push('Compétences techniques: ' + data.technicalSkills.map(s => s.name).join(', '));
+  }
+  if (data.softSkills.length > 0) {
+    allSkills.push('Compétences transversales: ' + data.softSkills.map(s => s.name).join(', '));
+  }
+  data.skills = allSkills.join('\n\n');
   
   // Langues
   data.languages = [];
@@ -1399,7 +1423,7 @@ ${rawText}
         fillFormWithData(data);
         
         alert('Formulaire rempli automatiquement avec succès !');
-        generatePreview();
+        generatePreviewWrapper();
         
       } catch (parseError) {
         console.error('Erreur de parsing JSON:', parseError);
@@ -1437,7 +1461,7 @@ Génère un résumé professionnel percutant de 2-3 phrases pour ce profil :
 
 Nom: ${formData.fullName}
 Titre: ${formData.jobTitle}
-Expériences: ${formData.experiences ? formData.experiences.map(exp => `${exp.title} chez ${exp.company}`).join(', ') : 'Non spécifiées'}
+Expériences: ${formData.experience ? formData.experience.map(exp => `${exp.title} chez ${exp.company}`).join(', ') : 'Non spécifiées'}
 Compétences techniques: ${formData.technicalSkills ? formData.technicalSkills.map(skill => skill.name).join(', ') : 'Non spécifiées'}
 
 Le résumé doit :
@@ -1457,7 +1481,7 @@ Retourne UNIQUEMENT le texte du résumé, sans guillemets ni formatage.
     
     if (result) {
       document.getElementById('summary-text').value = result.trim();
-      generatePreview();
+      generatePreviewWrapper();
       alert('Résumé généré avec succès !');
     }
     
@@ -1534,7 +1558,7 @@ Critères :
           });
         }
         
-        generatePreview();
+        generatePreviewWrapper();
         alert('Compétences suggérées ajoutées avec succès !');
         
       } catch (parseError) {
@@ -1685,7 +1709,7 @@ Retourne UNIQUEMENT le texte amélioré, sans guillemets.
     
     if (result) {
       textarea.value = result.trim();
-      generatePreview();
+      generatePreviewWrapper();
       alert('Texte amélioré avec succès !');
     }
     
@@ -1892,7 +1916,7 @@ function initRecruitmentBannerHandlers() {
         if (fixBannerCheckbox) fixBannerCheckbox.checked = false;
       }
       // Régénérer l'aperçu
-      generatePreview();
+      generatePreviewWrapper();
       saveRecruitmentBannerData();
     });
   }
@@ -1905,7 +1929,7 @@ function initRecruitmentBannerHandlers() {
     bannerHeightSlider.addEventListener('input', function() {
       bannerHeightValue.textContent = this.value + 'mm';
       // Régénérer l'aperçu en temps réel
-      generatePreview();
+      generatePreviewWrapper();
       saveRecruitmentBannerData();
     });
   }
@@ -1916,14 +1940,14 @@ function initRecruitmentBannerHandlers() {
   
   if (bannerStyleSelect) {
     bannerStyleSelect.addEventListener('change', () => {
-      generatePreview();
+      generatePreviewWrapper();
       saveRecruitmentBannerData();
     });
   }
 
   if (bannerColorInput) {
     bannerColorInput.addEventListener('input', () => {
-      generatePreview();
+      generatePreviewWrapper();
       saveRecruitmentBannerData();
     });
   }
@@ -1939,7 +1963,7 @@ function initRecruitmentBannerHandlers() {
     const field = document.getElementById(fieldId);
     if (field) {
       field.addEventListener('input', debounce(() => {
-        generatePreview();
+        generatePreviewWrapper();
         saveRecruitmentBannerData();
       }, 300));
     }
@@ -1947,7 +1971,7 @@ function initRecruitmentBannerHandlers() {
 
   if (fixBannerCheckbox) {
     fixBannerCheckbox.addEventListener('change', () => {
-      generatePreview();
+      generatePreviewWrapper();
       saveRecruitmentBannerData();
     });
   }
@@ -2034,7 +2058,7 @@ function createNewCV() {
 
     // Recharger la bannière et régénérer l'aperçu
     loadRecruitmentBannerData();
-    generatePreview();
+    generatePreviewWrapper();
     
     // Retourner à la première section
     const firstNavBtn = document.querySelector('.nav-btn[data-form="personal-info"]');
@@ -2103,7 +2127,7 @@ function loadDemoData() {
     populateExampleData();
     
     // Régénérer l'aperçu
-    generatePreview();
+    generatePreviewWrapper();
     
     alert('✅ Données de démonstration chargées ! Vous pouvez maintenant tester toutes les fonctionnalités.');
   }
@@ -2184,7 +2208,7 @@ async function optimizeSpacingManual() {
   
   // Régénérer l'aperçu après optimisation
   setTimeout(() => {
-    generatePreview();
+    generatePreviewWrapper();
     button.textContent = '✓ Optimisé';
     setTimeout(() => {
       button.textContent = originalText;
@@ -2216,8 +2240,31 @@ function optimizeSpacingBasic() {
   });
 }
 
+// Wrapper pour generatePreview qui récupère les données du formulaire
+function generatePreviewWrapper() {
+  try {
+    const formData = getFormData();
+    logSuccess('Form data retrieved successfully');
+    generatePreview(formData);
+    logSuccess('Preview generated successfully');
+  } catch (error) {
+    logError('Error in generatePreviewWrapper:', error);
+  }
+}
+
 // Rendre les fonctions disponibles globalement
 window.toggleCurrentJob = toggleCurrentJob;
 window.removeFormItem = removeFormItem;
 window.optimizeSpacingManual = optimizeSpacingManual;
 window.toggleEditMode = toggleEditMode;
+window.initNavigation = initNavigation;
+window.initFormHandlers = initFormHandlers;
+window.generatePreview = generatePreviewWrapper;
+
+// Debug: Log que les fonctions sont disponibles
+console.log('✅ Functions made available globally:', {
+  initNavigation: typeof window.initNavigation,
+  initFormHandlers: typeof window.initFormHandlers,
+  generatePreview: typeof window.generatePreview,
+  initDragAndDrop: typeof window.initDragAndDrop
+});
