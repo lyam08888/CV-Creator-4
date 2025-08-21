@@ -2,7 +2,7 @@ import { initDragAndDrop } from './drag.js';
 
 export function generatePreview(formData) {
   const previewContainer = document.getElementById('cv-preview');
-  
+
   // Générer le contenu des sections
   const sections = generateSections(formData);
   
@@ -21,9 +21,10 @@ export function generatePreview(formData) {
 
 function generateSections(formData) {
   const sections = [];
+  const hiddenSections = JSON.parse(localStorage.getItem('cv-hidden-sections') || '[]');
 
   // Bannière de recrutement
-  if (formData.showRecruitmentBanner) {
+  if (formData.showRecruitmentBanner && !hiddenSections.includes('recruitment-banner')) {
     const bannerStyle = formData.bannerStyle || 'modern';
     const bannerColor = formData.bannerColor || '#3B82F6';
     const bannerHeight = formData.bannerHeight || 50;
@@ -43,23 +44,25 @@ function generateSections(formData) {
   }
 
   // En-tête
-  sections.push({
-    type: 'header',
-    content: `
-      <div class="cv-section sortable" data-section="header">
-        <div class="drag-handle">⋮⋮</div>
-        <div class="cv-header">
-          <h1 contenteditable="false">${formData.fullName || ''}</h1>
-          <p contenteditable="false">${formData.jobTitle || ''}</p>
-          <p contenteditable="false">${formData.email || ''} | ${formData.phone || ''} | ${formData.address || ''}</p>
+  if (!hiddenSections.includes('header')) {
+    sections.push({
+      type: 'header',
+      content: `
+        <div class="cv-section sortable" data-section="header">
+          <div class="drag-handle">⋮⋮</div>
+          <div class="cv-header">
+            <h1 contenteditable="false">${formData.fullName || ''}</h1>
+            <p contenteditable="false">${formData.jobTitle || ''}</p>
+            <p contenteditable="false">${formData.email || ''} | ${formData.phone || ''} | ${formData.address || ''}</p>
+          </div>
         </div>
-      </div>
-    `,
-    height: 60
-  });
+      `,
+      height: 60
+    });
+  }
 
   // Résumé
-  if (formData.summary) {
+  if (formData.summary && !hiddenSections.includes('summary')) {
     sections.push({
       type: 'summary',
       content: `
@@ -74,7 +77,7 @@ function generateSections(formData) {
   }
 
   // Expérience
-  if (formData.experience && formData.experience.length > 0) {
+  if (formData.experience && formData.experience.length > 0 && !hiddenSections.includes('experience')) {
     let experienceContent = '<div class="cv-section sortable" data-section="experience"><div class="drag-handle">⋮⋮</div><h2 contenteditable="false">Expérience Professionnelle</h2>';
     let experienceHeight = 30; // titre
     let experienceItems = 0;
@@ -113,7 +116,7 @@ function generateSections(formData) {
   }
 
   // Formation
-  if (formData.education && formData.education.length > 0) {
+  if (formData.education && formData.education.length > 0 && !hiddenSections.includes('education')) {
     let educationContent = '<div class="cv-section sortable" data-section="education"><div class="drag-handle">⋮⋮</div><h2 contenteditable="false">Formation</h2>';
     let educationHeight = 30;
     let educationItems = 0;
@@ -152,7 +155,7 @@ function generateSections(formData) {
   }
 
   // Compétences
-  if (formData.skills) {
+  if (formData.skills && !hiddenSections.includes('skills')) {
     sections.push({
       type: 'skills',
       content: `
@@ -316,4 +319,13 @@ window.addNewPage = function() {
   localStorage.setItem('cv-max-pages', (currentMax + 1).toString());
   window.dispatchEvent(new CustomEvent('regeneratePreview'));
 
+};
+
+// Fonction pour supprimer la dernière page
+window.removeLastPage = function() {
+  const currentMax = parseInt(localStorage.getItem('cv-max-pages') || '2');
+  if (currentMax > 1) {
+    localStorage.setItem('cv-max-pages', (currentMax - 1).toString());
+    window.dispatchEvent(new CustomEvent('regeneratePreview'));
+  }
 };

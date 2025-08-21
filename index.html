@@ -32,6 +32,7 @@
         <button class="nav-btn" data-form="languages">Langues</button>
         <button class="nav-btn" data-form="certifications">Certifications</button>
         <button class="nav-btn" data-form="projects">Projets</button>
+        <button class="nav-btn" data-form="blocks">Organisation</button>
         <button class="nav-btn" data-form="recruitment">Recrutement</button>
         <button class="nav-btn" data-form="settings">Paramètres</button>
         <button class="nav-btn" data-form="customization">Personnalisation</button>
@@ -169,6 +170,13 @@
           <button type="button" id="btnAddProject" class="btn btn-add">+ Ajouter un projet</button>
         </section>
 
+        <!-- ORGANISATION DES BLOCS -->
+        <section id="blocks" class="form-section">
+          <h2>Organisation des blocs</h2>
+          <p>Glissez pour réorganiser les sections ou décochez pour les masquer.</p>
+          <ul id="block-order-list" class="block-order-list"></ul>
+        </section>
+
         <!-- INFORMATIONS RECRUTEMENT -->
         <section id="recruitment" class="form-section">
           <h2>Informations Recrutement</h2>
@@ -286,6 +294,13 @@
           <div class="form-group">
             <label>Couleur principale</label>
             <input type="color" id="primaryColor" class="input" value="#2563eb">
+          </div>
+          <div class="form-group">
+            <label>Gestion des pages</label>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <button type="button" id="btnAddPage" class="btn btn-small">+ Ajouter une page</button>
+              <button type="button" id="btnRemovePage" class="btn btn-small">- Supprimer la dernière page</button>
+            </div>
           </div>
         </section>
 

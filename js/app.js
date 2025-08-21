@@ -10,6 +10,9 @@ import { initCustomization, applyCurrentCustomization } from './customization.js
 // Import du module de gestion du drag & drop
 import { initDragAndDrop, destroyDragAndDrop } from './drag.js';
 
+// Import du module d'organisation des blocs
+import { initBlocksTab } from './blocks.js';
+
 // Données d'exemple pour pré-remplir le CV
 const exampleData = {
   fullName: "Jean Dupont",
@@ -145,6 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
   loadSavedApiKey();
   populateExampleData();
   generatePreview();
+  initBlocksTab();
   
   // Initialiser la personnalisation de manière asynchrone
   initCustomizationAsync();
@@ -302,6 +306,8 @@ function initFormHandlers() {
   addSafeListener('btnAddLanguage', 'click', addLanguage);
   addSafeListener('btnAddCertification', 'click', addCertification);
   addSafeListener('btnAddProject', 'click', addProject);
+  addSafeListener('btnAddPage', 'click', () => window.addNewPage());
+  addSafeListener('btnRemovePage', 'click', () => window.removeLastPage());
   
   // Boutons d'action
   addSafeListener('btnAutoFillAI', 'click', autoFillWithAI);
