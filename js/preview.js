@@ -10,11 +10,61 @@ export function generatePreview(formData) {
   // Injecter le HTML dans le conteneur
   previewContainer.innerHTML = pages;
   
+  // Optimiser les espaces vides
+  optimizeSpacing();
+  
   // Initialiser le drag & drop après avoir généré le contenu
   initializeDragAndDrop();
   
   // Appliquer la personnalisation
   applyCustomizationToPreview();
+}
+
+// Fonction pour optimiser les espaces vides
+function optimizeSpacing() {
+  const sections = document.querySelectorAll('.cv-section');
+  
+  sections.forEach(section => {
+    // Supprimer les paragraphes vides
+    const emptyParagraphs = section.querySelectorAll('p:empty, p:not(:has(*)):not([contenteditable])');
+    emptyParagraphs.forEach(p => {
+      if (!p.textContent.trim()) {
+        p.remove();
+      }
+    });
+    
+    // Supprimer les divs vides
+    const emptyDivs = section.querySelectorAll('div:empty:not(.drag-handle):not(.resize-handle)');
+    emptyDivs.forEach(div => div.remove());
+    
+    // Optimiser les marges des derniers éléments
+    const lastItem = section.querySelector('.cv-item:last-child');
+    if (lastItem) {
+      lastItem.style.marginBottom = '0';
+    }
+    
+    // Réduire les espaces excessifs entre les éléments
+    const items = section.querySelectorAll('.cv-item');
+    items.forEach((item, index) => {
+      if (index > 0) {
+        const prevItem = items[index - 1];
+        const gap = item.offsetTop - (prevItem.offsetTop + prevItem.offsetHeight);
+        if (gap > 20) { // Si l'espace est trop grand
+          item.style.marginTop = '-5px';
+        }
+      }
+    });
+  });
+  
+  // Supprimer les sections complètement vides
+  const emptySections = document.querySelectorAll('.cv-section:not(.cv-recruitment-banner)');
+  emptySections.forEach(section => {
+    const hasContent = section.querySelector('h1, h2, h3, p, li, img, .cv-item');
+    const textContent = section.textContent.trim();
+    if (!hasContent || textContent.length < 10) {
+      section.remove();
+    }
+  });
 }
 
 function generateSections(formData) {
@@ -24,14 +74,17 @@ function generateSections(formData) {
   if (formData.showRecruitmentBanner && (formData.recruiterName || formData.companyName || formData.companyLogoUrl || formData.bannerMessage)) {
     const bannerStyle = formData.bannerStyle || 'modern';
     const bannerColor = formData.bannerColor || '#3B82F6';
-    const bannerHeight = formData.bannerHeight || 50;
+    const bannerHeight = parseInt(formData.bannerHeight) || 20;
     const bannerImageUrl = formData.bannerImageUrl || '';
     
-    sections.push({
-      type: 'recruitment-banner',
-      content: generateRecruitmentBanner(formData, bannerStyle, bannerColor, bannerHeight, bannerImageUrl),
-      height: parseInt(bannerHeight) + 10 // hauteur + marge
-    });
+    // Ne pas ajouter la bannière si la hauteur est 0
+    if (bannerHeight > 0) {
+      sections.push({
+        type: 'recruitment-banner',
+        content: generateRecruitmentBanner(formData, bannerStyle, bannerColor, bannerHeight, bannerImageUrl),
+        height: bannerHeight + 5 // hauteur + marge réduite
+      });
+    }
   }
 
   // En-tête
@@ -47,7 +100,7 @@ function generateSections(formData) {
         </div>
       </div>
     `,
-    height: 60
+    height: 35
   });
 
   // Résumé
@@ -61,14 +114,14 @@ function generateSections(formData) {
           <p contenteditable="false">${formData.summary}</p>
         </div>
       `,
-      height: 40 + (formData.summary.length / 100) * 10 // estimation basée sur la longueur
+      height: 25 + Math.min((formData.summary.length / 150) * 8, 20) // estimation plus compacte
     });
   }
 
   // Expérience
   if (formData.experience && formData.experience.length > 0) {
     let experienceContent = '<div class="cv-section sortable" data-section="experience"><div class="drag-handle">⋮⋮</div><h2 contenteditable="false">Expérience Professionnelle</h2>';
-    let experienceHeight = 30; // titre
+    let experienceHeight = 20; // titre réduit
     
     formData.experience.forEach(exp => {
       const title = exp.title || '';
@@ -83,7 +136,7 @@ function generateSections(formData) {
           ${description ? `<p contenteditable="false">${description}</p>` : ''}
         </div>
       `;
-      experienceHeight += 25 + (description ? description.length / 150 * 10 : 0);
+      experienceHeight += 18 + (description ? Math.min(description.length / 200 * 8, 15) : 0); // plus compact
     });
     
     experienceContent += '</div>';
@@ -202,11 +255,23 @@ function generateRecruitmentBanner(formData, bannerStyle, bannerColor, bannerHei
   const companyLogoUrl = formData.companyLogoUrl || '';
   const bannerMessage = formData.bannerMessage || '';
   
+  // Si la hauteur est 0, retourner une bannière masquée
+  if (bannerHeight <= 0) {
+    return `
+      <div class="cv-section cv-recruitment-banner banner-${bannerStyle} sortable" 
+           data-section="recruitment-banner" 
+           style="display: none !important; height: 0 !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important;">
+      </div>
+    `;
+  }
+  
   // Styles CSS inline pour la bannière
   const bannerStyles = `
     --banner-height: ${bannerHeight}mm;
     --banner-color: ${bannerColor};
     --banner-color-secondary: ${adjustColor(bannerColor, -20)};
+    min-height: ${bannerHeight}mm;
+    height: ${bannerHeight}mm;
     ${bannerImageUrl ? `background-image: url('${bannerImageUrl}');` : ''}
   `;
   

@@ -306,6 +306,7 @@ function initFormHandlers() {
   addSafeListener('btnExport', 'click', exportToPDF);
   addSafeListener('btnAnalyzeCVAI', 'click', analyzeCVWithAI);
   addSafeListener('btnToggleEdit', 'click', toggleEditMode);
+  addSafeListener('btnOptimizeSpacing', 'click', optimizeSpacingManual);
   addSafeListener('btnSaveApiKey', 'click', saveApiKey);
   addSafeListener('btnNewCV', 'click', createNewCV);
   addSafeListener('btnResetToDemo', 'click', loadDemoData);
@@ -955,23 +956,47 @@ function generateProjects(data) {
 }
 
 // DRAG & DROP
-function initDragAndDrop() {
+async function initDragAndDrop() {
   console.log('Initializing drag & drop...');
   
+  try {
+    // Importer le module drag amélioré
+    const dragModule = await import('./drag.js');
+    if (dragModule.initDragAndDrop) {
+      dragModule.initDragAndDrop();
+      
+      // Optimiser les espaces après initialisation
+      if (dragModule.optimizeSpacing) {
+        dragModule.optimizeSpacing();
+      }
+    }
+  } catch (error) {
+    console.warn('Enhanced drag module not available, using fallback:', error);
+    // Fallback vers l'ancien système
+    initDragAndDropFallback();
+  }
+}
+
+// Système de drag & drop de fallback
+function initDragAndDropFallback() {
   // Nettoyer les instances existantes
   sortableInstances.forEach(instance => instance.destroy());
   sortableInstances = [];
   
-  const cvContainer = document.getElementById('cv-container');
+  const cvContainer = document.querySelector('.cv-page') || document.getElementById('cv-preview');
   if (cvContainer && editMode) {
     const sortable = Sortable.create(cvContainer, {
-      animation: 150,
+      animation: 200,
       ghostClass: 'cv-section-ghost',
       chosenClass: 'cv-section-chosen',
       dragClass: 'cv-section-drag',
+      handle: '.drag-handle',
       onEnd: function(evt) {
         console.log('Section moved from', evt.oldIndex, 'to', evt.newIndex);
-        // Ici on pourrait sauvegarder l'ordre des sections
+        // Sauvegarder l'ordre des sections
+        const sections = cvContainer.querySelectorAll('.cv-section[data-section]');
+        const order = Array.from(sections).map(section => section.dataset.section);
+        localStorage.setItem('cv-section-order', JSON.stringify(order));
       }
     });
     sortableInstances.push(sortable);
@@ -1966,7 +1991,70 @@ function formatProjectPeriod(project) {
 
 
 
+// FONCTION POUR OPTIMISER MANUELLEMENT LES ESPACES
+async function optimizeSpacingManual() {
+  const button = document.getElementById('btnOptimizeSpacing');
+  const originalText = button.textContent;
+  button.textContent = 'Optimisation...';
+  button.disabled = true;
+  
+  try {
+    // Essayer d'utiliser le module drag amélioré
+    const dragModule = await import('./drag.js');
+    if (dragModule.optimizeSpacing) {
+      dragModule.optimizeSpacing();
+    }
+  } catch (error) {
+    console.warn('Enhanced drag module not available, using preview optimization');
+    // Fallback vers l'optimisation du module preview
+    try {
+      const previewModule = await import('./preview.js');
+      if (previewModule.optimizeSpacing) {
+        previewModule.optimizeSpacing();
+      }
+    } catch (previewError) {
+      console.warn('Preview module optimization not available');
+      // Optimisation basique
+      optimizeSpacingBasic();
+    }
+  }
+  
+  // Régénérer l'aperçu après optimisation
+  setTimeout(() => {
+    generatePreview();
+    button.textContent = '✓ Optimisé';
+    setTimeout(() => {
+      button.textContent = originalText;
+      button.disabled = false;
+    }, 2000);
+  }, 500);
+}
+
+// Optimisation basique des espaces
+function optimizeSpacingBasic() {
+  const sections = document.querySelectorAll('.cv-section');
+  
+  sections.forEach(section => {
+    // Supprimer les paragraphes vides
+    const emptyElements = section.querySelectorAll('p:empty, div:empty:not(.drag-handle)');
+    emptyElements.forEach(el => {
+      if (!el.textContent.trim() && !el.querySelector('img, input, button')) {
+        el.remove();
+      }
+    });
+    
+    // Réduire les marges excessives
+    const items = section.querySelectorAll('.cv-item');
+    items.forEach((item, index) => {
+      if (index === items.length - 1) {
+        item.style.marginBottom = '0';
+      }
+    });
+  });
+}
+
 // Rendre les fonctions disponibles globalement
 window.toggleCurrentJob = toggleCurrentJob;
 window.removeFormItem = removeFormItem;
+window.optimizeSpacingManual = optimizeSpacingManual;
 window.toggleEditMode = toggleEditMode;
