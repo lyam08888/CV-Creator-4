@@ -143,6 +143,19 @@ function generateSections(formData) {
     });
   }
 
+  // Appliquer l'ordre sauvegardé des sections si disponible
+  const savedOrder = JSON.parse(localStorage.getItem('cv-section-order') || '[]');
+  if (savedOrder.length > 0) {
+    sections.sort((a, b) => {
+      const indexA = savedOrder.indexOf(a.type);
+      const indexB = savedOrder.indexOf(b.type);
+      if (indexA === -1 && indexB === -1) return 0;
+      if (indexA === -1) return 1;
+      if (indexB === -1) return -1;
+      return indexA - indexB;
+    });
+  }
+
   return sections;
 }
 
