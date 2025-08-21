@@ -724,24 +724,42 @@ function generatePreview() {
 // Fonction de fallback pour la génération d'aperçu
 function generatePreviewFallback(formData) {
   const previewContainer = document.getElementById('cv-preview');
-  
+
+  // Construire la liste des sections disponibles
+  const sections = [
+    { type: 'header', content: generateHeader(formData) },
+    { type: 'summary', content: generateSummary(formData) },
+    { type: 'experience', content: generateExperience(formData) },
+    { type: 'education', content: generateEducation(formData) },
+    { type: 'skills', content: generateSkills(formData) },
+    { type: 'languages', content: generateLanguages(formData) },
+    { type: 'certifications', content: generateCertifications(formData) },
+    { type: 'projects', content: generateProjects(formData) }
+  ].filter(section => section.content && section.content.trim() !== '');
+
+  // Appliquer l'ordre sauvegardé des sections si disponible
+  const savedOrder = JSON.parse(localStorage.getItem('cv-section-order') || '[]');
+  if (savedOrder.length > 0) {
+    sections.sort((a, b) => {
+      const indexA = savedOrder.indexOf(a.type);
+      const indexB = savedOrder.indexOf(b.type);
+      if (indexA === -1 && indexB === -1) return 0;
+      if (indexA === -1) return 1;
+      if (indexB === -1) return -1;
+      return indexA - indexB;
+    });
+  }
+
   previewContainer.innerHTML = `
     <div class="cv-page" data-page="1">
-      ${generateHeader(formData)}
-      ${generateSummary(formData)}
-      ${generateExperience(formData)}
-      ${generateEducation(formData)}
-      ${generateSkills(formData)}
-      ${generateLanguages(formData)}
-      ${generateCertifications(formData)}
-      ${generateProjects(formData)}
+      ${sections.map(section => section.content).join('')}
       <div class="page-number">Page 1</div>
     </div>
   `;
-  
+
   // Initialiser le drag & drop après la génération
   initializeDragAndDrop();
-  
+
   // Appliquer la personnalisation
   if (window.applyCurrentCustomization) {
     window.applyCurrentCustomization();
