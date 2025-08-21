@@ -187,7 +187,8 @@ function loadDemoData() {
     // Déclencher l'événement change pour afficher les contrôles
     document.getElementById('showRecruitmentBanner').dispatchEvent(new Event('change'));
   }
-  if (document.getElementById('fixRecruitmentBanner')) document.getElementById('fixRecruitmentBanner').checked = demoData.fixRecruitmentBanner;
+  const fixBannerCheckbox = document.getElementById('fixRecruitmentBanner');
+  if (fixBannerCheckbox) fixBannerCheckbox.checked = demoData.fixRecruitmentBanner;
   if (document.getElementById('recruiterFirstName')) document.getElementById('recruiterFirstName').value = demoData.recruiterFirstName;
   if (document.getElementById('recruiterLastName')) document.getElementById('recruiterLastName').value = demoData.recruiterLastName;
   if (document.getElementById('recruiterPosition')) document.getElementById('recruiterPosition').value = demoData.recruiterPosition;
