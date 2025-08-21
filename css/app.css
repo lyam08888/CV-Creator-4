@@ -1150,6 +1150,24 @@ label {
   background-color: rgba(139, 92, 246, 0.1);
 }
 
+.section-resizer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  cursor: ns-resize;
+}
+
+#column-resizer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--cv-left-column-width) - 3px);
+  width: 6px;
+  cursor: ew-resize;
+}
+
 .drag-handle {
   position: absolute;
   left: -30px;

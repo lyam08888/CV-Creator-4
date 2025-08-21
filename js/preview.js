@@ -1,4 +1,5 @@
 import { initDragAndDrop } from './drag.js';
+import { initResizableSections, initResizableColumns } from './resize.js';
 
 export function generatePreview(formData) {
   const previewContainer = document.getElementById('cv-preview');
@@ -14,6 +15,8 @@ export function generatePreview(formData) {
   
   // Initialiser le drag & drop après avoir généré le contenu
   initDragAndDrop();
+  initResizableSections();
+  initResizableColumns();
   
   // Appliquer la personnalisation
   applyCustomizationToPreview();
