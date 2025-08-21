@@ -1229,7 +1229,10 @@ function getFormData() {
 // FONCTIONS UTILITAIRES DE FORMATAGE
 function formatDate(dateString) {
   if (!dateString) return '';
-  const date = new Date(dateString + '-01');
+  // Support "YYYY-MM" as well as full date strings like "YYYY-MM-DD"
+  const normalized = dateString.length > 7 ? dateString.slice(0, 7) : dateString;
+  const date = new Date(normalized + '-01');
+  if (isNaN(date)) return '';
   return date.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long' });
 }
 
@@ -1241,6 +1244,56 @@ function formatDescription(description) {
     }
     return `<div>${line.trim()}</div>`;
   }).join('');
+}
+
+// Parse a period string like "Mars 2021 - Présent" or "Janvier 2019 - Février 2021"
+// and return an object with startDate/endDate in YYYY-MM format and a current flag.
+function parsePeriodString(period) {
+  if (!period) return { startDate: '', endDate: '', current: false };
+  const months = {
+    'janvier': '01',
+    'février': '02', 'fevrier': '02',
+    'mars': '03',
+    'avril': '04',
+    'mai': '05',
+    'juin': '06',
+    'juillet': '07',
+    'août': '08', 'aout': '08',
+    'septembre': '09',
+    'octobre': '10',
+    'novembre': '11',
+    'décembre': '12', 'decembre': '12'
+  };
+
+  const parts = period.split('-').map(p => p.trim());
+  const startMatch = parts[0]?.match(/([a-zA-Zéû]+)\s*(\d{4})/i);
+  let startDate = '';
+  if (startMatch) {
+    const month = months[startMatch[1].toLowerCase()] || '01';
+    startDate = `${startMatch[2]}-${month}`;
+  }
+
+  let endDate = '';
+  let current = false;
+  if (parts[1]) {
+    if (/présent|present/i.test(parts[1])) {
+      current = true;
+    } else {
+      const endMatch = parts[1].match(/([a-zA-Zéû]+)\s*(\d{4})/i);
+      if (endMatch) {
+        const month = months[endMatch[1].toLowerCase()] || '01';
+        endDate = `${endMatch[2]}-${month}`;
+      }
+    }
+  }
+
+  return { startDate, endDate, current };
+}
+
+function normalizeMonth(dateStr) {
+  if (!dateStr) return '';
+  const match = dateStr.match(/\d{4}-\d{2}/);
+  return match ? match[0] : '';
 }
 
 // GESTION DE LA CLÉ API
@@ -1698,15 +1751,34 @@ function fillFormWithData(data) {
   document.getElementById('languages-list').innerHTML = '';
   document.getElementById('certifications-list').innerHTML = '';
   document.getElementById('projects-list').innerHTML = '';
-  
+
   // Ajouter les expériences
   if (data.experiences) {
-    data.experiences.forEach(exp => addExperience(exp));
+    data.experiences.forEach(exp => {
+      if ((!exp.startDate || !exp.endDate) && exp.period) {
+        const parsed = parsePeriodString(exp.period);
+        exp.startDate = exp.startDate || parsed.startDate;
+        exp.endDate = exp.endDate || parsed.endDate;
+        if (parsed.current) exp.current = true;
+      }
+      exp.startDate = normalizeMonth(exp.startDate);
+      exp.endDate = normalizeMonth(exp.endDate);
+      addExperience(exp);
+    });
   }
-  
+
   // Ajouter les formations
   if (data.education) {
-    data.education.forEach(edu => addEducation(edu));
+    data.education.forEach(edu => {
+      if ((!edu.startDate || !edu.endDate) && edu.period) {
+        const parsed = parsePeriodString(edu.period);
+        edu.startDate = edu.startDate || parsed.startDate;
+        edu.endDate = edu.endDate || parsed.endDate;
+      }
+      edu.startDate = normalizeMonth(edu.startDate);
+      edu.endDate = normalizeMonth(edu.endDate);
+      addEducation(edu);
+    });
   }
   
   // Ajouter les compétences techniques
@@ -1731,7 +1803,16 @@ function fillFormWithData(data) {
   
   // Ajouter les projets
   if (data.projects) {
-    data.projects.forEach(project => addProject(project));
+    data.projects.forEach(project => {
+      if ((!project.startDate || !project.endDate) && project.period) {
+        const parsed = parsePeriodString(project.period);
+        project.startDate = project.startDate || parsed.startDate;
+        project.endDate = project.endDate || parsed.endDate;
+      }
+      project.startDate = normalizeMonth(project.startDate);
+      project.endDate = normalizeMonth(project.endDate);
+      addProject(project);
+    });
   }
 }
 
