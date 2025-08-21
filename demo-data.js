@@ -162,7 +162,8 @@ const demoData = {
   bannerMessage: "Rejoignez notre équipe dynamique ! Nous recherchons un(e) Développeur(se) Full Stack passionné(e) pour contribuer à nos projets innovants.",
   bannerStyle: "modern",
   bannerColor: "#3B82F6",
-  bannerHeight: "60"
+  bannerHeight: "60",
+  fixRecruitmentBanner: false
 };
 
 // Fonction pour charger les données de démonstration
@@ -186,6 +187,7 @@ function loadDemoData() {
     // Déclencher l'événement change pour afficher les contrôles
     document.getElementById('showRecruitmentBanner').dispatchEvent(new Event('change'));
   }
+  if (document.getElementById('fixRecruitmentBanner')) document.getElementById('fixRecruitmentBanner').checked = demoData.fixRecruitmentBanner;
   if (document.getElementById('recruiterFirstName')) document.getElementById('recruiterFirstName').value = demoData.recruiterFirstName;
   if (document.getElementById('recruiterLastName')) document.getElementById('recruiterLastName').value = demoData.recruiterLastName;
   if (document.getElementById('recruiterPosition')) document.getElementById('recruiterPosition').value = demoData.recruiterPosition;

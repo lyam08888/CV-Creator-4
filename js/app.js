@@ -1169,6 +1169,7 @@ function getFormData() {
   
   // Données de la bannière de recrutement
   data.showRecruitmentBanner = document.getElementById('showRecruitmentBanner')?.checked || false;
+  data.fixRecruitmentBanner = document.getElementById('fixRecruitmentBanner')?.checked || false;
   data.recruiterFirstName = document.getElementById('recruiterFirstName')?.value || '';
   data.recruiterLastName = document.getElementById('recruiterLastName')?.value || '';
   data.recruiterPosition = document.getElementById('recruiterPosition')?.value || '';
@@ -1840,6 +1841,7 @@ function initRecruitmentBannerHandlers() {
   // Gestionnaire pour la checkbox d'affichage de la bannière
   const showBannerCheckbox = document.getElementById('showRecruitmentBanner');
   const bannerControls = document.getElementById('recruitmentBannerControls');
+  const fixBannerCheckbox = document.getElementById('fixRecruitmentBanner');
 
   if (showBannerCheckbox && bannerControls) {
     // Par défaut, la bannière est désactivée
@@ -1859,6 +1861,7 @@ function initRecruitmentBannerHandlers() {
         }, 10);
       } else {
         bannerControls.style.display = 'none';
+        if (fixBannerCheckbox) fixBannerCheckbox.checked = false;
       }
       // Régénérer l'aperçu
       generatePreview();
@@ -1902,6 +1905,10 @@ function initRecruitmentBannerHandlers() {
       field.addEventListener('input', debounce(generatePreview, 300));
     }
   });
+
+  if (fixBannerCheckbox) {
+    fixBannerCheckbox.addEventListener('change', generatePreview);
+  }
   
   console.log('Recruitment banner handlers initialized');
 }

@@ -1680,6 +1680,12 @@ label {
   background-repeat: no-repeat;
 }
 
+.cv-recruitment-banner.fixed-banner {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
 /* Styles selon le type de bannière */
 .cv-recruitment-banner.banner-modern {
   background: linear-gradient(135deg, var(--banner-color, #3B82F6) 0%, var(--banner-color-secondary, #1E40AF) 100%);
