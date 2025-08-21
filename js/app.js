@@ -635,18 +635,18 @@ function addProject(data = null) {
 // FONCTIONS UTILITAIRES
 function removeFormItem(button) {
   button.closest('.form-item').remove();
-  generatePreview();
+  generatePreviewInternal();
 }
 
 function removeSkill(button) {
   button.closest('.skill-item').remove();
-  generatePreview();
+  generatePreviewInternal();
 }
 
 function updateSkillLevel(range) {
   const levelSpan = range.nextElementSibling;
   levelSpan.textContent = range.value + '%';
-  generatePreview();
+  generatePreviewInternal();
 }
 
 function toggleCurrentJob(checkbox) {
@@ -657,7 +657,7 @@ function toggleCurrentJob(checkbox) {
   } else {
     endDateInput.disabled = false;
   }
-  generatePreview();
+  generatePreviewInternal();
 }
 
 function debounce(func, wait) {
@@ -721,31 +721,29 @@ function populateExampleData() {
 
 // GÉNÉRATION DE L'APERÇU
 
-function generatePreview() {
+function generatePreviewInternal() {
   console.log('Generating preview...');
   
   const formData = getFormData();
   
-  // Utiliser le nouveau système de génération avec pagination
-  import('./preview.js').then(module => {
-    if (module.generatePreview) {
-      module.generatePreview(formData);
-      
-      // Réinitialiser le mode édition si actif
-      if (editMode) {
-        setTimeout(() => {
-          const editableElements = document.querySelectorAll('[contenteditable]');
-          editableElements.forEach(element => {
-            element.setAttribute('contenteditable', 'true');
-          });
-        }, 100);
-      }
+  try {
+    // Utiliser le module de prévisualisation importé
+    generatePreview(formData);
+    
+    // Réinitialiser le mode édition si actif
+    if (editMode) {
+      setTimeout(() => {
+        const editableElements = document.querySelectorAll('[contenteditable]');
+        editableElements.forEach(element => {
+          element.setAttribute('contenteditable', 'true');
+        });
+      }, 100);
     }
-  }).catch(error => {
-    console.error('Erreur lors du chargement du module preview:', error);
+  } catch (error) {
+    console.error('Erreur lors de la génération de l\'aperçu:', error);
     // Fallback vers l'ancien système
     generatePreviewFallback(formData);
-  });
+  }
 }
 
 // Fonction de fallback pour la génération d'aperçu
@@ -2245,7 +2243,7 @@ function generatePreviewWrapper() {
   try {
     const formData = getFormData();
     logSuccess('Form data retrieved successfully');
-    generatePreview(formData);
+    generatePreviewInternal();
     logSuccess('Preview generated successfully');
   } catch (error) {
     logError('Error in generatePreviewWrapper:', error);
