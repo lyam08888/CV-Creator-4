@@ -48,8 +48,8 @@ export function initBlocksTab() {
       animation: 150,
       handle: '.drag-handle',
       // Allow checkboxes to remain interactive while using drag handles
-      // "filter" prevents Sortable from hijacking clicks on the inputs
-      filter: '.block-visibility',
+      // "filter" prevents Sortable from hijacking clicks on the inputs or their labels
+      filter: '.block-visibility, .checkbox-label, .checkbox-label *',
       preventOnFilter: false,
       onEnd: saveOrder
     });
