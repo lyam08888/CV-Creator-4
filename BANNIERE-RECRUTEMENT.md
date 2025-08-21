@@ -15,7 +15,8 @@
   - **Corporate** : Dégradé horizontal avec bordure latérale
 
 - **Couleur personnalisable** : Sélecteur de couleur avec aperçu en temps réel
-- **Hauteur ajustable** : Slider de 20mm à 80mm avec affichage de la valeur
+- **Hauteur ajustable** : Slider de 20mm à 80mm par pas de 0,1mm avec affichage de la valeur
+- **Padding adaptatif** : Espacement interne basé sur la taille du texte
 
 ### 3. 🖼️ Gestion des Images
 - **Image de fond** : URL personnalisable pour l'arrière-plan de la bannière
@@ -98,7 +99,7 @@
 - [x] Contrôles s'affichent/se masquent
 - [x] 4 styles de bannière fonctionnels
 - [x] Couleur personnalisable
-- [x] Hauteur ajustable
+- [x] Hauteur ajustable (pas de 0,1mm)
 - [x] Image de fond supportée
 - [x] Logo d'entreprise affiché
 - [x] Drag & drop fonctionnel

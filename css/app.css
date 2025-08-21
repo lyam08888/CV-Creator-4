@@ -1674,7 +1674,7 @@ label {
   overflow: hidden;
   display: flex;
   align-items: center;
-  padding: 15mm 20mm;
+  padding: 1em 2em;
   box-sizing: border-box;
   background-size: cover;
   background-position: center;
