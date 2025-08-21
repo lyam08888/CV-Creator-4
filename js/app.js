@@ -1921,21 +1921,7 @@ function loadDemoData() {
   }
 }
 
-// FONCTION POUR GÉNÉRER L'APERÇU DU CV
-function generatePreview() {
-  console.log('Generating CV preview...');
-  
-  const formData = getFormData();
-  
-  // Importer et utiliser le module de prévisualisation
-  import('./preview.js').then(module => {
-    module.generatePreview(formData);
-  }).catch(error => {
-    console.error('Erreur lors du chargement du module preview:', error);
-    // Fallback: générer un aperçu simple
-    generateSimplePreview(formData);
-  });
-}
+
 
 // FONCTION DE PRÉVISUALISATION SIMPLE (FALLBACK)
 function generateSimplePreview(formData) {
@@ -2207,40 +2193,10 @@ function formatDate(dateString) {
 }
 
 // FONCTIONS UTILITAIRES SUPPLÉMENTAIRES
-function debounce(func, wait) {
-  let timeout;
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
-}
 
-// FONCTION POUR BASCULER LE POSTE ACTUEL
-function toggleCurrentJob(checkbox) {
-  const endDateInput = checkbox.closest('.form-item').querySelector('input[type="month"][name*="endDate"]');
-  if (endDateInput) {
-    if (checkbox.checked) {
-      endDateInput.disabled = true;
-      endDateInput.value = '';
-    } else {
-      endDateInput.disabled = false;
-    }
-  }
-  generatePreview();
-}
 
-// FONCTION POUR SUPPRIMER UN ÉLÉMENT DE FORMULAIRE
-function removeFormItem(button) {
-  const formItem = button.closest('.form-item');
-  if (formItem) {
-    formItem.remove();
-    generatePreview();
-  }
-}
+
+
 
 // FONCTION POUR BASCULER LE MODE ÉDITION
 function toggleEditMode() {
