@@ -126,7 +126,10 @@ const exampleData = {
       startDate: "2022-08",
       endDate: "2022-12"
     }
-  ]
+  ],
+
+  // Bannière de recrutement désactivée par défaut
+  showRecruitmentBanner: false
 };
 
 // Variables globales
@@ -683,15 +686,23 @@ function populateExampleData() {
   
   // Compétences transversales
   exampleData.softSkills.forEach(skill => addSoftSkill(skill));
-  
+
   // Langues
   exampleData.languages.forEach(lang => addLanguage(lang));
-  
+
   // Certifications
   exampleData.certifications.forEach(cert => addCertification(cert));
-  
+
   // Projets
   exampleData.projects.forEach(project => addProject(project));
+
+  // S'assurer que la bannière de recrutement est désactivée
+  const showBannerCheckbox = document.getElementById('showRecruitmentBanner');
+  const bannerControls = document.getElementById('recruitmentBannerControls');
+  if (showBannerCheckbox && bannerControls) {
+    showBannerCheckbox.checked = false;
+    bannerControls.style.display = 'none';
+  }
 }
 
 // GÉNÉRATION DE L'APERÇU
@@ -1829,8 +1840,12 @@ function initRecruitmentBannerHandlers() {
   // Gestionnaire pour la checkbox d'affichage de la bannière
   const showBannerCheckbox = document.getElementById('showRecruitmentBanner');
   const bannerControls = document.getElementById('recruitmentBannerControls');
-  
+
   if (showBannerCheckbox && bannerControls) {
+    // Par défaut, la bannière est désactivée
+    showBannerCheckbox.checked = false;
+    bannerControls.style.display = 'none';
+
     showBannerCheckbox.addEventListener('change', function() {
       if (this.checked) {
         bannerControls.style.display = 'block';
