@@ -543,23 +543,24 @@ label {
 }
 
 .skill-item {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 12px;
   padding: 12px;
   background: #f8fafc;
   border-radius: 6px;
   border: 1px solid #e2e8f0;
+  width: fit-content;
 }
 
 .skill-item input[type="text"] {
-  flex: 1;
-  min-width: 150px;
+  flex: 0 1 auto;
+  width: auto;
+  min-width: 0;
 }
 
 .skill-item .range {
-  flex: 1;
-  min-width: 100px;
+  flex: 0 0 100px;
 }
 
 .skill-level {
@@ -678,7 +679,7 @@ label {
 
 /* CV Sections */
 .cv-section {
-  margin-bottom: 30px;
+  margin-bottom: 10px;
   transition: all 0.3s ease;
 }
 
@@ -686,8 +687,8 @@ label {
   cursor: move;
   border: 2px dashed transparent;
   border-radius: 8px;
-  padding: 15px;
-  margin: 10px 0;
+  padding: 5px;
+  margin: 5px 0;
 }
 
 .cv-section.editable:hover {
@@ -1151,6 +1152,24 @@ label {
 .cv-section.drag-over {
   border: 2px dashed var(--primary-color);
   background-color: rgba(139, 92, 246, 0.08);
+}
+
+.section-resizer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  cursor: ns-resize;
+}
+
+#column-resizer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--cv-left-column-width) - 3px);
+  width: 6px;
+  cursor: ew-resize;
 }
 
 .drag-handle {
@@ -1833,10 +1852,16 @@ label {
   opacity: 0.9;
 }
 
-.banner-contact {
+.banner-position,
+.banner-phone,
+.banner-email {
   font-size: 14px;
-  margin: 0 0 10px 0;
+  margin: 0 0 5px 0;
   opacity: 0.8;
+}
+
+.banner-email {
+  margin-bottom: 10px;
 }
 
 .banner-message {
@@ -1852,7 +1877,7 @@ label {
 .cv-preview.layout-sidebar .cv-recruitment-banner,
 .cv-page.layout-two-column .cv-recruitment-banner,
 .cv-page.layout-sidebar .cv-recruitment-banner {
-  grid-column: 1 / -1; /* La bannière prend toute la largeur */
+  grid-column: 1 / -1 !important; /* La bannière prend toute la largeur */
   margin-left: calc(-1 * var(--cv-margin-left, 20mm));
   margin-right: calc(-1 * var(--cv-margin-right, 20mm));
   width: calc(100% + var(--cv-margin-left, 20mm) + var(--cv-margin-right, 20mm));
@@ -1894,4 +1919,30 @@ label {
 .cv-recruitment-banner.banner-corporate .drag-handle:hover {
   color: rgba(0, 0, 0, 0.8);
   background: rgba(0, 0, 0, 0.2);
+}
+
+/* Organisation des blocs */
+.block-order-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.block-order-list .block-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+}
+
+.block-order-list .drag-handle {
+  cursor: grab;
+  font-size: 18px;
+  padding-left: 0;
 }

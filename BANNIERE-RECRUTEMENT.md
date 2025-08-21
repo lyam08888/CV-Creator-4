@@ -15,7 +15,8 @@
   - **Corporate** : Dégradé horizontal avec bordure latérale
 
 - **Couleur personnalisable** : Sélecteur de couleur avec aperçu en temps réel
-- **Hauteur ajustable** : Slider de 20mm à 80mm avec affichage de la valeur
+- **Hauteur ajustable** : Slider de 0mm à 80mm par pas de 0,1mm avec affichage de la valeur
+- **Padding adaptatif** : Espacement interne basé sur la taille du texte
 
 ### 3. 🖼️ Gestion des Images
 - **Image de fond** : URL personnalisable pour l'arrière-plan de la bannière
@@ -23,8 +24,11 @@
 - **Overlay intelligent** : Assombrit l'image de fond pour améliorer la lisibilité
 
 ### 4. 📝 Contenu Personnalisable
-- **Nom du recruteur** : Champ texte pour identifier le contact
-- **Contact recruteur** : Email, téléphone ou autres informations
+- **Prénom du recruteur** : Champ texte pour le prénom du contact
+- **Nom du recruteur** : Champ texte pour le nom du contact
+- **Poste du recruteur** : Fonction ou titre du recruteur
+- **Téléphone du recruteur** : Numéro de contact direct
+- **Email du recruteur** : Adresse email professionnelle
 - **Nom de l'entreprise** : Affiché en titre principal
 - **Message personnalisé** : Zone de texte libre pour un message d'accroche
 
@@ -37,6 +41,11 @@
 - **Largeur fixe** : La bannière prend toute la largeur disponible
 - **Indépendante des colonnes** : Ne se redimensionne pas selon le layout
 - **Position flexible** : Peut être placée n'importe où dans le CV
+
+### 7. 📌 Bannière Fixable
+- **Option de fixation** : Épingle la bannière en haut du document
+- **Désactive le drag & drop** : Lorsque fixée, la bannière n'est plus déplaçable
+- **Compatible multi-colonnes** : Reste en haut quel que soit le layout
 
 ## 🏗️ Architecture Technique
 
@@ -90,12 +99,13 @@
 - [x] Contrôles s'affichent/se masquent
 - [x] 4 styles de bannière fonctionnels
 - [x] Couleur personnalisable
-- [x] Hauteur ajustable
+- [x] Hauteur ajustable (pas de 0,1mm)
 - [x] Image de fond supportée
 - [x] Logo d'entreprise affiché
 - [x] Drag & drop fonctionnel
 - [x] Adaptation aux layouts
 - [x] Mise à jour temps réel
+- [x] Option de bannière fixable
 
 ## 🚀 Utilisation
 
@@ -109,8 +119,12 @@ document.getElementById('showRecruitmentBanner').checked = true;
 ```javascript
 const bannerData = {
     showRecruitmentBanner: true,
-    recruiterName: "Sophie Martin",
-    recruiterContact: "sophie.martin@entreprise.com",
+    fixRecruitmentBanner: true,
+    recruiterFirstName: "Sophie",
+    recruiterLastName: "Martin",
+    recruiterPosition: "Responsable RH",
+    recruiterPhone: "+33 1 23 45 67 89",
+    recruiterEmail: "sophie.martin@entreprise.com",
     companyName: "TechCorp Solutions",
     companyLogoUrl: "https://exemple.com/logo.png",
     bannerImageUrl: "https://exemple.com/background.jpg",

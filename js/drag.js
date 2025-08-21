@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // Système de drag & drop amélioré pour CV Creator
 let sortableInstances = [];
 let resizeObserver = null;
@@ -235,3 +236,43 @@ window.initDragAndDrop = initDragAndDrop;
 window.cleanupDragAndDrop = cleanupDragAndDrop;
 window.restoreSectionOrder = restoreSectionOrder;
 window.optimizeSpacing = optimizeSpacing;
+=======
+let sortableInstances = [];
+
+export function initDragAndDrop() {
+  const previewPanel = document.getElementById('cv-preview');
+  if (!previewPanel || !window.Sortable) return;
+
+  // Destroy existing instances
+  destroyDragAndDrop();
+
+  const pages = previewPanel.querySelectorAll('.cv-page');
+  pages.forEach(page => {
+    const sortable = Sortable.create(page, {
+      group: 'cv-sections',
+      animation: 150,
+      handle: '.drag-handle',
+      ghostClass: 'dragging',
+      chosenClass: 'drag-over',
+      onEnd: () => {
+        saveSectionOrder();
+        setTimeout(() => {
+          window.dispatchEvent(new CustomEvent('regeneratePreview'));
+        }, 100);
+      }
+    });
+    sortableInstances.push(sortable);
+  });
+}
+
+export function destroyDragAndDrop() {
+  sortableInstances.forEach(inst => inst.destroy());
+  sortableInstances = [];
+}
+
+function saveSectionOrder() {
+  const sections = document.querySelectorAll('.cv-section[data-section]');
+  const order = Array.from(sections).map(sec => sec.dataset.section);
+  localStorage.setItem('cv-section-order', JSON.stringify(order));
+}
+>>>>>>> 5ad1599266110d7d8368dd4989b5393c44f14647

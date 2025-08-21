@@ -7,14 +7,18 @@ function verifyHTMLElements() {
         'showRecruitmentBanner',
         'recruitmentBannerControls',
         'bannerImageUrl',
-        'recruiterName',
-        'recruiterContact',
+        'recruiterFirstName',
+        'recruiterLastName',
+        'recruiterPosition',
+        'recruiterPhone',
+        'recruiterEmail',
         'companyName',
         'companyLogoUrl',
         'bannerMessage',
         'bannerStyle',
         'bannerColor',
-        'bannerHeight'
+        'bannerHeight',
+        'fixRecruitmentBanner'
     ];
     
     const missing = [];
@@ -37,6 +41,7 @@ function verifyHTMLElements() {
 function verifyEventHandlers() {
     const checkbox = document.getElementById('showRecruitmentBanner');
     const slider = document.getElementById('bannerHeight');
+    const fixCheckbox = document.getElementById('fixRecruitmentBanner');
     
     if (!checkbox || !slider) {
         console.log('❌ Éléments de contrôle non trouvés');
@@ -59,6 +64,12 @@ function verifyEventHandlers() {
         slider.value = '60';
         slider.dispatchEvent(new Event('input'));
         console.log('✅ Gestionnaire de slider testé');
+
+        if (fixCheckbox) {
+            fixCheckbox.checked = true;
+            fixCheckbox.dispatchEvent(new Event('change'));
+            console.log('✅ Gestionnaire de fixation testé');
+        }
         
         return true;
     } catch (error) {
@@ -119,16 +130,18 @@ function testBannerGeneration() {
         // Simuler des données de test
         const testData = {
             showRecruitmentBanner: true,
-            recruiterName: "Test Recruiter",
+            recruiterFirstName: "Test",
+            recruiterLastName: "Recruiter",
             companyName: "Test Company",
             bannerStyle: "modern",
             bannerColor: "#3B82F6",
-            bannerHeight: "50"
+            bannerHeight: "50",
+            fixRecruitmentBanner: true
         };
         
         // Vérifier que getFormData inclut les données de bannière
         const formData = window.getFormData ? window.getFormData() : {};
-        const hasBannerData = 'showRecruitmentBanner' in formData;
+        const hasBannerData = 'showRecruitmentBanner' in formData && 'fixRecruitmentBanner' in formData;
         
         if (hasBannerData) {
             console.log('✅ getFormData inclut les données de bannière');

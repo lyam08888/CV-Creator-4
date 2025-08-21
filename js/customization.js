@@ -182,8 +182,8 @@ function applyLayout() {
     page.classList.add(`layout-${currentCustomization.layoutType}`);
   });
   
-  // Ajouter la nouvelle classe au conteneur
-  previewContainer.classList.add(`layout-${currentCustomization.layoutType}`);
+  // Le conteneur reste en disposition verticale pour empiler les pages
+  previewContainer.style.display = 'block';
   
   // Pour le layout sidebar, assigner les sections aux colonnes
   if (currentCustomization.layoutType === 'sidebar') {
@@ -541,10 +541,13 @@ function collectFormData() {
   }
   
   // Données de recrutement
-  data.recruiterName = document.getElementById('recruiterName')?.value || '';
+  data.recruiterFirstName = document.getElementById('recruiterFirstName')?.value || '';
+  data.recruiterLastName = document.getElementById('recruiterLastName')?.value || '';
+  data.recruiterPosition = document.getElementById('recruiterPosition')?.value || '';
+  data.recruiterPhone = document.getElementById('recruiterPhone')?.value || '';
+  data.recruiterEmail = document.getElementById('recruiterEmail')?.value || '';
   data.companyName = document.getElementById('companyName')?.value || '';
   data.companyLogoUrl = document.getElementById('companyLogoUrl')?.value || '';
-  data.recruiterContact = document.getElementById('recruiterContact')?.value || '';
   
   return data;
 }

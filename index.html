@@ -32,6 +32,7 @@
         <button class="nav-btn" data-form="languages">Langues</button>
         <button class="nav-btn" data-form="certifications">Certifications</button>
         <button class="nav-btn" data-form="projects">Projets</button>
+        <button class="nav-btn" data-form="blocks">Organisation</button>
         <button class="nav-btn" data-form="recruitment">Recrutement</button>
         <button class="nav-btn" data-form="settings">Paramètres</button>
         <button class="nav-btn" data-form="customization">Personnalisation</button>
@@ -171,6 +172,13 @@
           <button type="button" id="btnAddProject" class="btn btn-add">+ Ajouter un projet</button>
         </section>
 
+        <!-- ORGANISATION DES BLOCS -->
+        <section id="blocks" class="form-section">
+          <h2>Organisation des blocs</h2>
+          <p>Glissez pour réorganiser les sections ou décochez pour les masquer.</p>
+          <ul id="block-order-list" class="block-order-list"></ul>
+        </section>
+
         <!-- INFORMATIONS RECRUTEMENT -->
         <section id="recruitment" class="form-section">
           <h2>Informations Recrutement</h2>
@@ -198,12 +206,24 @@
             <!-- Informations recruteur -->
             <div class="form-grid">
               <div class="form-group">
-                <label for="recruiterName">Nom du Recruteur</label>
-                <input type="text" id="recruiterName" name="recruiterName" class="input" placeholder="Marie Dupont">
+                <label for="recruiterFirstName">Prénom du Recruteur</label>
+                <input type="text" id="recruiterFirstName" name="recruiterFirstName" class="input" placeholder="Marie">
               </div>
               <div class="form-group">
-                <label for="recruiterContact">Contact Recruteur</label>
-                <input type="text" id="recruiterContact" name="recruiterContact" class="input" placeholder="marie.dupont@entreprise.com">
+                <label for="recruiterLastName">Nom du Recruteur</label>
+                <input type="text" id="recruiterLastName" name="recruiterLastName" class="input" placeholder="Dupont">
+              </div>
+              <div class="form-group">
+                <label for="recruiterPosition">Poste du Recruteur</label>
+                <input type="text" id="recruiterPosition" name="recruiterPosition" class="input" placeholder="Chargée de recrutement">
+              </div>
+              <div class="form-group">
+                <label for="recruiterPhone">Numéro de téléphone</label>
+                <input type="tel" id="recruiterPhone" name="recruiterPhone" class="input" placeholder="+33 1 23 45 67 89">
+              </div>
+              <div class="form-group">
+                <label for="recruiterEmail">Adresse email</label>
+                <input type="email" id="recruiterEmail" name="recruiterEmail" class="input" placeholder="marie.dupont@entreprise.com">
               </div>
               <div class="form-group">
                 <label for="companyName">Nom de l'Entreprise</label>
@@ -242,8 +262,17 @@
             <!-- Position et taille -->
             <div class="form-group">
               <label for="bannerHeight">Hauteur de la bannière (mm)</label>
-              <input type="range" id="bannerHeight" name="bannerHeight" class="range-input" min="20" max="80" value="50">
+              <input type="range" id="bannerHeight" name="bannerHeight" class="range-input" min="0" max="80" step="0.1" value="50">
               <span class="range-value">50mm</span>
+            </div>
+
+            <!-- Fixer la bannière en haut -->
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="fixRecruitmentBanner" name="fixRecruitmentBanner">
+                <span class="checkmark"></span>
+                Fixer la bannière en haut du document
+              </label>
             </div>
           </div>
         </section>
@@ -267,6 +296,13 @@
           <div class="form-group">
             <label>Couleur principale</label>
             <input type="color" id="primaryColor" class="input" value="#2563eb">
+          </div>
+          <div class="form-group">
+            <label>Gestion des pages</label>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <button type="button" id="btnAddPage" class="btn btn-small">+ Ajouter une page</button>
+              <button type="button" id="btnRemovePage" class="btn btn-small">- Supprimer la dernière page</button>
+            </div>
           </div>
         </section>
 
