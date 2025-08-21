@@ -74,13 +74,19 @@ function generateSections(formData) {
   if (formData.experience && formData.experience.length > 0) {
     let experienceContent = '<div class="cv-section sortable" data-section="experience"><div class="drag-handle">⋮⋮</div><h2 contenteditable="false">Expérience Professionnelle</h2>';
     let experienceHeight = 30; // titre
-    
+    let experienceItems = 0;
+
     formData.experience.forEach(exp => {
-      const title = exp.title || '';
-      const company = exp.company || '';
-      const period = exp.period || '';
-      const description = exp.description || '';
-      
+      const title = (exp.title || '').trim();
+      const company = (exp.company || '').trim();
+      const period = (exp.period || '').trim();
+      const description = (exp.description || '').trim();
+
+      // Ignorer l'entrée si toutes les informations sont vides
+      if (!title && !company && !period && !description) {
+        return;
+      }
+
       experienceContent += `
         <div class="cv-item">
           <h3 contenteditable="false">${title}${company ? ` chez ${company}` : ''}</h3>
@@ -89,43 +95,57 @@ function generateSections(formData) {
         </div>
       `;
       experienceHeight += 25 + (description ? description.length / 150 * 10 : 0);
+      experienceItems++;
     });
-    
-    experienceContent += '</div>';
-    
-    sections.push({
-      type: 'experience',
-      content: experienceContent,
-      height: experienceHeight
-    });
+
+    if (experienceItems > 0) {
+      experienceContent += '</div>';
+
+      sections.push({
+        type: 'experience',
+        content: experienceContent,
+        height: experienceHeight
+      });
+    }
   }
 
   // Formation
   if (formData.education && formData.education.length > 0) {
     let educationContent = '<div class="cv-section sortable" data-section="education"><div class="drag-handle">⋮⋮</div><h2 contenteditable="false">Formation</h2>';
     let educationHeight = 30;
-    
+    let educationItems = 0;
+
     formData.education.forEach(edu => {
-      const degree = edu.degree || '';
-      const school = edu.school || '';
-      const period = edu.period || '';
-      
+      const degree = (edu.degree || '').trim();
+      const school = (edu.school || '').trim();
+      const period = (edu.period || '').trim();
+      const description = (edu.description || '').trim();
+
+      // Ignorer l'entrée si toutes les informations sont vides
+      if (!degree && !school && !period && !description) {
+        return;
+      }
+
       educationContent += `
         <div class="cv-item">
           <h3 contenteditable="false">${degree}${school ? ` - ${school}` : ''}</h3>
           ${period ? `<p class="cv-period" contenteditable="false">${period}</p>` : ''}
+          ${description ? `<p contenteditable="false">${description}</p>` : ''}
         </div>
       `;
-      educationHeight += 20;
+      educationHeight += 20 + (description ? description.length / 150 * 10 : 0);
+      educationItems++;
     });
-    
-    educationContent += '</div>';
-    
-    sections.push({
-      type: 'education',
-      content: educationContent,
-      height: educationHeight
-    });
+
+    if (educationItems > 0) {
+      educationContent += '</div>';
+
+      sections.push({
+        type: 'education',
+        content: educationContent,
+        height: educationHeight
+      });
+    }
   }
 
   // Compétences
