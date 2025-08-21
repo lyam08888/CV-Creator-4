@@ -183,6 +183,9 @@ function initPreview() {
     </div>
   `;
   
+  // Initialiser le drag & drop pour l'aperçu
+  initDragAndDrop();
+  
   console.log('Preview initialized');
 }
 
@@ -690,11 +693,6 @@ function populateExampleData() {
 }
 
 // GÉNÉRATION DE L'APERÇU
-function initPreview() {
-  console.log('Initializing preview...');
-  // Initialiser le drag & drop pour l'aperçu
-  initDragAndDrop();
-}
 
 function generatePreview() {
   console.log('Generating preview...');
