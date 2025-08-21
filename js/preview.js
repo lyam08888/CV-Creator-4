@@ -181,43 +181,43 @@ function generateSections(formData) {
 }
 
 function createPagesWithPagination(sections) {
-  const maxPages = parseInt(localStorage.getItem('cv-max-pages') || '2');
+  let maxPages = parseInt(localStorage.getItem('cv-max-pages') || '2');
   const pageMarginTop = parseFloat(localStorage.getItem('cv-margin-top') || '20');
   const pageMarginBottom = parseFloat(localStorage.getItem('cv-margin-bottom') || '20');
   const availableHeight = 297 - pageMarginTop - pageMarginBottom; // A4 height minus margins
-  
+
   let pages = [];
   let currentPage = [];
   let currentPageHeight = 0;
-  let pageNumber = 1;
 
-  sections.forEach((section, index) => {
-    // Vérifier si la section tient sur la page actuelle
+  sections.forEach(section => {
+    // Start a new page if the current one is full
     if (currentPageHeight + section.height > availableHeight && currentPage.length > 0) {
-      // Créer une nouvelle page
-      pages.push(createPageHTML(currentPage, pageNumber));
+      pages.push(createPageHTML(currentPage, pages.length + 1));
       currentPage = [];
       currentPageHeight = 0;
-      pageNumber++;
-      
-      // Vérifier si on dépasse le nombre maximum de pages
-      if (pageNumber > maxPages) {
-        // Ajouter un indicateur de débordement
-        pages[pages.length - 1] = pages[pages.length - 1].replace(
-          '</div>',
-          '<div class="page-overflow-indicator">Contenu tronqué - Augmentez le nombre de pages</div></div>'
-        );
-        break;
-      }
     }
-    
+
     currentPage.push(section);
     currentPageHeight += section.height;
   });
 
-  // Ajouter la dernière page si elle contient du contenu
+  // Push the last page
   if (currentPage.length > 0) {
-    pages.push(createPageHTML(currentPage, pageNumber));
+    pages.push(createPageHTML(currentPage, pages.length + 1));
+  }
+
+  // If more pages are needed than allowed, automatically expand the limit
+  if (pages.length > maxPages) {
+    maxPages = pages.length;
+    localStorage.setItem('cv-max-pages', maxPages.toString());
+  }
+
+  // If the user increased the max pages, append empty pages
+  if (pages.length < maxPages) {
+    for (let i = pages.length; i < maxPages; i++) {
+      pages.push(createPageHTML([], i + 1));
+    }
   }
 
   return pages.join('');
@@ -343,16 +343,8 @@ function saveSectionOrder() {
 
 // Fonction pour ajouter une nouvelle page
 window.addNewPage = function() {
-  const previewPanel = document.getElementById('cv-preview');
-  const newPage = document.createElement('div');
-  newPage.className = 'cv-page';
-  newPage.innerHTML = `
-    <div class="cv-section sortable" data-section="new-section-${Date.now()}">
-      <div class="drag-handle">⋮⋮</div>
-      <h2 contenteditable="true">Nouvelle Section</h2>
-      <p contenteditable="true">Contenu de la nouvelle section...</p>
-    </div>
-  `;
-  previewPanel.appendChild(newPage);
-  initializeDragAndDrop();
+  // Augmente le nombre maximum de pages et régénère l'aperçu
+  const currentMax = parseInt(localStorage.getItem('cv-max-pages') || '2');
+  localStorage.setItem('cv-max-pages', (currentMax + 1).toString());
+  window.dispatchEvent(new CustomEvent('regeneratePreview'));
 };
