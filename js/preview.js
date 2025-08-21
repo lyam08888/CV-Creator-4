@@ -39,7 +39,7 @@ function generateSections(formData) {
         bannerHeight,
         bannerImageUrl
       ),
-      height: parseInt(bannerHeight) + 10 // hauteur + marge
+      height: parseFloat(bannerHeight) + 10 // hauteur + marge
     });
   }
 
