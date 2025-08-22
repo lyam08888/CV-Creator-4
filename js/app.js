@@ -2317,18 +2317,18 @@ function optimizeSpacingBasic() {
     const items = section.querySelectorAll('.cv-item');
     items.forEach((item, index) => {
       // Réduire l'espacement entre les éléments
-      item.style.marginBottom = '8px';
+      item.style.marginBottom = '4px';
       if (index === items.length - 1) {
         item.style.marginBottom = '0';
       }
-      
+
       // Réduire le padding interne
-      item.style.paddingLeft = '6px';
+      item.style.paddingLeft = '4px';
       
       // Optimiser les paragraphes internes
       const paragraphs = item.querySelectorAll('p');
       paragraphs.forEach(p => {
-        p.style.marginBottom = '4px';
+        p.style.marginBottom = '2px';
         p.style.lineHeight = '1.3';
       });
       
@@ -2343,18 +2343,18 @@ function optimizeSpacingBasic() {
     // Optimiser les titres de section
     const sectionTitles = section.querySelectorAll('h2');
     sectionTitles.forEach(title => {
-      title.style.marginBottom = '8px';
+      title.style.marginBottom = '4px';
       title.style.marginTop = '0';
     });
     
     // Réduire l'espacement global de la section
-    section.style.marginBottom = '12px';
+    section.style.marginBottom = '4px';
   });
   
   // Optimiser l'espacement des pages
   const pages = document.querySelectorAll('.cv-page');
   pages.forEach(page => {
-    page.style.gap = '8px';
+    page.style.gap = '4px';
     page.style.padding = '12mm 12mm 12mm 12mm';
   });
   

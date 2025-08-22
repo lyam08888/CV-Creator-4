@@ -26,7 +26,7 @@ export function generatePreview(formData) {
 }
 
 // Fonction pour optimiser les espaces vides
-function optimizeSpacing() {
+export function optimizeSpacing() {
   const sections = document.querySelectorAll('.cv-section');
   
   sections.forEach(section => {
@@ -46,8 +46,8 @@ function optimizeSpacing() {
     const items = section.querySelectorAll('.cv-item');
     items.forEach((item, index) => {
       // Réduire l'espacement par défaut
-      item.style.marginBottom = '6px';
-      item.style.paddingLeft = '6px';
+      item.style.marginBottom = '4px';
+      item.style.paddingLeft = '4px';
       
       if (index === items.length - 1) {
         item.style.marginBottom = '0';
@@ -56,7 +56,7 @@ function optimizeSpacing() {
       // Optimiser les paragraphes internes
       const paragraphs = item.querySelectorAll('p');
       paragraphs.forEach(p => {
-        p.style.marginBottom = '3px';
+        p.style.marginBottom = '2px';
         p.style.lineHeight = '1.3';
       });
       
@@ -71,19 +71,19 @@ function optimizeSpacing() {
       const periods = item.querySelectorAll('.cv-period');
       periods.forEach(period => {
         period.style.marginTop = '1px';
-        period.style.marginBottom = '4px';
+        period.style.marginBottom = '2px';
       });
     });
-    
+
     // Optimiser les titres de section h2
     const sectionTitles = section.querySelectorAll('h2');
     sectionTitles.forEach(title => {
-      title.style.marginBottom = '6px';
+      title.style.marginBottom = '4px';
       title.style.marginTop = '0';
     });
-    
+
     // Réduire l'espacement global de la section
-    section.style.marginBottom = '8px';
+    section.style.marginBottom = '4px';
   });
   
   // Supprimer les sections complètement vides
@@ -99,7 +99,7 @@ function optimizeSpacing() {
   // Optimiser l'espacement des pages
   const pages = document.querySelectorAll('.cv-page');
   pages.forEach(page => {
-    page.style.gap = '6px';
+    page.style.gap = '4px';
   });
 }
 
