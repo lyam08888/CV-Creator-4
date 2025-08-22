@@ -1,30 +1,30 @@
 // Système de personnalisation avancée du CV
 console.log('Customization module loaded');
 
-// Configuration par défaut
+// Configuration par défaut optimisée
 const defaultCustomization = {
   fontFamily: 'Arial, sans-serif',
-  baseFontSize: 11,
-  lineHeight: 1.4,
+  baseFontSize: 10.5,
+  lineHeight: 1.3,
   letterSpacing: 0,
-  pageMarginTop: 20,
-  pageMarginBottom: 20,
-  pageMarginLeft: 20,
-  pageMarginRight: 20,
-  sectionSpacing: 6,
-  paragraphSpacing: 3,
+  pageMarginTop: 15,
+  pageMarginBottom: 15,
+  pageMarginLeft: 15,
+  pageMarginRight: 15,
+  sectionSpacing: 4,
+  paragraphSpacing: 2.5,
   layoutType: 'single',
-  leftColumnWidth: 35,
-  columnGap: 8,
+  leftColumnWidth: 38,
+  columnGap: 5,
   maxPages: 2,
-  h1Size: 18,
-  h2Size: 14,
-  h3Size: 13,
-  titleSpacing: 2,
+  h1Size: 16,
+  h2Size: 13,
+  h3Size: 12,
+  titleSpacing: 1.5,
   showSectionLines: true,
-  lineThickness: 1,
+  lineThickness: 0.8,
   lineColor: '#cccccc',
-  lineMargin: 1
+  lineMargin: 0.8
 };
 
 // Variables globales
@@ -73,13 +73,31 @@ function initCustomizationHandlers() {
   // Bouton charger preset
   document.getElementById('btnLoadPreset').addEventListener('click', loadPreset);
   
-  // Gestion du type de layout
+  // Bouton optimisation deux colonnes
+  document.getElementById('btnOptimizeTwoColumns').addEventListener('click', () => {
+    // Changer le layout en deux colonnes
+    document.getElementById('layoutType').value = 'two-column';
+    currentCustomization.layoutType = 'two-column';
+    
+    // Appliquer l'optimisation
+    optimizeForTwoColumns();
+    
+    // Afficher le groupe de largeur de colonne
+    const columnWidthGroup = document.getElementById('columnWidthGroup');
+    columnWidthGroup.style.display = 'block';
+  });
+  
+  // Gestion du type de layout avec optimisation automatique
   document.getElementById('layoutType').addEventListener('change', (e) => {
     const columnWidthGroup = document.getElementById('columnWidthGroup');
     if (e.target.value === 'single') {
       columnWidthGroup.style.display = 'none';
     } else {
       columnWidthGroup.style.display = 'block';
+      // Optimisation automatique pour les deux colonnes
+      if (e.target.value === 'two-column') {
+        optimizeForTwoColumns();
+      }
     }
   });
   
@@ -433,6 +451,42 @@ window.applyCurrentCustomization = applyCurrentCustomization;
 // Exporter la configuration actuelle
 export function getCurrentCustomization() {
   return { ...currentCustomization };
+}
+
+// Fonction d'optimisation automatique pour les deux colonnes
+function optimizeForTwoColumns() {
+  // Paramètres optimisés pour deux colonnes
+  const twoColumnOptimization = {
+    baseFontSize: 10,
+    lineHeight: 1.25,
+    pageMarginTop: 12,
+    pageMarginBottom: 12,
+    pageMarginLeft: 12,
+    pageMarginRight: 12,
+    sectionSpacing: 3.5,
+    paragraphSpacing: 2,
+    leftColumnWidth: 40,
+    columnGap: 4,
+    h1Size: 15,
+    h2Size: 12,
+    h3Size: 11,
+    titleSpacing: 1.2,
+    lineThickness: 0.6,
+    lineMargin: 0.6
+  };
+  
+  // Appliquer les optimisations
+  Object.assign(currentCustomization, twoColumnOptimization);
+  
+  // Mettre à jour le formulaire
+  updateFormFromCustomization();
+  
+  // Appliquer les changements
+  applyCustomization();
+  saveCustomizationToStorage();
+  
+  // Notification
+  showNotification('✨ Optimisation automatique appliquée pour deux colonnes !');
 }
 
 // Fonction pour régénérer l'aperçu avec pagination
