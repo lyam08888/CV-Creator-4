@@ -335,6 +335,7 @@ function initFormHandlers() {
   addSafeListener('btnExport', 'click', exportToPDF);
   addSafeListener('btnAnalyzeCVAI', 'click', analyzeCVWithAI);
   addSafeListener('btnToggleEdit', 'click', toggleEditMode);
+  addSafeListener('btnToggleEditPreview', 'click', toggleEditMode);
   addSafeListener('btnOptimizeSpacing', 'click', optimizeSpacingManual);
   addSafeListener('btnSaveApiKey', 'click', saveApiKey);
   addSafeListener('btnNewCV', 'click', createNewCV);
@@ -1010,14 +1011,16 @@ function generateProjects(data) {
 
 function toggleEditMode() {
   editMode = !editMode;
-  const button = document.getElementById('btnToggleEdit');
+  const buttons = document.querySelectorAll('#btnToggleEdit, #btnToggleEditPreview');
   const cvPreview = document.getElementById('cv-preview');
-  
+
   if (editMode) {
-    button.textContent = 'Mode Lecture';
-    button.classList.add('active');
+    buttons.forEach(button => {
+      button.textContent = 'Mode Lecture';
+      button.classList.add('active');
+    });
     cvPreview.classList.add('edit-mode');
-    
+
     // Activer l'édition directe sur tous les éléments de contenu
     const editableElements = cvPreview.querySelectorAll('h1, h2, h3, p, .cv-item, .cv-header');
     editableElements.forEach(element => {
@@ -1027,20 +1030,22 @@ function toggleEditMode() {
       element.addEventListener('blur', saveDirectEdit);
       element.addEventListener('keydown', handleEditKeydown);
     });
-    
+
     // Afficher les handles de drag
     const dragHandles = cvPreview.querySelectorAll('.drag-handle');
     dragHandles.forEach(handle => {
       handle.style.opacity = '0.7';
     });
-    
+
     initDragAndDrop();
     console.log('Mode édition activé');
   } else {
-    button.textContent = 'Mode Édition';
-    button.classList.remove('active');
+    buttons.forEach(button => {
+      button.textContent = 'Mode Édition';
+      button.classList.remove('active');
+    });
     cvPreview.classList.remove('edit-mode');
-    
+
     // Désactiver l'édition directe
     const editableElements = cvPreview.querySelectorAll('[contenteditable="true"]');
     editableElements.forEach(element => {
@@ -1050,13 +1055,13 @@ function toggleEditMode() {
       element.removeEventListener('blur', saveDirectEdit);
       element.removeEventListener('keydown', handleEditKeydown);
     });
-    
+
     // Masquer les handles de drag
     const dragHandles = cvPreview.querySelectorAll('.drag-handle');
     dragHandles.forEach(handle => {
       handle.style.opacity = '0';
     });
-    
+
     // Détruire les instances de drag & drop
     cleanupDragAndDrop();
     console.log('Mode édition désactivé');
