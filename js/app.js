@@ -337,6 +337,7 @@ function initFormHandlers() {
   addSafeListener('btnExport', 'click', exportToPDF);
   addSafeListener('btnAnalyzeCVAI', 'click', analyzeCVWithAI);
   addSafeListener('btnToggleEdit', 'click', toggleEditMode);
+  addSafeListener('btnToggleEditPreview', 'click', toggleEditMode);
   addSafeListener('btnOptimizeSpacing', 'click', optimizeSpacingManual);
   addSafeListener('btnSaveApiKey', 'click', saveApiKey);
   addSafeListener('btnNewCV', 'click', createNewCV);
@@ -1012,14 +1013,16 @@ function generateProjects(data) {
 
 function toggleEditMode() {
   editMode = !editMode;
-  const button = document.getElementById('btnToggleEdit');
+  const buttons = document.querySelectorAll('.js-toggle-edit-mode');
   const cvPreview = document.getElementById('cv-preview');
-  
+
   if (editMode) {
-    button.textContent = 'Mode Lecture';
-    button.classList.add('active');
+    buttons.forEach(button => {
+      button.textContent = 'Mode Lecture';
+      button.classList.add('active');
+    });
     cvPreview.classList.add('edit-mode');
-    
+
     // Activer l'édition directe sur tous les éléments de contenu
     const editableElements = cvPreview.querySelectorAll('h1, h2, h3, p, .cv-item, .cv-header');
     editableElements.forEach(element => {
@@ -1029,20 +1032,22 @@ function toggleEditMode() {
       element.addEventListener('blur', saveDirectEdit);
       element.addEventListener('keydown', handleEditKeydown);
     });
-    
+
     // Afficher les handles de drag
     const dragHandles = cvPreview.querySelectorAll('.drag-handle');
     dragHandles.forEach(handle => {
       handle.style.opacity = '0.7';
     });
-    
+
     initDragAndDrop();
     console.log('Mode édition activé');
   } else {
-    button.textContent = 'Mode Édition';
-    button.classList.remove('active');
+    buttons.forEach(button => {
+      button.textContent = 'Mode Édition';
+      button.classList.remove('active');
+    });
     cvPreview.classList.remove('edit-mode');
-    
+
     // Désactiver l'édition directe
     const editableElements = cvPreview.querySelectorAll('[contenteditable="true"]');
     editableElements.forEach(element => {
@@ -1052,13 +1057,13 @@ function toggleEditMode() {
       element.removeEventListener('blur', saveDirectEdit);
       element.removeEventListener('keydown', handleEditKeydown);
     });
-    
+
     // Masquer les handles de drag
     const dragHandles = cvPreview.querySelectorAll('.drag-handle');
     dragHandles.forEach(handle => {
       handle.style.opacity = '0';
     });
-    
+
     // Détruire les instances de drag & drop
     cleanupDragAndDrop();
     console.log('Mode édition désactivé');
@@ -2319,18 +2324,18 @@ function optimizeSpacingBasic() {
     const items = section.querySelectorAll('.cv-item');
     items.forEach((item, index) => {
       // Réduire l'espacement entre les éléments
-      item.style.marginBottom = '8px';
+      item.style.marginBottom = '4px';
       if (index === items.length - 1) {
         item.style.marginBottom = '0';
       }
-      
+
       // Réduire le padding interne
-      item.style.paddingLeft = '6px';
+      item.style.paddingLeft = '4px';
       
       // Optimiser les paragraphes internes
       const paragraphs = item.querySelectorAll('p');
       paragraphs.forEach(p => {
-        p.style.marginBottom = '4px';
+        p.style.marginBottom = '2px';
         p.style.lineHeight = '1.3';
       });
       
@@ -2345,18 +2350,18 @@ function optimizeSpacingBasic() {
     // Optimiser les titres de section
     const sectionTitles = section.querySelectorAll('h2');
     sectionTitles.forEach(title => {
-      title.style.marginBottom = '8px';
+      title.style.marginBottom = '4px';
       title.style.marginTop = '0';
     });
     
     // Réduire l'espacement global de la section
-    section.style.marginBottom = '12px';
+    section.style.marginBottom = '4px';
   });
   
   // Optimiser l'espacement des pages
   const pages = document.querySelectorAll('.cv-page');
   pages.forEach(page => {
-    page.style.gap = '8px';
+    page.style.gap = '4px';
     page.style.padding = '12mm 12mm 12mm 12mm';
   });
   
