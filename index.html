@@ -4,10 +4,32 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CV CREATOR IA</title>
+  <meta name="description" content="AI-powered CV Creator with drag & drop functionality. Create professional resumes with artificial intelligence assistance.">
+  <meta name="keywords" content="CV, resume, AI, generator, PDF, drag-drop, professional">
+  <meta name="author" content="T.LAMARA">
+  
+  <!-- PWA Configuration -->
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#0f172a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="CV Creator IA">
+  
+  <!-- Icons -->
   <link rel="icon" href="./assets/favicon.svg">
+  <link rel="apple-touch-icon" href="./assets/icon-192.png">
+  
+  <!-- Preload critical resources -->
+  <link rel="preload" href="./css/app.css" as="style">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" as="style">
+  
+  <!-- Stylesheets -->
   <link rel="stylesheet" href="./css/app.css">
+  
+  <!-- DNS prefetch for external resources -->
+  <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
   <!-- QRCode -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <!-- html2canvas & jsPDF -->

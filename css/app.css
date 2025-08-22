@@ -1,5 +1,34 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+/* Performance optimizations */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Enable hardware acceleration for smooth animations */
+.nav-btn,
+.btn,
+.form-item,
+.cv-preview {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* Optimize font rendering */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Reduce layout thrashing */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
 :root {
   --primary-color: #8B5CF6; /* Vibrant Purple */
   --primary-color-dark: #7C3AED; /* Darker Purple */
@@ -14,12 +43,6 @@
   --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
   --shadow-medium: 0 8px 16px rgba(0, 0, 0, 0.2);
   --shadow-dark: 0 12px 24px rgba(0, 0, 0, 0.3);
-}
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
 
 html, body {
@@ -440,7 +463,7 @@ label {
 
 .form-item-header {
   display: flex;
-  justify-content: between;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 15px;
   padding-bottom: 10px;

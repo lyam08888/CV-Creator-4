@@ -1,0 +1,89 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+        
+      - name: Validate HTML
+        run: |
+          # Basic HTML validation
+          if ! grep -q "<!DOCTYPE html>" index.html; then
+            echo "Error: Missing DOCTYPE declaration"
+            exit 1
+          fi
+          
+      - name: Validate CSS
+        run: |
+          # Check for common CSS syntax errors
+          if grep -q "justify-content: between" css/app.css; then
+            echo "Error: Invalid CSS property value 'justify-content: between'"
+            exit 1
+          fi
+          
+      - name: Validate JavaScript
+        run: |
+          # Check for basic JavaScript syntax
+          for file in js/*.js; do
+            if [ -f "$file" ]; then
+              node -c "$file" || exit 1
+            fi
+          done
+          
+      - name: Optimize assets
+        run: |
+          # Create optimized build
+          mkdir -p _site
+          cp -r . _site/
+          
+          # Remove development files
+          rm -rf _site/.git
+          rm -rf _site/.github
+          rm -rf _site/.zencoder
+          rm -f _site/debug.html
+          rm -f _site/test-*.html
+          rm -f _site/diagnostic.js
+          rm -f _site/verification-banniere.js
+          
+          # Minify CSS (basic)
+          if command -v sed >/dev/null 2>&1; then
+            sed -i 's/  */ /g' _site/css/app.css
+            sed -i '/^[[:space:]]*$/d' _site/css/app.css
+          fi
+          
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '_site'
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
