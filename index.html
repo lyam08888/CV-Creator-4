@@ -65,28 +65,32 @@
         <h1 class="title">CV CREATOR IA</h1>
       </header>
       <nav class="app-nav">
-        <button class="nav-btn active" data-form="personal-info">Informations Personnelles</button>
-        <button class="nav-btn" data-form="summary">Résumé</button>
-        <button class="nav-btn" data-form="experience">Expérience</button>
-        <button class="nav-btn" data-form="education">Formation</button>
-        <button class="nav-btn" data-form="skills">Compétences</button>
-        <button class="nav-btn" data-form="languages">Langues</button>
-        <button class="nav-btn" data-form="certifications">Certifications</button>
-        <button class="nav-btn" data-form="projects">Projets</button>
-        <button class="nav-btn" data-form="blocks">Organisation</button>
-        <button class="nav-btn" data-form="recruitment">Recrutement</button>
-        <button class="nav-btn" data-form="settings">Paramètres</button>
-        <button class="nav-btn" data-form="customization">Personnalisation</button>
+        <details class="nav-group" open>
+          <summary>Profil</summary>
+          <button class="nav-btn active" data-form="personal-info">Informations Personnelles</button>
+          <button class="nav-btn" data-form="summary">Résumé</button>
+        </details>
+        <details class="nav-group">
+          <summary>Parcours</summary>
+          <button class="nav-btn" data-form="experience">Expérience</button>
+          <button class="nav-btn" data-form="education">Formation</button>
+          <button class="nav-btn" data-form="certifications">Certifications</button>
+          <button class="nav-btn" data-form="projects">Projets</button>
+        </details>
+        <details class="nav-group">
+          <summary>Compétences</summary>
+          <button class="nav-btn" data-form="skills">Compétences</button>
+          <button class="nav-btn" data-form="languages">Langues</button>
+        </details>
+        <details class="nav-group">
+          <summary>Autres</summary>
+          <button class="nav-btn" data-form="blocks">Organisation</button>
+          <button class="nav-btn" data-form="recruitment">Recrutement</button>
+          <button class="nav-btn" data-form="settings">Paramètres</button>
+          <button class="nav-btn" data-form="customization">Personnalisation</button>
+          <button class="nav-btn" data-form="actions">Actions</button>
+        </details>
       </nav>
-      <div class="app-actions">
-        <button id="btnGenerateIA" class="btn btn-primary">Générer le CV par IA</button>
-        <button id="btnExport" class="btn">Exporter PDF</button>
-        <button id="btnAnalyzeCVAI" class="btn">Analyser le CV avec IA</button>
-        <button id="btnToggleEdit" class="btn">Mode Édition</button>
-        <button id="btnOptimizeSpacing" class="btn btn-secondary">Optimiser Espaces</button>
-        <button id="btnNewCV" class="btn btn-secondary">Nouveau CV</button>
-        <button id="btnResetToDemo" class="btn btn-secondary">Charger Démo</button>
-      </div>
     </aside>
     
     <main class="main-content">
@@ -551,13 +555,26 @@
             <button type="button" id="btnLoadPreset" class="btn btn-secondary">📁 Charger preset</button>
           </div>
         </section>
+
+        <!-- ACTIONS GÉNÉRALES -->
+        <section id="actions" class="form-section">
+          <h2>Actions</h2>
+          <div class="form-group actions-group">
+            <button id="btnGenerateIA" class="btn btn-primary">Générer le CV par IA</button>
+            <button id="btnExport" class="btn">Exporter PDF</button>
+            <button id="btnAnalyzeCVAI" class="btn">Analyser le CV avec IA</button>
+            <button id="btnToggleEdit" class="btn">Mode Édition</button>
+            <button id="btnOptimizeSpacing" class="btn btn-secondary">Optimiser Espaces</button>
+            <button id="btnNewCV" class="btn btn-secondary">Nouveau CV</button>
+            <button id="btnResetToDemo" class="btn btn-secondary">Charger Démo</button>
+          </div>
+        </section>
       </form>
     </main>
     
     <aside class="preview-panel">
       <div class="preview-header">
         <h3>Aperçu du CV</h3>
-        <button id="btnToggleEdit" class="btn btn-small">Mode Édition</button>
       </div>
       <div id="cv-preview" class="cv-preview">
         <!-- L'aperçu du CV sera généré ici avec des blocs drag & drop -->

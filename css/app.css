@@ -93,9 +93,27 @@ html, body {
 .app-nav {
   display: flex;
   flex-direction: column;
-  gap: 10px; /* Increased gap */
+  gap: 20px;
   flex-grow: 1;
-  margin-bottom: 20px; /* Space before actions */
+  margin-bottom: 20px;
+}
+
+.nav-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nav-group summary {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 10px 20px;
+  cursor: pointer;
+  color: var(--text-color);
+}
+
+.nav-group summary::-webkit-details-marker {
+  display: none;
 }
 
 .nav-btn {
@@ -153,11 +171,10 @@ html, body {
   width: 4px;
 }
 
-.app-actions {
+.actions-group {
   display: flex;
   flex-direction: column;
-  gap: 15px; /* Increased gap */
-  margin-top: auto; /* Push actions to bottom */
+  gap: 15px;
 }
 
 .btn {
@@ -1718,11 +1735,11 @@ label {
   }
   
   .app-nav {
-    flex-direction: row;
-    overflow-x: auto;
-    gap: 8px;
+    flex-direction: column;
+    overflow: visible;
+    gap: 20px;
   }
-  
+
   .nav-btn {
     white-space: nowrap;
     padding: 10px 16px;
