@@ -29,6 +29,7 @@ const defaultCustomization = {
 
 // Variables globales
 let currentCustomization = { ...defaultCustomization };
+window.currentCustomization = currentCustomization;
 let previewContainer = null;
 
 // Initialisation du système de personnalisation
@@ -148,6 +149,7 @@ function updateCustomizationFromForm() {
     lineColor: document.getElementById('lineColor').value,
     lineMargin: parseFloat(document.getElementById('lineMargin').value)
   };
+  window.currentCustomization = currentCustomization;
 }
 
 // Appliquer la personnalisation au CV
@@ -342,6 +344,7 @@ function updateFormFromCustomization() {
 // Réinitialiser la personnalisation
 function resetCustomization() {
   currentCustomization = { ...defaultCustomization };
+  window.currentCustomization = currentCustomization;
   updateFormFromCustomization();
   applyCustomization();
   saveCustomizationToStorage();
@@ -358,10 +361,12 @@ function loadCustomizationFromStorage() {
   if (saved) {
     try {
       currentCustomization = { ...defaultCustomization, ...JSON.parse(saved) };
+      window.currentCustomization = currentCustomization;
       updateFormFromCustomization();
     } catch (error) {
       console.error('Error loading customization:', error);
       currentCustomization = { ...defaultCustomization };
+      window.currentCustomization = currentCustomization;
     }
   }
 }
@@ -393,8 +398,9 @@ function loadPreset() {
     alert('Preset non trouvé');
     return;
   }
-  
+
   currentCustomization = { ...presets[presetName] };
+  window.currentCustomization = currentCustomization;
   updateFormFromCustomization();
   applyCustomization();
   saveCustomizationToStorage();

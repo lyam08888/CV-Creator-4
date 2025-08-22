@@ -417,7 +417,18 @@ window.addNewPage = function() {
 
   // Augmente le nombre maximum de pages et régénère l'aperçu
   const currentMax = parseInt(localStorage.getItem('cv-max-pages') || '2');
-  localStorage.setItem('cv-max-pages', (currentMax + 1).toString());
+  const newMax = currentMax + 1;
+  localStorage.setItem('cv-max-pages', newMax.toString());
+
+  const maxPagesInput = document.getElementById('maxPages');
+  if (maxPagesInput) {
+    maxPagesInput.value = newMax.toString();
+  }
+
+  if (window.currentCustomization) {
+    window.currentCustomization.maxPages = newMax;
+  }
+
   window.dispatchEvent(new CustomEvent('regeneratePreview'));
 
 };
@@ -426,7 +437,18 @@ window.addNewPage = function() {
 window.removeLastPage = function() {
   const currentMax = parseInt(localStorage.getItem('cv-max-pages') || '2');
   if (currentMax > 1) {
-    localStorage.setItem('cv-max-pages', (currentMax - 1).toString());
+    const newMax = currentMax - 1;
+    localStorage.setItem('cv-max-pages', newMax.toString());
+
+    const maxPagesInput = document.getElementById('maxPages');
+    if (maxPagesInput) {
+      maxPagesInput.value = newMax.toString();
+    }
+
+    if (window.currentCustomization) {
+      window.currentCustomization.maxPages = newMax;
+    }
+
     window.dispatchEvent(new CustomEvent('regeneratePreview'));
   }
 };

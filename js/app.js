@@ -326,7 +326,9 @@ function initFormHandlers() {
   addSafeListener('btnAddProject', 'click', addProject);
   addSafeListener('btnAddPage', 'click', () => window.addNewPage());
   addSafeListener('btnRemovePage', 'click', () => window.removeLastPage());
-  
+  addSafeListener('btnPreviewAddPage', 'click', () => window.addNewPage());
+  addSafeListener('btnPreviewRemovePage', 'click', () => window.removeLastPage());
+
   // Boutons d'action
   addSafeListener('btnAutoFillAI', 'click', autoFillWithAI);
   addSafeListener('btnGenerateSummaryAI', 'click', generateSummaryAI);

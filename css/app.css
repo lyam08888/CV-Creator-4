@@ -902,6 +902,11 @@ label {
   border-bottom: 2px solid #e2e8f0;
 }
 
+.preview-actions {
+  display: flex;
+  gap: 8px;
+}
+
 .preview-header h3 {
   color: var(--secondary-color);
   font-size: 20px;
