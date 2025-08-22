@@ -1011,7 +1011,7 @@ function generateProjects(data) {
 
 function toggleEditMode() {
   editMode = !editMode;
-  const buttons = document.querySelectorAll('#btnToggleEdit, #btnToggleEditPreview');
+  const buttons = document.querySelectorAll('.js-toggle-edit-mode');
   const cvPreview = document.getElementById('cv-preview');
 
   if (editMode) {
