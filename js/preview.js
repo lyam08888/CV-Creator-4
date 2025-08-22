@@ -42,23 +42,48 @@ function optimizeSpacing() {
     const emptyDivs = section.querySelectorAll('div:empty:not(.drag-handle):not(.resize-handle)');
     emptyDivs.forEach(div => div.remove());
     
-    // Optimiser les marges des derniers éléments
-    const lastItem = section.querySelector('.cv-item:last-child');
-    if (lastItem) {
-      lastItem.style.marginBottom = '0';
-    }
-    
-    // Réduire les espaces excessifs entre les éléments
+    // Optimiser les marges des éléments cv-item
     const items = section.querySelectorAll('.cv-item');
     items.forEach((item, index) => {
-      if (index > 0) {
-        const prevItem = items[index - 1];
-        const gap = item.offsetTop - (prevItem.offsetTop + prevItem.offsetHeight);
-        if (gap > 20) { // Si l'espace est trop grand
-          item.style.marginTop = '-5px';
-        }
+      // Réduire l'espacement par défaut
+      item.style.marginBottom = '6px';
+      item.style.paddingLeft = '6px';
+      
+      if (index === items.length - 1) {
+        item.style.marginBottom = '0';
       }
+      
+      // Optimiser les paragraphes internes
+      const paragraphs = item.querySelectorAll('p');
+      paragraphs.forEach(p => {
+        p.style.marginBottom = '3px';
+        p.style.lineHeight = '1.3';
+      });
+      
+      // Optimiser les titres h3
+      const titles = item.querySelectorAll('h3');
+      titles.forEach(title => {
+        title.style.marginBottom = '2px';
+        title.style.marginTop = '0';
+      });
+      
+      // Optimiser les périodes
+      const periods = item.querySelectorAll('.cv-period');
+      periods.forEach(period => {
+        period.style.marginTop = '1px';
+        period.style.marginBottom = '4px';
+      });
     });
+    
+    // Optimiser les titres de section h2
+    const sectionTitles = section.querySelectorAll('h2');
+    sectionTitles.forEach(title => {
+      title.style.marginBottom = '6px';
+      title.style.marginTop = '0';
+    });
+    
+    // Réduire l'espacement global de la section
+    section.style.marginBottom = '8px';
   });
   
   // Supprimer les sections complètement vides
@@ -69,6 +94,12 @@ function optimizeSpacing() {
     if (!hasContent || textContent.length < 10) {
       section.remove();
     }
+  });
+  
+  // Optimiser l'espacement des pages
+  const pages = document.querySelectorAll('.cv-page');
+  pages.forEach(page => {
+    page.style.gap = '6px';
   });
 }
 
@@ -122,14 +153,14 @@ function generateSections(formData) {
           <p contenteditable="false">${formData.summary}</p>
         </div>
       `,
-      height: 25 + Math.min((formData.summary.length / 150) * 8, 20) // estimation plus compacte
+      height: 18 + Math.min((formData.summary.length / 200) * 6, 15) // estimation plus compacte
     });
   }
 
   // Expérience
   if (formData.experience && formData.experience.length > 0 && !hiddenSections.includes('experience')) {
     let experienceContent = '<div class="cv-section sortable" data-section="experience"><div class="drag-handle">⋮⋮</div><h2 contenteditable="false">Expérience Professionnelle</h2>';
-    let experienceHeight = 20; // titre réduit
+    let experienceHeight = 15; // titre réduit
     let experienceItems = 0;
     formData.experience.forEach(exp => {
       const title = (exp.title || '').trim();
@@ -149,7 +180,7 @@ function generateSections(formData) {
           ${description ? `<p contenteditable="false">${description}</p>` : ''}
         </div>
       `;
-      experienceHeight += 18 + (description ? Math.min(description.length / 200 * 8, 15) : 0); // plus compact
+      experienceHeight += 12 + (description ? Math.min(description.length / 250 * 6, 12) : 0); // plus compact
       experienceItems++;
     });
 
@@ -167,7 +198,7 @@ function generateSections(formData) {
   // Formation
   if (formData.education && formData.education.length > 0 && !hiddenSections.includes('education')) {
     let educationContent = '<div class="cv-section sortable" data-section="education"><div class="drag-handle">⋮⋮</div><h2 contenteditable="false">Formation</h2>';
-    let educationHeight = 30;
+    let educationHeight = 15;
     let educationItems = 0;
 
     formData.education.forEach(edu => {
@@ -188,7 +219,7 @@ function generateSections(formData) {
           ${description ? `<p contenteditable="false">${description}</p>` : ''}
         </div>
       `;
-      educationHeight += 20 + (description ? description.length / 150 * 10 : 0);
+      educationHeight += 12 + (description ? description.length / 200 * 6 : 0);
       educationItems++;
     });
 

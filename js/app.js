@@ -1012,50 +1012,124 @@ function toggleEditMode() {
   editMode = !editMode;
   const button = document.getElementById('btnToggleEdit');
   const cvPreview = document.getElementById('cv-preview');
-  const editableElements = document.querySelectorAll('[contenteditable]');
   
   if (editMode) {
     button.textContent = 'Mode Lecture';
     button.classList.add('active');
     cvPreview.classList.add('edit-mode');
     
-    // Activer l'édition directe
+    // Activer l'édition directe sur tous les éléments de contenu
+    const editableElements = cvPreview.querySelectorAll('h1, h2, h3, p, .cv-item, .cv-header');
     editableElements.forEach(element => {
       element.setAttribute('contenteditable', 'true');
-    });
-    
-    // Ajouter les gestionnaires d'événements pour sauvegarder les modifications
-    editableElements.forEach(element => {
+      element.style.outline = '1px dashed rgba(139, 92, 246, 0.5)';
+      element.style.padding = '2px';
       element.addEventListener('blur', saveDirectEdit);
       element.addEventListener('keydown', handleEditKeydown);
     });
     
+    // Afficher les handles de drag
+    const dragHandles = cvPreview.querySelectorAll('.drag-handle');
+    dragHandles.forEach(handle => {
+      handle.style.opacity = '0.7';
+    });
+    
     initDragAndDrop();
+    console.log('Mode édition activé');
   } else {
     button.textContent = 'Mode Édition';
     button.classList.remove('active');
     cvPreview.classList.remove('edit-mode');
     
     // Désactiver l'édition directe
+    const editableElements = cvPreview.querySelectorAll('[contenteditable="true"]');
     editableElements.forEach(element => {
       element.setAttribute('contenteditable', 'false');
+      element.style.outline = 'none';
+      element.style.padding = '';
       element.removeEventListener('blur', saveDirectEdit);
       element.removeEventListener('keydown', handleEditKeydown);
     });
     
+    // Masquer les handles de drag
+    const dragHandles = cvPreview.querySelectorAll('.drag-handle');
+    dragHandles.forEach(handle => {
+      handle.style.opacity = '0';
+    });
+    
     // Détruire les instances de drag & drop
     cleanupDragAndDrop();
+    console.log('Mode édition désactivé');
   }
 }
 
 function saveDirectEdit(event) {
-  // Sauvegarder les modifications dans le localStorage ou synchroniser avec le formulaire
   const element = event.target;
   const section = element.closest('[data-section]');
-  if (section) {
-    const sectionType = section.dataset.section;
-    const content = element.innerHTML;
+  
+  if (!section) return;
+  
+  const sectionType = section.dataset.section;
+  const content = element.textContent.trim();
+  
+  // Synchroniser avec les champs du formulaire selon le type de section
+  try {
+    switch(sectionType) {
+      case 'header':
+        if (element.tagName === 'H1') {
+          const nameField = document.getElementById('fullName');
+          if (nameField) nameField.value = content;
+        } else if (element.tagName === 'P') {
+          const text = element.textContent;
+          if (text.includes('@') || text.includes('|')) {
+            // C'est la ligne de contact
+            const parts = text.split('|').map(p => p.trim());
+            if (parts[0] && parts[0].includes('@')) {
+              const emailField = document.getElementById('email');
+              if (emailField) emailField.value = parts[0];
+            }
+            if (parts[1]) {
+              const phoneField = document.getElementById('phone');
+              if (phoneField) phoneField.value = parts[1];
+            }
+            if (parts[2]) {
+              const addressField = document.getElementById('address');
+              if (addressField) addressField.value = parts[2];
+            }
+          } else {
+            // C'est le titre du poste
+            const jobField = document.getElementById('jobTitle');
+            if (jobField) jobField.value = content;
+          }
+        }
+        break;
+        
+      case 'summary':
+        if (element.tagName === 'P') {
+          const summaryField = document.getElementById('summary');
+          if (summaryField) summaryField.value = content;
+        }
+        break;
+        
+      case 'skills':
+        if (element.tagName === 'P') {
+          const skillsField = document.getElementById('skills');
+          if (skillsField) skillsField.value = content;
+        }
+        break;
+    }
+    
+    // Sauvegarder dans le localStorage pour persistance
     localStorage.setItem(`cv-edit-${sectionType}-${element.tagName.toLowerCase()}`, content);
+    
+    // Feedback visuel
+    element.style.backgroundColor = 'rgba(16, 185, 129, 0.1)';
+    setTimeout(() => {
+      element.style.backgroundColor = '';
+    }, 1000);
+    
+  } catch (error) {
+    console.warn('Erreur lors de la sauvegarde:', error);
   }
 }
 
@@ -2239,14 +2313,52 @@ function optimizeSpacingBasic() {
       }
     });
     
-    // Réduire les marges excessives
+    // Optimiser les marges des éléments
     const items = section.querySelectorAll('.cv-item');
     items.forEach((item, index) => {
+      // Réduire l'espacement entre les éléments
+      item.style.marginBottom = '8px';
       if (index === items.length - 1) {
         item.style.marginBottom = '0';
       }
+      
+      // Réduire le padding interne
+      item.style.paddingLeft = '6px';
+      
+      // Optimiser les paragraphes internes
+      const paragraphs = item.querySelectorAll('p');
+      paragraphs.forEach(p => {
+        p.style.marginBottom = '4px';
+        p.style.lineHeight = '1.3';
+      });
+      
+      // Optimiser les titres
+      const titles = item.querySelectorAll('h3');
+      titles.forEach(title => {
+        title.style.marginBottom = '2px';
+        title.style.lineHeight = '1.2';
+      });
     });
+    
+    // Optimiser les titres de section
+    const sectionTitles = section.querySelectorAll('h2');
+    sectionTitles.forEach(title => {
+      title.style.marginBottom = '8px';
+      title.style.marginTop = '0';
+    });
+    
+    // Réduire l'espacement global de la section
+    section.style.marginBottom = '12px';
   });
+  
+  // Optimiser l'espacement des pages
+  const pages = document.querySelectorAll('.cv-page');
+  pages.forEach(page => {
+    page.style.gap = '8px';
+    page.style.padding = '12mm 12mm 12mm 12mm';
+  });
+  
+  console.log('Optimisation des espaces terminée');
 }
 
 // Wrapper pour generatePreview qui récupère les données du formulaire

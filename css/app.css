@@ -291,7 +291,7 @@ label {
 .cv-page {
   width: 210mm;
   min-height: 297mm;
-  padding: var(--cv-margin-top, 15mm) var(--cv-margin-right, 15mm) var(--cv-margin-bottom, 15mm) var(--cv-margin-left, 15mm);
+  padding: var(--cv-margin-top, 12mm) var(--cv-margin-right, 12mm) var(--cv-margin-bottom, 12mm) var(--cv-margin-left, 12mm);
   background-color: white;
   color: #1E293B;
   border-radius: 8px;
@@ -301,7 +301,7 @@ label {
   page-break-after: always;
   display: flex;
   flex-direction: column;
-  gap: var(--cv-section-spacing, 3mm);
+  gap: var(--cv-section-spacing, 6mm);
   font-family: var(--cv-font-family, 'Arial, sans-serif');
   font-size: var(--cv-base-font-size, 11pt);
   line-height: var(--cv-line-height, 1.3);
@@ -322,7 +322,7 @@ label {
 
 .cv-preview .cv-header, .cv-page .cv-header {
   text-align: center;
-  margin-bottom: var(--cv-section-spacing, 2mm);
+  margin-bottom: var(--cv-section-spacing, 6mm);
 }
 
 .cv-preview .cv-header h1, .cv-page .cv-header h1 {
@@ -339,7 +339,7 @@ label {
 }
 
 .cv-preview .cv-section, .cv-page .cv-section {
-  margin-bottom: var(--cv-section-spacing, 2mm);
+  margin-bottom: var(--cv-section-spacing, 6mm);
 }
 
 .cv-preview .cv-section h2, .cv-page .cv-section h2 {
@@ -361,8 +361,8 @@ label {
 }
 
 .cv-preview .cv-item, .cv-page .cv-item {
-  margin-bottom: var(--cv-paragraph-spacing, 1.5mm);
-  padding-left: 8px;
+  margin-bottom: var(--cv-paragraph-spacing, 4mm);
+  padding-left: 6px;
   border-left: 2px solid var(--primary-color);
 }
 
@@ -2887,4 +2887,55 @@ label {
   cursor: grab;
   font-size: 18px;
   padding-left: 0;
+}
+
+/* Contrôles d'espacement */
+.spacing-controls {
+  border: 1px solid #e2e8f0;
+  margin-bottom: 20px;
+}
+
+.spacing-controls h3 {
+  color: var(--secondary-color);
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.range-input {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #e2e8f0;
+  outline: none;
+  -webkit-appearance: none;
+  margin-bottom: 5px;
+}
+
+.range-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(139, 92, 246, 0.3);
+}
+
+.range-input::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 4px rgba(139, 92, 246, 0.3);
+}
+
+.range-value {
+  font-size: 12px;
+  color: var(--primary-color);
+  font-weight: 600;
+  display: block;
+  text-align: center;
 }
