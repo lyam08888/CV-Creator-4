@@ -19,6 +19,9 @@ import { initBlocksTab } from './blocks.js';
 // Import du module de prévisualisation
 import { generatePreview } from './preview.js';
 
+// Import du module UI amélioré
+import { initEnhancedUI } from './enhanced-ui.js';
+
 // Données d'exemple pour pré-remplir le CV
 const exampleData = {
   fullName: "Jean Dupont",
@@ -159,6 +162,14 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Initialiser la personnalisation de manière asynchrone
   initCustomizationAsync();
+  
+  // Initialiser l'UI améliorée
+  try {
+    initEnhancedUI();
+    logSuccess('Enhanced UI initialized successfully');
+  } catch (error) {
+    logError('Failed to initialize enhanced UI:', error);
+  }
   
   // Écouter l'événement de régénération depuis la personnalisation
   window.addEventListener('regeneratePreview', () => {
